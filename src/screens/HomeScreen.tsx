@@ -26,7 +26,7 @@ const SERVICE_ICONS: Record<string, { icon: string; color: string; bg: string }>
   restoration:   { icon: 'construct',      color: '#059669', bg: '#f0fdf4' },
 };
 
-const WHATSAPP = '5511999999999';
+const WHATSAPP = '5518998210220';
 
 export function HomeScreen({ onBudget, onPortfolio, onServiceDetail, onPortfolioDetail, onAllServices }: Props) {
   const user = useAppStore((s) => s.user);
