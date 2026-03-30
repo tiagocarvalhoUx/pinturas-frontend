@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, Animated, Dimensions } from 'react-native';
+import { View, Text, Animated, Dimensions, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const { width } = Dimensions.get('window');
@@ -73,23 +73,17 @@ export function SplashScreen({ onFinish }: Props) {
       />
 
       {/* Logo */}
-      <Animated.View
-        style={{
-          width: 100,
-          height: 100,
-          borderRadius: 28,
-          backgroundColor: 'rgba(255,255,255,0.2)',
-          alignItems: 'center',
-          justifyContent: 'center',
-          transform: [{ scale }],
-          opacity,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 8 },
-          shadowOpacity: 0.3,
-          shadowRadius: 16,
-        }}
-      >
-        <Text style={{ fontSize: 56 }}>🖌️</Text>
+      <Animated.View style={{ transform: [{ scale }], opacity }}>
+        <Image
+          source={require('../../assets/logo-pintura.jpeg')}
+          style={{
+            width: 120, height: 120, borderRadius: 30,
+            borderWidth: 3, borderColor: 'rgba(255,255,255,0.4)',
+            shadowColor: '#000', shadowOffset: { width: 0, height: 8 },
+            shadowOpacity: 0.3, shadowRadius: 16,
+          }}
+          resizeMode="cover"
+        />
       </Animated.View>
 
       {/* Text */}
