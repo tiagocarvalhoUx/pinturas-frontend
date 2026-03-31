@@ -3,6 +3,7 @@ import {
   View, Text, TextInput, TouchableOpacity, FlatList,
   KeyboardAvoidingView, Platform, Image, ActivityIndicator,
 } from 'react-native';
+
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../store/appStore';
@@ -155,9 +156,11 @@ export function ChatScreen({ onBack }: Props) {
           )}
 
           {/* Avatar */}
-          <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,0.25)', alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: 'rgba(255,255,255,0.4)' }}>
-            <Text style={{ color: '#fff', fontSize: 18, fontWeight: '800' }}>🖌️</Text>
-          </View>
+          <Image
+            source={require('../../assets/logo-pintura.jpeg')}
+            style={{ width: 44, height: 44, borderRadius: 22, borderWidth: 2, borderColor: 'rgba(255,255,255,0.4)' }}
+            resizeMode="cover"
+          />
 
           <View style={{ flex: 1 }}>
             <Text style={{ color: '#fff', fontSize: 16, fontWeight: '800' }}>A. Coraça & T. Carvalho</Text>
