@@ -7,6 +7,7 @@ import { BudgetCard } from '../components/BudgetCard';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import api from '../services/api';
 import { formatCurrency } from '../utils/helpers';
+import { C, R, S } from '../theme';
 
 interface Props {
   onBudgetDetail: (id: string) => void;
@@ -14,12 +15,12 @@ interface Props {
 }
 
 export function AdminDashboard({ onBudgetDetail, onAllBudgets }: Props) {
-  const adminStats = useAppStore((s) => s.adminStats);
+  const adminStats    = useAppStore((s) => s.adminStats);
   const setAdminStats = useAppStore((s) => s.setAdminStats);
-  const setBudgets = useAppStore((s) => s.setBudgets);
-  const budgets = useAppStore((s) => s.budgets);
-  const user = useAppStore((s) => s.user);
-  const [loading, setLoading] = useState(true);
+  const setBudgets    = useAppStore((s) => s.setBudgets);
+  const budgets       = useAppStore((s) => s.budgets);
+  const user          = useAppStore((s) => s.user);
+  const [loading, setLoading]       = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const load = async (isRefresh = false) => {
@@ -28,12 +29,8 @@ export function AdminDashboard({ onBudgetDetail, onAllBudgets }: Props) {
       const res = await api.get('/users/admin/stats');
       setAdminStats(res.data.stats);
       setBudgets(res.data.recentBudgets);
-    } catch {
-      // keep cached
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
+    } catch { /* keep cached */ }
+    finally { setLoading(false); setRefreshing(false); }
   };
 
   useEffect(() => { load(); }, []);
@@ -41,108 +38,151 @@ export function AdminDashboard({ onBudgetDetail, onAllBudgets }: Props) {
   if (loading) return <LoadingSpinner message="Carregando dashboard..." />;
 
   const firstName = user?.name?.split(' ')[0] || 'Admin';
-  const hour = new Date().getHours();
-  const greeting = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
+  const hour      = new Date().getHours();
+  const greeting  = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
 
   const statCards = [
-    { label: 'Total', value: adminStats?.totalBudgets || 0, icon: 'clipboard', color: '#2563EB', bg: '#eff6ff' },
-    { label: 'Pendentes', value: adminStats?.pendingBudgets || 0, icon: 'time', color: '#d97706', bg: '#fffbeb' },
-    { label: 'Em Andamento', value: adminStats?.inProgressBudgets || 0, icon: 'construct', color: '#0891b2', bg: '#ecfeff' },
-    { label: 'Concluídos', value: adminStats?.completedBudgets || 0, icon: 'trophy', color: '#059669', bg: '#f0fdf4' },
+    { label: 'Total',        value: adminStats?.totalBudgets     || 0, icon: 'clipboard',  color: C.amber  },
+    { label: 'Pendentes',    value: adminStats?.pendingBudgets   || 0, icon: 'time',       color: C.warning },
+    { label: 'Em Andamento', value: adminStats?.inProgressBudgets|| 0, icon: 'construct',  color: C.info   },
+    { label: 'Concluídos',   value: adminStats?.completedBudgets || 0, icon: 'trophy',     color: C.success },
   ];
+
+  const total = adminStats?.totalBudgets || 1;
 
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: '#f8fafc' }}
+      style={{ flex: 1, backgroundColor: C.bgBase }}
       showsVerticalScrollIndicator={false}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor="#2563EB" />}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={() => load(true)}
+          tintColor={C.amber}
+          colors={[C.amber]}
+        />
+      }
     >
-      {/* Header */}
-      <LinearGradient colors={['#1d4ed8', '#2563EB', '#3b82f6']} style={{ paddingTop: 52, paddingHorizontal: 20, paddingBottom: 32 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+      {/* ── Header ── */}
+      <View style={{ backgroundColor: C.bgDeep, paddingTop: 52, paddingHorizontal: S.md, paddingBottom: 32 }}>
+        <View style={{ position: 'absolute', top: 0, right: -10, width: 220, height: 220, borderRadius: 110, backgroundColor: C.amber, opacity: 0.05 }} />
+
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 22 }}>
           <View>
-            <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13 }}>{greeting},</Text>
-            <Text style={{ color: '#fff', fontSize: 22, fontWeight: '800' }}>{firstName}! 👋</Text>
+            <Text style={{ color: C.textSecondary, fontSize: 13 }}>{greeting},</Text>
+            <Text style={{ color: C.textPrimary, fontSize: 22, fontWeight: '800', marginTop: 2 }}>{firstName}! 👋</Text>
           </View>
-          <View style={{ backgroundColor: '#fbbf24', borderRadius: 12, paddingHorizontal: 12, paddingVertical: 6, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-            <Ionicons name="shield-checkmark" size={14} color="#92400e" />
-            <Text style={{ color: '#92400e', fontWeight: '800', fontSize: 12 }}>Admin</Text>
+          <View style={{
+            backgroundColor: C.amber + '25',
+            borderRadius: R.md, paddingHorizontal: 12, paddingVertical: 7,
+            flexDirection: 'row', alignItems: 'center', gap: 5,
+            borderWidth: 1, borderColor: C.amber + '55',
+          }}>
+            <Ionicons name="shield-checkmark" size={14} color={C.amber} />
+            <Text style={{ color: C.amber, fontWeight: '800', fontSize: 12 }}>Admin</Text>
           </View>
         </View>
 
         {/* Revenue + Rating */}
         <View style={{ flexDirection: 'row', gap: 12 }}>
-          <View style={{ flex: 1, backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 18, padding: 16 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-              <Ionicons name="cash-outline" size={14} color="rgba(255,255,255,0.7)" />
-              <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 12 }}>Faturamento Total</Text>
+          {[
+            {
+              icon: 'cash-outline', label: 'Faturamento Total',
+              value: formatCurrency(adminStats?.totalRevenue || 0),
+              valueColor: C.textPrimary,
+            },
+            {
+              icon: 'star-outline', label: 'Avaliação Média',
+              value: adminStats?.avgRating?.toFixed(1) || '0.0',
+              valueColor: C.amber,
+              suffix: <Ionicons name="star" size={14} color={C.amber} />,
+            },
+          ].map((s) => (
+            <View key={s.label} style={{
+              flex: 1, backgroundColor: C.bgElevated,
+              borderRadius: R.lg, padding: 16,
+              borderWidth: 1, borderColor: C.border,
+            }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+                <Ionicons name={s.icon as any} size={14} color={C.textSecondary} />
+                <Text style={{ color: C.textSecondary, fontSize: 12 }}>{s.label}</Text>
+              </View>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <Text style={{ color: s.valueColor, fontSize: 20, fontWeight: '800' }}>{s.value}</Text>
+                {s.suffix}
+              </View>
             </View>
-            <Text style={{ color: '#fff', fontSize: 22, fontWeight: '800' }}>
-              {formatCurrency(adminStats?.totalRevenue || 0)}
-            </Text>
-          </View>
-          <View style={{ flex: 1, backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 18, padding: 16 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-              <Ionicons name="star-outline" size={14} color="rgba(255,255,255,0.7)" />
-              <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 12 }}>Avaliação Média</Text>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-              <Text style={{ color: '#fbbf24', fontSize: 22, fontWeight: '800' }}>
-                {adminStats?.avgRating?.toFixed(1) || '0.0'}
-              </Text>
-              <Ionicons name="star" size={16} color="#fbbf24" />
-            </View>
-          </View>
+          ))}
         </View>
-      </LinearGradient>
+      </View>
 
-      <View style={{ padding: 20, marginTop: -16 }}>
+      <View style={{ padding: S.md, marginTop: -16 }}>
 
-        {/* Stat Cards Grid */}
+        {/* ── Stat Cards Grid ── */}
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginBottom: 24 }}>
           {statCards.map((s) => (
             <View key={s.label} style={{
-              width: '47%', backgroundColor: '#fff', borderRadius: 20, padding: 16,
-              shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 10, elevation: 3,
+              width: '47%', backgroundColor: C.bgSurface,
+              borderRadius: R.lg, padding: S.md,
+              borderWidth: 1, borderColor: C.border,
+              shadowColor: '#000', shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.15, shadowRadius: 12, elevation: 4,
             }}>
-              <View style={{ width: 42, height: 42, borderRadius: 14, backgroundColor: s.bg, alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+              {/* Icon */}
+              <View style={{
+                width: 44, height: 44, borderRadius: R.md,
+                backgroundColor: s.color + '1A',
+                borderWidth: 1, borderColor: s.color + '30',
+                alignItems: 'center', justifyContent: 'center', marginBottom: 12,
+              }}>
                 <Ionicons name={s.icon as any} size={20} color={s.color} />
               </View>
-              <Text style={{ fontSize: 28, fontWeight: '800', color: '#0f172a' }}>{s.value}</Text>
-              <Text style={{ fontSize: 13, color: '#64748b', marginTop: 2 }}>{s.label}</Text>
-              <View style={{ height: 3, backgroundColor: s.bg, borderRadius: 2, marginTop: 10 }}>
+              <Text style={{ fontSize: 30, fontWeight: '800', color: C.textPrimary }}>{s.value}</Text>
+              <Text style={{ fontSize: 13, color: C.textSecondary, marginTop: 2 }}>{s.label}</Text>
+              {/* Progress bar */}
+              <View style={{ height: 3, backgroundColor: C.bgElevated, borderRadius: 2, marginTop: 12 }}>
                 <View style={{
                   height: 3, borderRadius: 2, backgroundColor: s.color,
-                  width: `${Math.min(100, ((s.value as number) / (adminStats?.totalBudgets || 1)) * 100)}%`,
+                  width: `${Math.min(100, ((s.value as number) / total) * 100)}%`,
                 }} />
               </View>
             </View>
           ))}
         </View>
 
-        {/* Quick Actions */}
-        <View style={{ backgroundColor: '#fff', borderRadius: 20, padding: 16, marginBottom: 24, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 10, elevation: 3 }}>
-          <Text style={{ fontSize: 15, fontWeight: '800', color: '#0f172a', marginBottom: 14 }}>Ações Rápidas</Text>
+        {/* ── Quick Actions ── */}
+        <View style={{
+          backgroundColor: C.bgSurface, borderRadius: R.lg,
+          padding: S.md, marginBottom: 24,
+          borderWidth: 1, borderColor: C.border,
+        }}>
+          <Text style={{ fontSize: 13, fontWeight: '800', color: C.textPrimary, marginBottom: 14 }}>Ações Rápidas</Text>
           <View style={{ flexDirection: 'row', gap: 10 }}>
-            <TouchableOpacity onPress={onAllBudgets} activeOpacity={0.8} style={{ flex: 1, backgroundColor: '#eff6ff', borderRadius: 14, padding: 14, alignItems: 'center', gap: 6 }}>
-              <Ionicons name="list-outline" size={22} color="#2563EB" />
-              <Text style={{ color: '#2563EB', fontSize: 12, fontWeight: '700', textAlign: 'center' }}>Ver Orçamentos</Text>
+            <TouchableOpacity onPress={onAllBudgets} activeOpacity={0.8}
+              style={{ flex: 1, backgroundColor: C.amberGlow, borderRadius: R.md, padding: 14, alignItems: 'center', gap: 6, borderWidth: 1, borderColor: C.amber + '35' }}>
+              <Ionicons name="list-outline" size={22} color={C.amber} />
+              <Text style={{ color: C.amber, fontSize: 12, fontWeight: '700', textAlign: 'center' }}>Ver Orçamentos</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => onBudgetDetail(budgets.find(b => b.status === 'pending')?._id || '')} activeOpacity={0.8}
-              style={{ flex: 1, backgroundColor: '#fffbeb', borderRadius: 14, padding: 14, alignItems: 'center', gap: 6 }}>
-              <Ionicons name="time-outline" size={22} color="#d97706" />
-              <Text style={{ color: '#d97706', fontSize: 12, fontWeight: '700', textAlign: 'center' }}>Pendentes ({adminStats?.pendingBudgets || 0})</Text>
+            <TouchableOpacity
+              onPress={() => { const p = budgets.find(b => b.status === 'pending'); if (p) onBudgetDetail(p._id); }}
+              activeOpacity={0.8}
+              style={{ flex: 1, backgroundColor: C.warning + '18', borderRadius: R.md, padding: 14, alignItems: 'center', gap: 6, borderWidth: 1, borderColor: C.warning + '35' }}
+            >
+              <Ionicons name="time-outline" size={22} color={C.warning} />
+              <Text style={{ color: C.warning, fontSize: 12, fontWeight: '700', textAlign: 'center' }}>
+                Pendentes ({adminStats?.pendingBudgets || 0})
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* Recent Budgets */}
+        {/* ── Recent Budgets ── */}
         <View style={{ marginBottom: 8 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-            <Text style={{ fontSize: 15, fontWeight: '800', color: '#0f172a' }}>Orçamentos Recentes</Text>
+            <Text style={{ fontSize: 15, fontWeight: '800', color: C.textPrimary }}>Orçamentos Recentes</Text>
             <TouchableOpacity onPress={onAllBudgets} style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-              <Text style={{ color: '#2563EB', fontWeight: '600', fontSize: 13 }}>Ver todos</Text>
-              <Ionicons name="chevron-forward" size={14} color="#2563EB" />
+              <Text style={{ color: C.amber, fontWeight: '700', fontSize: 13 }}>Ver todos</Text>
+              <Ionicons name="chevron-forward" size={14} color={C.amber} />
             </TouchableOpacity>
           </View>
 
@@ -151,9 +191,9 @@ export function AdminDashboard({ onBudgetDetail, onAllBudgets }: Props) {
           ))}
 
           {budgets.length === 0 && (
-            <View style={{ alignItems: 'center', paddingVertical: 40, backgroundColor: '#fff', borderRadius: 20 }}>
-              <Ionicons name="clipboard-outline" size={40} color="#cbd5e1" />
-              <Text style={{ color: '#94a3b8', fontSize: 14, marginTop: 10 }}>Nenhum orçamento ainda</Text>
+            <View style={{ alignItems: 'center', paddingVertical: 48, backgroundColor: C.bgSurface, borderRadius: R.lg, borderWidth: 1, borderColor: C.border }}>
+              <Ionicons name="clipboard-outline" size={40} color={C.textDisabled} />
+              <Text style={{ color: C.textSecondary, fontSize: 14, marginTop: 10 }}>Nenhum orçamento ainda</Text>
             </View>
           )}
         </View>

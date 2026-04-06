@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, ActivityIndicator, Text } from 'react-native';
+import { C } from '../theme';
 
 interface Props {
   message?: string;
@@ -7,11 +8,15 @@ interface Props {
   color?: string;
 }
 
-export function LoadingSpinner({ message, size = 'large', color = '#2563EB' }: Props) {
+export function LoadingSpinner({ message, size = 'large', color = C.amber }: Props) {
   return (
-    <View className="flex-1 items-center justify-center bg-white">
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: C.bgBase }}>
       <ActivityIndicator size={size} color={color} />
-      {message && <Text className="mt-3 text-gray-500 text-base">{message}</Text>}
+      {message && (
+        <Text style={{ marginTop: 12, color: C.textSecondary, fontSize: 14 }}>
+          {message}
+        </Text>
+      )}
     </View>
   );
 }

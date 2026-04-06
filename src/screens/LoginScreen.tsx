@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity,
-  KeyboardAvoidingView, Platform, ScrollView, Alert, Image
+  KeyboardAvoidingView, Platform, ScrollView, Alert, Image, Animated,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../store/appStore';
 import { authService } from '../services/auth';
+import { C, R, S } from '../theme';
 
 interface Props {
   onLogin: () => void;
@@ -14,12 +15,14 @@ interface Props {
 }
 
 export function LoginScreen({ onLogin, onGoRegister }: Props) {
-  const [email, setEmail] = useState('');
+  const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading]   = useState(false);
   const [showPass, setShowPass] = useState(false);
-  const setUser = useAppStore((s) => s.setUser);
-  const setAuthenticated = useAppStore((s) => s.setAuthenticated);
+  const [focusedField, setFocusedField] = useState<string | null>(null);
+  const setUser           = useAppStore((s) => s.setUser);
+  const setAuthenticated  = useAppStore((s) => s.setAuthenticated);
+  const btnScale = useRef(new Animated.Value(1)).current;
 
   const handleLogin = async () => {
     if (!email.trim() || !password) return Alert.alert('Atenção', 'Preencha e-mail e senha.');
@@ -36,93 +39,164 @@ export function LoginScreen({ onLogin, onGoRegister }: Props) {
     }
   };
 
+  const pressIn  = () => Animated.spring(btnScale, { toValue: 0.97, useNativeDriver: true }).start();
+  const pressOut = () => Animated.spring(btnScale, { toValue: 1,    useNativeDriver: true }).start();
+
+  const inputStyle = (field: string) => ({
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    backgroundColor: C.bgElevated,
+    borderWidth: 1.5,
+    borderColor: focusedField === field ? C.amber : C.border,
+    borderRadius: R.md,
+    paddingHorizontal: 14,
+  });
+
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-      <ScrollView style={{ flex: 1, backgroundColor: '#f8fafc' }} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-        {/* Header gradient */}
-        <LinearGradient colors={['#1d4ed8', '#2563EB', '#3b82f6']} style={{ paddingTop: 80, paddingBottom: 48, alignItems: 'center' }}>
-          <Image
-            source={require('../../assets/logo-pintura.jpeg')}
-            style={{ width: 90, height: 90, borderRadius: 22, marginBottom: 16, borderWidth: 3, borderColor: 'rgba(255,255,255,0.4)' }}
-            resizeMode="cover"
-          />
-          <Text style={{ color: '#fff', fontSize: 22, fontWeight: '800' }}>Bem-vindo de volta!</Text>
-          <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 14, marginTop: 4 }}>Entre na sua conta</Text>
-        </LinearGradient>
-
-        {/* Form Card */}
+      <ScrollView
+        style={{ flex: 1, backgroundColor: C.bgBase }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Top brand area */}
         <View style={{
-          backgroundColor: '#fff', marginHorizontal: 20, borderRadius: 24,
-          padding: 24, marginTop: -28,
-          shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.1, shadowRadius: 24, elevation: 8,
+          backgroundColor: C.bgDeep,
+          paddingTop: 80, paddingBottom: 52, alignItems: 'center',
         }}>
+          {/* Ambient glow */}
+          <View style={{
+            position: 'absolute', top: 40, width: 200, height: 200,
+            borderRadius: 100, backgroundColor: C.amber, opacity: 0.05,
+          }} />
+
+          {/* Logo */}
+          <View style={{
+            width: 92, height: 92, borderRadius: 26,
+            borderWidth: 2, borderColor: C.amber,
+            overflow: 'hidden', marginBottom: 18,
+            shadowColor: C.amber, shadowOffset: { width: 0, height: 6 },
+            shadowOpacity: 0.3, shadowRadius: 14, elevation: 10,
+          }}>
+            <Image
+              source={require('../../assets/logo-pintura.jpeg')}
+              style={{ width: '100%', height: '100%' }}
+              resizeMode="cover"
+            />
+          </View>
+
+          <View style={{ width: 32, height: 2, backgroundColor: C.amber, borderRadius: 1, marginBottom: 14 }} />
+          <Text style={{ color: C.textPrimary, fontSize: 22, fontWeight: '800', letterSpacing: 0.3 }}>
+            Bem-vindo de volta
+          </Text>
+          <Text style={{ color: C.textSecondary, fontSize: 14, marginTop: 5 }}>
+            Entre na sua conta
+          </Text>
+        </View>
+
+        {/* Form Card — floats over dark header */}
+        <View style={{
+          backgroundColor: C.bgSurface,
+          marginHorizontal: S.md, borderRadius: R.xl,
+          padding: S.lg, marginTop: -28,
+          borderWidth: 1, borderColor: C.border,
+          shadowColor: '#000', shadowOffset: { width: 0, height: 12 },
+          shadowOpacity: 0.3, shadowRadius: 28, elevation: 12,
+        }}>
+
           {/* Email */}
-          <View style={{ marginBottom: 16 }}>
-            <Text style={{ fontSize: 13, fontWeight: '600', color: '#374151', marginBottom: 8 }}>E-mail</Text>
-            <View style={{
-              flexDirection: 'row', alignItems: 'center',
-              backgroundColor: '#f8fafc', borderWidth: 1.5, borderColor: '#e2e8f0', borderRadius: 14, paddingHorizontal: 14,
-            }}>
-              <Ionicons name="mail-outline" size={18} color="#94a3b8" />
+          <View style={{ marginBottom: S.md }}>
+            <Text style={{ fontSize: 11, fontWeight: '700', color: C.textSecondary, marginBottom: 8, letterSpacing: 1.2, textTransform: 'uppercase' }}>
+              E-mail
+            </Text>
+            <View style={inputStyle('email')}>
+              <Ionicons name="mail-outline" size={18} color={focusedField === 'email' ? C.amber : C.textDisabled} />
               <TextInput
-                style={{ flex: 1, paddingVertical: 14, paddingHorizontal: 10, fontSize: 15, color: '#1e293b' }}
+                style={{ flex: 1, paddingVertical: 14, paddingHorizontal: 10, fontSize: 15, color: C.textPrimary }}
                 placeholder="seu@email.com"
-                placeholderTextColor="#94a3b8"
+                placeholderTextColor={C.textDisabled}
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
+                onFocus={() => setFocusedField('email')}
+                onBlur={() => setFocusedField(null)}
               />
             </View>
           </View>
 
           {/* Password */}
-          <View style={{ marginBottom: 24 }}>
-            <Text style={{ fontSize: 13, fontWeight: '600', color: '#374151', marginBottom: 8 }}>Senha</Text>
-            <View style={{
-              flexDirection: 'row', alignItems: 'center',
-              backgroundColor: '#f8fafc', borderWidth: 1.5, borderColor: '#e2e8f0', borderRadius: 14, paddingHorizontal: 14,
-            }}>
-              <Ionicons name="lock-closed-outline" size={18} color="#94a3b8" />
+          <View style={{ marginBottom: S.lg }}>
+            <Text style={{ fontSize: 11, fontWeight: '700', color: C.textSecondary, marginBottom: 8, letterSpacing: 1.2, textTransform: 'uppercase' }}>
+              Senha
+            </Text>
+            <View style={inputStyle('password')}>
+              <Ionicons name="lock-closed-outline" size={18} color={focusedField === 'password' ? C.amber : C.textDisabled} />
               <TextInput
-                style={{ flex: 1, paddingVertical: 14, paddingHorizontal: 10, fontSize: 15, color: '#1e293b' }}
+                style={{ flex: 1, paddingVertical: 14, paddingHorizontal: 10, fontSize: 15, color: C.textPrimary }}
                 placeholder="••••••••"
-                placeholderTextColor="#94a3b8"
+                placeholderTextColor={C.textDisabled}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry={!showPass}
+                onFocus={() => setFocusedField('password')}
+                onBlur={() => setFocusedField(null)}
               />
               <TouchableOpacity onPress={() => setShowPass(!showPass)}>
-                <Ionicons name={showPass ? 'eye-off-outline' : 'eye-outline'} size={20} color="#94a3b8" />
+                <Ionicons name={showPass ? 'eye-off-outline' : 'eye-outline'} size={20} color={C.textSecondary} />
               </TouchableOpacity>
             </View>
           </View>
 
           {/* Login Button */}
-          <TouchableOpacity onPress={handleLogin} disabled={loading} activeOpacity={0.85}>
-            <LinearGradient
-              colors={loading ? ['#93c5fd', '#93c5fd'] : ['#2563EB', '#1d4ed8']}
-              style={{ borderRadius: 14, paddingVertical: 16, alignItems: 'center' }}
+          <Animated.View style={{ transform: [{ scale: btnScale }] }}>
+            <TouchableOpacity
+              onPress={handleLogin}
+              onPressIn={pressIn}
+              onPressOut={pressOut}
+              disabled={loading}
+              activeOpacity={1}
             >
-              <Text style={{ color: '#fff', fontSize: 16, fontWeight: '700' }}>
-                {loading ? 'Entrando...' : 'Entrar'}
-              </Text>
-            </LinearGradient>
-          </TouchableOpacity>
+              <LinearGradient
+                colors={loading ? [C.bgMuted, C.bgMuted] : [C.amberDeep, C.amber]}
+                start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+                style={{ borderRadius: R.md, paddingVertical: 16, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 8 }}
+              >
+                {!loading && <Ionicons name="log-in-outline" size={20} color="#fff" />}
+                <Text style={{ color: loading ? C.textDisabled : '#fff', fontSize: 16, fontWeight: '800', letterSpacing: 0.3 }}>
+                  {loading ? 'Entrando...' : 'Entrar'}
+                </Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </Animated.View>
+
+          {/* Divider */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginVertical: 20 }}>
+            <View style={{ flex: 1, height: 1, backgroundColor: C.border }} />
+            <Text style={{ color: C.textDisabled, fontSize: 12 }}>ou</Text>
+            <View style={{ flex: 1, height: 1, backgroundColor: C.border }} />
+          </View>
 
           {/* Register link */}
-          <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
-            <Text style={{ color: '#94a3b8', fontSize: 14 }}>Não tem conta? </Text>
-            <TouchableOpacity onPress={onGoRegister}>
-              <Text style={{ color: '#2563EB', fontWeight: '700', fontSize: 14 }}>Cadastre-se</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            onPress={onGoRegister}
+            activeOpacity={0.8}
+            style={{
+              borderWidth: 1.5, borderColor: C.amber + '55',
+              borderRadius: R.md, paddingVertical: 14,
+              alignItems: 'center',
+            }}
+          >
+            <Text style={{ color: C.amber, fontWeight: '700', fontSize: 15 }}>Criar nova conta</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Footer */}
-        <View style={{ alignItems: 'center', paddingVertical: 32 }}>
-          <Text style={{ color: '#cbd5e1', fontSize: 12 }}>A. Coraça & T. Carvalho Pinturas e Reformas</Text>
+        <View style={{ alignItems: 'center', paddingVertical: 36 }}>
+          <Text style={{ color: C.textDisabled, fontSize: 11, letterSpacing: 0.3 }}>
+            A. Coraça & T. Carvalho Pinturas e Reformas
+          </Text>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

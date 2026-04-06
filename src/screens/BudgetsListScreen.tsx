@@ -6,6 +6,7 @@ import { useAppStore } from '../store/appStore';
 import { budgetService } from '../services/budgets';
 import { BudgetCard } from '../components/BudgetCard';
 import { LoadingSpinner } from '../components/LoadingSpinner';
+import { C, R, S } from '../theme';
 
 interface Props {
   onBudgetDetail: (id: string) => void;
@@ -13,20 +14,20 @@ interface Props {
 }
 
 const STATUS_FILTERS = [
-  { key: 'all', label: 'Todos' },
-  { key: 'pending', label: 'Pendentes' },
-  { key: 'quoted', label: 'Orçados' },
+  { key: 'all',         label: 'Todos'        },
+  { key: 'pending',     label: 'Pendentes'    },
+  { key: 'quoted',      label: 'Orçados'      },
   { key: 'in_progress', label: 'Em Andamento' },
-  { key: 'completed', label: 'Concluídos' },
+  { key: 'completed',   label: 'Concluídos'   },
 ];
 
 export function BudgetsListScreen({ onBudgetDetail, onNewBudget }: Props) {
-  const budgets = useAppStore((s) => s.budgets);
+  const budgets    = useAppStore((s) => s.budgets);
   const setBudgets = useAppStore((s) => s.setBudgets);
-  const user = useAppStore((s) => s.user);
-  const [loading, setLoading] = useState(true);
+  const user       = useAppStore((s) => s.user);
+  const [loading, setLoading]     = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter]       = useState('all');
 
   const loadBudgets = async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true);
@@ -35,9 +36,8 @@ export function BudgetsListScreen({ onBudgetDetail, onNewBudget }: Props) {
         ? await budgetService.getAllBudgets()
         : await budgetService.getMyBudgets();
       setBudgets(data);
-    } catch {
-      // keep cached
-    } finally {
+    } catch { /* keep cached */ }
+    finally {
       setLoading(false);
       setRefreshing(false);
     }
@@ -46,21 +46,28 @@ export function BudgetsListScreen({ onBudgetDetail, onNewBudget }: Props) {
   useEffect(() => { loadBudgets(); }, []);
 
   const filtered = filter === 'all' ? budgets : budgets.filter((b) => b.status === filter);
-
-  const isAdmin = user?.role === 'admin';
+  const isAdmin  = user?.role === 'admin';
 
   if (loading) return <LoadingSpinner message="Carregando orçamentos..." />;
 
+  const total     = budgets.length;
+  const pending   = budgets.filter((b) => b.status === 'pending').length;
+  const completed = budgets.filter((b) => b.status === 'completed').length;
+
   return (
-    <View style={{ flex: 1, backgroundColor: '#f8fafc' }}>
-      {/* Header */}
-      <LinearGradient colors={['#1d4ed8', '#2563EB', '#3b82f6']} style={{ paddingTop: 52, paddingHorizontal: 20, paddingBottom: 20 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+    <View style={{ flex: 1, backgroundColor: C.bgBase }}>
+
+      {/* ── Header ── */}
+      <View style={{ backgroundColor: C.bgDeep, paddingTop: 52, paddingHorizontal: S.md, paddingBottom: 24 }}>
+        {/* ambient glow */}
+        <View style={{ position: 'absolute', top: 0, right: -10, width: 180, height: 180, borderRadius: 90, backgroundColor: C.amber, opacity: 0.05 }} />
+
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
           <View>
-            <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13 }}>
+            <Text style={{ color: C.textSecondary, fontSize: 13 }}>
               {isAdmin ? 'Administrador' : 'Minha conta'}
             </Text>
-            <Text style={{ color: '#fff', fontSize: 20, fontWeight: '800' }}>
+            <Text style={{ color: C.textPrimary, fontSize: 20, fontWeight: '800', marginTop: 2 }}>
               {isAdmin ? 'Todos os Pedidos' : 'Meus Orçamentos'}
             </Text>
           </View>
@@ -68,37 +75,41 @@ export function BudgetsListScreen({ onBudgetDetail, onNewBudget }: Props) {
             <TouchableOpacity
               onPress={onNewBudget}
               activeOpacity={0.85}
-              style={{ backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 8, flexDirection: 'row', alignItems: 'center', gap: 6 }}
+              style={{
+                backgroundColor: C.amber, borderRadius: R.md,
+                paddingHorizontal: 14, paddingVertical: 9,
+                flexDirection: 'row', alignItems: 'center', gap: 6,
+                shadowColor: C.amber, shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.35, shadowRadius: 8, elevation: 5,
+              }}
             >
               <Ionicons name="add" size={18} color="#fff" />
-              <Text style={{ color: '#fff', fontWeight: '700', fontSize: 13 }}>Novo</Text>
+              <Text style={{ color: '#fff', fontWeight: '800', fontSize: 13 }}>Novo</Text>
             </TouchableOpacity>
           )}
         </View>
 
-        {/* Stats summary */}
+        {/* Stats row */}
         <View style={{ flexDirection: 'row', gap: 10 }}>
-          <View style={{ flex: 1, backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 12, padding: 10, alignItems: 'center' }}>
-            <Text style={{ color: '#fff', fontSize: 20, fontWeight: '800' }}>{budgets.length}</Text>
-            <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 11 }}>Total</Text>
-          </View>
-          <View style={{ flex: 1, backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 12, padding: 10, alignItems: 'center' }}>
-            <Text style={{ color: '#fbbf24', fontSize: 20, fontWeight: '800' }}>
-              {budgets.filter((b) => b.status === 'pending').length}
-            </Text>
-            <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 11 }}>Pendentes</Text>
-          </View>
-          <View style={{ flex: 1, backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 12, padding: 10, alignItems: 'center' }}>
-            <Text style={{ color: '#34d399', fontSize: 20, fontWeight: '800' }}>
-              {budgets.filter((b) => b.status === 'completed').length}
-            </Text>
-            <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 11 }}>Concluídos</Text>
-          </View>
+          {[
+            { label: 'Total',      value: total,     color: C.textPrimary },
+            { label: 'Pendentes',  value: pending,   color: C.warning     },
+            { label: 'Concluídos', value: completed, color: C.success     },
+          ].map((s) => (
+            <View key={s.label} style={{
+              flex: 1, backgroundColor: C.bgElevated,
+              borderRadius: R.md, padding: 12, alignItems: 'center',
+              borderWidth: 1, borderColor: C.border,
+            }}>
+              <Text style={{ color: s.color, fontSize: 22, fontWeight: '800' }}>{s.value}</Text>
+              <Text style={{ color: C.textSecondary, fontSize: 11, marginTop: 2 }}>{s.label}</Text>
+            </View>
+          ))}
         </View>
-      </LinearGradient>
+      </View>
 
-      {/* Filter chips */}
-      <View style={{ backgroundColor: '#fff', paddingVertical: 12, paddingHorizontal: 16, borderBottomWidth: 1, borderBottomColor: '#f1f5f9' }}>
+      {/* ── Filter chips ── */}
+      <View style={{ backgroundColor: C.bgSurface, paddingVertical: 12, paddingHorizontal: S.md, borderBottomWidth: 1, borderBottomColor: C.border }}>
         <FlatList
           data={STATUS_FILTERS}
           horizontal
@@ -111,11 +122,13 @@ export function BudgetsListScreen({ onBudgetDetail, onNewBudget }: Props) {
                 onPress={() => setFilter(item.key)}
                 activeOpacity={0.7}
                 style={{
-                  marginRight: 8, paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20,
-                  backgroundColor: active ? '#2563EB' : '#f1f5f9',
+                  marginRight: 8, paddingHorizontal: 14, paddingVertical: 7,
+                  borderRadius: R.full,
+                  backgroundColor: active ? C.amber : C.bgElevated,
+                  borderWidth: 1, borderColor: active ? C.amber : C.border,
                 }}
               >
-                <Text style={{ fontSize: 12, fontWeight: '600', color: active ? '#fff' : '#64748b' }}>
+                <Text style={{ fontSize: 12, fontWeight: '700', color: active ? '#fff' : C.textSecondary }}>
                   {item.label}
                 </Text>
               </TouchableOpacity>
@@ -124,34 +137,45 @@ export function BudgetsListScreen({ onBudgetDetail, onNewBudget }: Props) {
         />
       </View>
 
-      {/* List */}
+      {/* ── List ── */}
       <FlatList
         data={filtered}
         keyExtractor={(b) => b._id}
         renderItem={({ item }) => (
           <BudgetCard budget={item} onPress={() => onBudgetDetail(item._id)} />
         )}
-        contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
+        contentContainerStyle={{ padding: S.md, paddingBottom: 36 }}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={() => loadBudgets(true)} tintColor="#2563EB" />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => loadBudgets(true)}
+            tintColor={C.amber}
+            colors={[C.amber]}
+          />
         }
         ListEmptyComponent={
-          <View style={{ alignItems: 'center', paddingVertical: 64 }}>
-            <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: '#eff6ff', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
-              <Ionicons name="clipboard-outline" size={38} color="#93c5fd" />
+          <View style={{ alignItems: 'center', paddingVertical: 72 }}>
+            <View style={{
+              width: 80, height: 80, borderRadius: 40,
+              backgroundColor: C.amberGlow,
+              borderWidth: 1.5, borderColor: C.amber + '40',
+              alignItems: 'center', justifyContent: 'center', marginBottom: 18,
+            }}>
+              <Ionicons name="clipboard-outline" size={36} color={C.amber} />
             </View>
-            <Text style={{ fontSize: 17, fontWeight: '700', color: '#0f172a', marginBottom: 6 }}>
+            <Text style={{ fontSize: 17, fontWeight: '700', color: C.textPrimary, marginBottom: 6 }}>
               {filter === 'all' ? 'Nenhum orçamento' : 'Nenhum resultado'}
             </Text>
-            <Text style={{ fontSize: 14, color: '#94a3b8', textAlign: 'center', marginBottom: 24 }}>
+            <Text style={{ fontSize: 14, color: C.textSecondary, textAlign: 'center', marginBottom: 28, lineHeight: 20 }}>
               {filter === 'all' ? 'Solicite seu primeiro orçamento agora!' : 'Tente outro filtro.'}
             </Text>
             {filter === 'all' && !isAdmin && (
               <TouchableOpacity onPress={onNewBudget} activeOpacity={0.85}>
                 <LinearGradient
-                  colors={['#2563EB', '#1d4ed8']}
-                  style={{ borderRadius: 14, paddingHorizontal: 24, paddingVertical: 12, flexDirection: 'row', alignItems: 'center', gap: 8 }}
+                  colors={[C.amberDeep, C.amber]}
+                  start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+                  style={{ borderRadius: R.md, paddingHorizontal: 24, paddingVertical: 13, flexDirection: 'row', alignItems: 'center', gap: 8 }}
                 >
                   <Ionicons name="add-circle-outline" size={18} color="#fff" />
                   <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14 }}>Solicitar Orçamento</Text>

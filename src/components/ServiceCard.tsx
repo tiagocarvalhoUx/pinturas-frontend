@@ -1,5 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, View, Text } from 'react-native';
+import { C, R } from '../theme';
 
 interface Service {
   id: string;
@@ -17,31 +18,41 @@ interface Props {
 }
 
 const ICONS: Record<string, string> = {
-  home: '🏠',
-  building: '🏢',
-  layers: '🎨',
-  sparkles: '✨',
-  droplets: '💧',
-  refresh: '🔄',
+  home: '🏠', building: '🏢', layers: '🎨',
+  sparkles: '✨', droplets: '💧', refresh: '🔄',
 };
 
 export function ServiceCard({ service, onPress }: Props) {
+  // Remap light palette colors to dark-friendly ones
+  const accentColor = C.amber;
+
   return (
     <TouchableOpacity
       onPress={onPress}
-      className="mr-4 w-48 rounded-2xl overflow-hidden"
-      style={{ backgroundColor: service.color + '15', borderWidth: 1, borderColor: service.color + '30' }}
       activeOpacity={0.8}
+      style={{
+        marginRight: 14, width: 180,
+        backgroundColor: C.bgSurface,
+        borderRadius: R.lg, overflow: 'hidden',
+        borderWidth: 1.5, borderColor: accentColor + '30',
+      }}
     >
-      <View className="p-4">
-        <Text className="text-3xl mb-2">{ICONS[service.icon] || '🖌️'}</Text>
-        <Text className="text-base font-bold text-gray-800 mb-1">{service.name}</Text>
-        <Text className="text-xs text-gray-500 mb-3" numberOfLines={2}>{service.description}</Text>
-        <View className="flex-row items-center justify-between">
-          <Text className="text-sm font-bold" style={{ color: service.color }}>
+      {/* Top accent line */}
+      <View style={{ height: 3, backgroundColor: accentColor, opacity: 0.8 }} />
+
+      <View style={{ padding: 14 }}>
+        <Text style={{ fontSize: 32, marginBottom: 10 }}>{ICONS[service.icon] || '🖌️'}</Text>
+        <Text style={{ fontSize: 14, fontWeight: '800', color: C.textPrimary, marginBottom: 4 }}>
+          {service.name}
+        </Text>
+        <Text style={{ fontSize: 12, color: C.textSecondary, marginBottom: 12, lineHeight: 16 }} numberOfLines={2}>
+          {service.description}
+        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Text style={{ fontSize: 13, fontWeight: '800', color: accentColor }}>
             R$ {service.pricePerM2}/m²
           </Text>
-          <Text className="text-xs text-gray-400">{service.duration}</Text>
+          <Text style={{ fontSize: 11, color: C.textDisabled }}>{service.duration}</Text>
         </View>
       </View>
     </TouchableOpacity>

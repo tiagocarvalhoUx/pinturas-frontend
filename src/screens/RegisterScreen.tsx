@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity,
-  KeyboardAvoidingView, Platform, ScrollView, Alert
+  KeyboardAvoidingView, Platform, ScrollView, Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../store/appStore';
 import { authService } from '../services/auth';
+import { C, R, S } from '../theme';
 
 interface Props {
   onRegister: () => void;
@@ -34,10 +35,11 @@ const FIELDS: Field[] = [
 ];
 
 export function RegisterScreen({ onRegister, onGoLogin }: Props) {
-  const [form, setForm] = useState<Record<FieldKey, string>>({ name: '', email: '', phone: '', password: '', confirmPassword: '' });
+  const [form, setForm]       = useState<Record<FieldKey, string>>({ name: '', email: '', phone: '', password: '', confirmPassword: '' });
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState<Record<string, boolean>>({});
-  const setUser = useAppStore((s) => s.setUser);
+  const [focusedField, setFocusedField] = useState<string | null>(null);
+  const setUser          = useAppStore((s) => s.setUser);
   const setAuthenticated = useAppStore((s) => s.setAuthenticated);
 
   const set = (key: FieldKey) => (value: string) => setForm((f) => ({ ...f, [key]: value }));
@@ -61,50 +63,74 @@ export function RegisterScreen({ onRegister, onGoLogin }: Props) {
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-      <ScrollView style={{ flex: 1, backgroundColor: '#f8fafc' }} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={{ flex: 1, backgroundColor: C.bgBase }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
         {/* Header */}
-        <LinearGradient colors={['#1d4ed8', '#2563EB', '#3b82f6']} style={{ paddingTop: 60, paddingBottom: 40, alignItems: 'center' }}>
+        <View style={{ backgroundColor: C.bgDeep, paddingTop: 64, paddingBottom: 48, alignItems: 'center' }}>
           <View style={{
-            width: 72, height: 72, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.2)',
-            alignItems: 'center', justifyContent: 'center', marginBottom: 14,
+            position: 'absolute', top: 30, width: 180, height: 180,
+            borderRadius: 90, backgroundColor: C.amber, opacity: 0.05,
+          }} />
+
+          <View style={{
+            width: 72, height: 72, borderRadius: 22,
+            backgroundColor: C.amberGlow, borderWidth: 1.5, borderColor: C.amber + '55',
+            alignItems: 'center', justifyContent: 'center', marginBottom: 16,
           }}>
-            <Ionicons name="person-add" size={34} color="#fff" />
+            <Ionicons name="person-add" size={32} color={C.amber} />
           </View>
-          <Text style={{ color: '#fff', fontSize: 22, fontWeight: '800' }}>Criar Conta</Text>
-          <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 14, marginTop: 4 }}>Rápido e gratuito</Text>
-        </LinearGradient>
+          <View style={{ width: 28, height: 2, backgroundColor: C.amber, borderRadius: 1, marginBottom: 12 }} />
+          <Text style={{ color: C.textPrimary, fontSize: 22, fontWeight: '800', letterSpacing: 0.3 }}>
+            Criar Conta
+          </Text>
+          <Text style={{ color: C.textSecondary, fontSize: 14, marginTop: 5 }}>Rápido e gratuito</Text>
+        </View>
 
         {/* Form Card */}
         <View style={{
-          backgroundColor: '#fff', marginHorizontal: 20, borderRadius: 24,
-          padding: 24, marginTop: -24,
-          shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.1, shadowRadius: 24, elevation: 8,
+          backgroundColor: C.bgSurface,
+          marginHorizontal: S.md, borderRadius: R.xl,
+          padding: S.lg, marginTop: -24,
+          borderWidth: 1, borderColor: C.border,
+          shadowColor: '#000', shadowOffset: { width: 0, height: 12 },
+          shadowOpacity: 0.3, shadowRadius: 28, elevation: 12,
         }}>
           {FIELDS.map((field) => {
             const isSecure = field.secure;
-            const visible = showPass[field.key];
+            const visible  = showPass[field.key];
+            const isFocused = focusedField === field.key;
+
             return (
-              <View key={field.key} style={{ marginBottom: 16 }}>
-                <Text style={{ fontSize: 13, fontWeight: '600', color: '#374151', marginBottom: 8 }}>{field.label}</Text>
+              <View key={field.key} style={{ marginBottom: S.md }}>
+                <Text style={{ fontSize: 11, fontWeight: '700', color: C.textSecondary, marginBottom: 8, letterSpacing: 1.2, textTransform: 'uppercase' }}>
+                  {field.label}
+                </Text>
                 <View style={{
                   flexDirection: 'row', alignItems: 'center',
-                  backgroundColor: '#f8fafc', borderWidth: 1.5, borderColor: '#e2e8f0', borderRadius: 14, paddingHorizontal: 14,
+                  backgroundColor: C.bgElevated,
+                  borderWidth: 1.5, borderColor: isFocused ? C.amber : C.border,
+                  borderRadius: R.md, paddingHorizontal: 14,
                 }}>
-                  <Ionicons name={field.icon as any} size={18} color="#94a3b8" />
+                  <Ionicons name={field.icon as any} size={18} color={isFocused ? C.amber : C.textDisabled} />
                   <TextInput
-                    style={{ flex: 1, paddingVertical: 13, paddingHorizontal: 10, fontSize: 15, color: '#1e293b' }}
+                    style={{ flex: 1, paddingVertical: 13, paddingHorizontal: 10, fontSize: 15, color: C.textPrimary }}
                     placeholder={field.placeholder}
-                    placeholderTextColor="#94a3b8"
+                    placeholderTextColor={C.textDisabled}
                     value={form[field.key]}
                     onChangeText={set(field.key)}
                     keyboardType={field.keyboardType}
                     autoCapitalize={field.autoCapitalize || 'sentences'}
                     autoCorrect={false}
                     secureTextEntry={isSecure && !visible}
+                    onFocus={() => setFocusedField(field.key)}
+                    onBlur={() => setFocusedField(null)}
                   />
                   {isSecure && (
                     <TouchableOpacity onPress={() => setShowPass((p) => ({ ...p, [field.key]: !p[field.key] }))}>
-                      <Ionicons name={visible ? 'eye-off-outline' : 'eye-outline'} size={20} color="#94a3b8" />
+                      <Ionicons name={visible ? 'eye-off-outline' : 'eye-outline'} size={20} color={C.textSecondary} />
                     </TouchableOpacity>
                   )}
                 </View>
@@ -115,26 +141,28 @@ export function RegisterScreen({ onRegister, onGoLogin }: Props) {
           {/* Submit */}
           <TouchableOpacity onPress={handleRegister} disabled={loading} activeOpacity={0.85} style={{ marginTop: 8 }}>
             <LinearGradient
-              colors={loading ? ['#93c5fd', '#93c5fd'] : ['#2563EB', '#1d4ed8']}
-              style={{ borderRadius: 14, paddingVertical: 16, alignItems: 'center' }}
+              colors={loading ? [C.bgMuted, C.bgMuted] : [C.amberDeep, C.amber]}
+              start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+              style={{ borderRadius: R.md, paddingVertical: 16, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 8 }}
             >
-              <Text style={{ color: '#fff', fontSize: 16, fontWeight: '700' }}>
+              {!loading && <Ionicons name="checkmark-circle-outline" size={20} color="#fff" />}
+              <Text style={{ color: loading ? C.textDisabled : '#fff', fontSize: 16, fontWeight: '800' }}>
                 {loading ? 'Criando conta...' : 'Criar Conta'}
               </Text>
             </LinearGradient>
           </TouchableOpacity>
 
-          {/* Login Link */}
+          {/* Login link */}
           <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
-            <Text style={{ color: '#94a3b8', fontSize: 14 }}>Já tem conta? </Text>
+            <Text style={{ color: C.textSecondary, fontSize: 14 }}>Já tem conta? </Text>
             <TouchableOpacity onPress={onGoLogin}>
-              <Text style={{ color: '#2563EB', fontWeight: '700', fontSize: 14 }}>Entrar</Text>
+              <Text style={{ color: C.amber, fontWeight: '700', fontSize: 14 }}>Entrar</Text>
             </TouchableOpacity>
           </View>
         </View>
 
-        <View style={{ alignItems: 'center', paddingVertical: 32 }}>
-          <Text style={{ color: '#cbd5e1', fontSize: 12 }}>A. Coraça & T. Carvalho Pinturas e Reformas</Text>
+        <View style={{ alignItems: 'center', paddingVertical: 36 }}>
+          <Text style={{ color: C.textDisabled, fontSize: 11 }}>A. Coraça & T. Carvalho Pinturas e Reformas</Text>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

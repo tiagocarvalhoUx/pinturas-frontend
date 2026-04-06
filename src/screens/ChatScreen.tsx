@@ -3,13 +3,13 @@ import {
   View, Text, TextInput, TouchableOpacity, FlatList,
   KeyboardAvoidingView, Platform, Image, ActivityIndicator,
 } from 'react-native';
-
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../store/appStore';
 import api from '../services/api';
 import { io, Socket } from 'socket.io-client';
 import { ChatMessage } from '../store/appStore';
+import { C, R, S } from '../theme';
 
 const SOCKET_URL = process.env.EXPO_PUBLIC_SOCKET_URL || 'http://localhost:3000';
 
@@ -20,13 +20,13 @@ interface Props {
 export function ChatScreen({ onBack }: Props) {
   const user = useAppStore((s) => s.user);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [text, setText] = useState('');
-  const [chatId, setChatId] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [sending, setSending] = useState(false);
+  const [text, setText]         = useState('');
+  const [chatId, setChatId]     = useState('');
+  const [loading, setLoading]   = useState(true);
+  const [sending, setSending]   = useState(false);
   const socketRef = useRef<Socket | null>(null);
-  const flatRef = useRef<FlatList>(null);
-  const inputRef = useRef<TextInput>(null);
+  const flatRef   = useRef<FlatList>(null);
+  const inputRef  = useRef<TextInput>(null);
 
   useEffect(() => {
     const socket = io(SOCKET_URL, { transports: ['websocket'] });
@@ -35,7 +35,6 @@ export function ChatScreen({ onBack }: Props) {
 
     const initChat = async () => {
       try {
-        // Try to get existing chat or create one
         let id = chatId;
         if (!id) {
           const res = await api.post('/chat', {});
@@ -45,11 +44,8 @@ export function ChatScreen({ onBack }: Props) {
         const res = await api.get(`/chat/${id}`);
         setMessages(res.data.chat.messages || []);
         socket.emit('join_chat', id);
-      } catch {
-        // chat not available
-      } finally {
-        setLoading(false);
-      }
+      } catch { /* chat not available */ }
+      finally { setLoading(false); }
     };
     initChat();
 
@@ -74,27 +70,24 @@ export function ChatScreen({ onBack }: Props) {
       setMessages((prev) => [...prev, newMsg]);
       socketRef.current?.emit('send_message', { chatId, message: newMsg });
       setTimeout(() => flatRef.current?.scrollToEnd({ animated: true }), 100);
-    } catch {
-      setText(msgText);
-    } finally {
-      setSending(false);
-    }
+    } catch { setText(msgText); }
+    finally { setSending(false); }
   };
 
   const renderMessage = ({ item, index }: { item: ChatMessage; index: number }) => {
-    const isMe = item.sender._id === user?._id;
-    const prevItem = index > 0 ? messages[index - 1] : null;
+    const isMe      = item.sender._id === user?._id;
+    const prevItem  = index > 0 ? messages[index - 1] : null;
     const showAvatar = !isMe && (!prevItem || prevItem.sender._id !== item.sender._id);
-    const time = new Date(item.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const time       = new Date(item.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
     return (
-      <View style={{ marginBottom: 4, paddingHorizontal: 16 }}>
+      <View style={{ marginBottom: 4, paddingHorizontal: S.md }}>
         <View style={{ flexDirection: 'row', justifyContent: isMe ? 'flex-end' : 'flex-start', alignItems: 'flex-end', gap: 8 }}>
-          {/* Avatar for other side */}
+          {/* Other side avatar */}
           {!isMe && (
             <View style={{ width: 30, height: 30, marginBottom: 2, opacity: showAvatar ? 1 : 0 }}>
-              <View style={{ width: 30, height: 30, borderRadius: 15, backgroundColor: '#2563EB', alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ color: '#fff', fontSize: 13, fontWeight: '700' }}>A</Text>
+              <View style={{ width: 30, height: 30, borderRadius: 15, backgroundColor: C.amber + '30', borderWidth: 1.5, borderColor: C.amber, alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ color: C.amber, fontSize: 12, fontWeight: '800' }}>A</Text>
               </View>
             </View>
           )}
@@ -102,26 +95,23 @@ export function ChatScreen({ onBack }: Props) {
           <View style={{ maxWidth: '75%' }}>
             {/* Image message */}
             {item.type === 'image' && item.image?.url && (
-              <Image
-                source={{ uri: item.image.url }}
-                style={{ width: 200, height: 150, borderRadius: 16, marginBottom: 2 }}
-                resizeMode="cover"
-              />
+              <Image source={{ uri: item.image.url }} style={{ width: 200, height: 150, borderRadius: R.md, marginBottom: 2 }} resizeMode="cover" />
             )}
 
             {/* Text bubble */}
             {item.content ? (
               <View style={{
                 paddingHorizontal: 14, paddingVertical: 10, borderRadius: 20,
-                backgroundColor: isMe ? '#2563EB' : '#fff',
+                backgroundColor: isMe ? C.amber : C.bgSurface,
                 borderBottomRightRadius: isMe ? 4 : 20,
                 borderBottomLeftRadius: isMe ? 20 : 4,
-                shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.06, shadowRadius: 4, elevation: 1,
+                borderWidth: isMe ? 0 : 1,
+                borderColor: isMe ? 'transparent' : C.border,
               }}>
-                <Text style={{ color: isMe ? '#fff' : '#1e293b', fontSize: 15, lineHeight: 21 }}>
+                <Text style={{ color: isMe ? '#fff' : C.textPrimary, fontSize: 15, lineHeight: 21 }}>
                   {item.content}
                 </Text>
-                <Text style={{ color: isMe ? 'rgba(255,255,255,0.6)' : '#94a3b8', fontSize: 10, marginTop: 4, textAlign: isMe ? 'right' : 'left' }}>
+                <Text style={{ color: isMe ? 'rgba(255,255,255,0.6)' : C.textDisabled, fontSize: 10, marginTop: 4, textAlign: isMe ? 'right' : 'left' }}>
                   {time} {isMe && '✓'}
                 </Text>
               </View>
@@ -132,55 +122,48 @@ export function ChatScreen({ onBack }: Props) {
     );
   };
 
-  const renderDateSeparator = (date: string) => (
-    <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 16, paddingHorizontal: 16 }}>
-      <View style={{ flex: 1, height: 1, backgroundColor: '#e2e8f0' }} />
-      <Text style={{ fontSize: 11, color: '#94a3b8', marginHorizontal: 10, fontWeight: '600' }}>{date}</Text>
-      <View style={{ flex: 1, height: 1, backgroundColor: '#e2e8f0' }} />
-    </View>
-  );
+  const hasText = text.trim().length > 0;
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1, backgroundColor: '#f8fafc' }}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+      style={{ flex: 1, backgroundColor: C.bgBase }}
+      keyboardVerticalOffset={0}
     >
-      {/* Header */}
-      <LinearGradient colors={['#1d4ed8', '#2563EB', '#3b82f6']} style={{ paddingTop: 52, paddingHorizontal: 16, paddingBottom: 16 }}>
+      {/* ── Header ── */}
+      <View style={{ backgroundColor: C.bgDeep, paddingTop: 52, paddingHorizontal: S.md, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: C.border }}>
+        <View style={{ position: 'absolute', top: 0, right: -10, width: 180, height: 180, borderRadius: 90, backgroundColor: C.amber, opacity: 0.05 }} />
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
           {onBack && (
-            <TouchableOpacity onPress={onBack} style={{ backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 10, padding: 8 }}>
-              <Ionicons name="arrow-back" size={20} color="#fff" />
+            <TouchableOpacity onPress={onBack} style={{ backgroundColor: C.bgElevated, borderRadius: R.sm, padding: 9, borderWidth: 1, borderColor: C.border }}>
+              <Ionicons name="arrow-back" size={20} color={C.textPrimary} />
             </TouchableOpacity>
           )}
 
-          {/* Avatar */}
-          <Image
-            source={require('../../assets/logo-pintura.jpeg')}
-            style={{ width: 44, height: 44, borderRadius: 22, borderWidth: 2, borderColor: 'rgba(255,255,255,0.4)' }}
-            resizeMode="cover"
-          />
+          {/* Company avatar */}
+          <View style={{ borderRadius: 24, overflow: 'hidden', width: 44, height: 44, borderWidth: 2, borderColor: C.amber }}>
+            <Image source={require('../../assets/logo-pintura.jpeg')} style={{ width: 44, height: 44 }} resizeMode="cover" />
+          </View>
 
           <View style={{ flex: 1 }}>
-            <Text style={{ color: '#fff', fontSize: 16, fontWeight: '800' }}>A. Coraça & T. Carvalho</Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 }}>
-              <View style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: '#34d399' }} />
-              <Text style={{ color: 'rgba(255,255,255,0.8)', fontSize: 12 }}>Online agora</Text>
+            <Text style={{ color: C.textPrimary, fontSize: 16, fontWeight: '800' }}>A. Coraça & T. Carvalho</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 2 }}>
+              <View style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: C.success }} />
+              <Text style={{ color: C.textSecondary, fontSize: 12 }}>Online agora</Text>
             </View>
           </View>
 
-          <TouchableOpacity style={{ backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 10, padding: 8 }}>
-            <Ionicons name="information-circle-outline" size={22} color="#fff" />
+          <TouchableOpacity style={{ backgroundColor: C.bgElevated, borderRadius: R.sm, padding: 9, borderWidth: 1, borderColor: C.border }}>
+            <Ionicons name="information-circle-outline" size={22} color={C.textSecondary} />
           </TouchableOpacity>
         </View>
-      </LinearGradient>
+      </View>
 
-      {/* Messages */}
+      {/* ── Messages ── */}
       {loading ? (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <ActivityIndicator size="large" color="#2563EB" />
-          <Text style={{ color: '#94a3b8', marginTop: 12, fontSize: 14 }}>Carregando conversa...</Text>
+          <ActivityIndicator size="large" color={C.amber} />
+          <Text style={{ color: C.textSecondary, marginTop: 12, fontSize: 14 }}>Carregando conversa...</Text>
         </View>
       ) : (
         <FlatList
@@ -188,16 +171,20 @@ export function ChatScreen({ onBack }: Props) {
           data={messages}
           keyExtractor={(m) => m._id}
           renderItem={renderMessage}
-          contentContainerStyle={{ paddingTop: 16, paddingBottom: 8 }}
+          contentContainerStyle={{ paddingTop: S.md, paddingBottom: S.sm }}
           showsVerticalScrollIndicator={false}
           onContentSizeChange={() => flatRef.current?.scrollToEnd({ animated: false })}
           ListEmptyComponent={
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 80 }}>
-              <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: '#eff6ff', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
-                <Ionicons name="chatbubbles-outline" size={38} color="#93c5fd" />
+              <View style={{
+                width: 80, height: 80, borderRadius: 40,
+                backgroundColor: C.amberGlow, borderWidth: 1.5, borderColor: C.amber + '40',
+                alignItems: 'center', justifyContent: 'center', marginBottom: 18,
+              }}>
+                <Ionicons name="chatbubbles-outline" size={36} color={C.amber} />
               </View>
-              <Text style={{ fontSize: 17, fontWeight: '700', color: '#0f172a', marginBottom: 6 }}>Inicie uma conversa</Text>
-              <Text style={{ fontSize: 14, color: '#94a3b8', textAlign: 'center', paddingHorizontal: 40 }}>
+              <Text style={{ fontSize: 17, fontWeight: '700', color: C.textPrimary, marginBottom: 6 }}>Inicie uma conversa</Text>
+              <Text style={{ fontSize: 14, color: C.textSecondary, textAlign: 'center', paddingHorizontal: 40, lineHeight: 20 }}>
                 Tire dúvidas, solicite informações ou acompanhe seu serviço.
               </Text>
             </View>
@@ -205,23 +192,25 @@ export function ChatScreen({ onBack }: Props) {
         />
       )}
 
-      {/* Input bar */}
+      {/* ── Input bar ── */}
       <View style={{
-        flexDirection: 'row', alignItems: 'flex-end', paddingHorizontal: 12, paddingVertical: 10,
-        paddingBottom: Platform.OS === 'ios' ? 24 : 12,
-        backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: '#f1f5f9',
-        shadowColor: '#000', shadowOffset: { width: 0, height: -2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 5,
+        flexDirection: 'row', alignItems: 'flex-end',
+        paddingHorizontal: S.md, paddingVertical: 10,
+        paddingBottom: Platform.OS === 'ios' ? 28 : 12,
+        backgroundColor: C.bgSurface,
+        borderTopWidth: 1, borderTopColor: C.border,
       }}>
         <View style={{
           flex: 1, flexDirection: 'row', alignItems: 'flex-end',
-          backgroundColor: '#f1f5f9', borderRadius: 24, paddingHorizontal: 14, paddingVertical: 6,
-          marginRight: 8,
+          backgroundColor: C.bgElevated, borderRadius: 24,
+          paddingHorizontal: 14, paddingVertical: 6, marginRight: 8,
+          borderWidth: 1.5, borderColor: hasText ? C.amber + '55' : C.border,
         }}>
           <TextInput
             ref={inputRef}
-            style={{ flex: 1, fontSize: 15, color: '#1e293b', maxHeight: 100, paddingVertical: 6, lineHeight: 20 }}
+            style={{ flex: 1, fontSize: 15, color: C.textPrimary, maxHeight: 100, paddingVertical: 6, lineHeight: 20 }}
             placeholder="Digite uma mensagem..."
-            placeholderTextColor="#94a3b8"
+            placeholderTextColor={C.textDisabled}
             value={text}
             onChangeText={setText}
             multiline
@@ -229,20 +218,19 @@ export function ChatScreen({ onBack }: Props) {
           />
         </View>
 
-        <TouchableOpacity
-          onPress={sendMessage}
-          disabled={!text.trim() || sending}
-          activeOpacity={0.85}
-          style={{ marginBottom: 2 }}
-        >
+        <TouchableOpacity onPress={sendMessage} disabled={!hasText || sending} activeOpacity={0.85} style={{ marginBottom: 2 }}>
           <LinearGradient
-            colors={text.trim() ? ['#2563EB', '#1d4ed8'] : ['#e2e8f0', '#e2e8f0']}
-            style={{ width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' }}
+            colors={hasText ? [C.amberDeep, C.amber] : [C.bgElevated, C.bgElevated]}
+            style={{
+              width: 46, height: 46, borderRadius: 23,
+              alignItems: 'center', justifyContent: 'center',
+              borderWidth: hasText ? 0 : 1, borderColor: C.border,
+            }}
           >
             {sending ? (
-              <ActivityIndicator size="small" color="#fff" />
+              <ActivityIndicator size="small" color={hasText ? '#fff' : C.textDisabled} />
             ) : (
-              <Ionicons name="send" size={18} color={text.trim() ? '#fff' : '#94a3b8'} style={{ marginLeft: 2 }} />
+              <Ionicons name="send" size={18} color={hasText ? '#fff' : C.textDisabled} style={{ marginLeft: 2 }} />
             )}
           </LinearGradient>
         </TouchableOpacity>

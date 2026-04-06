@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { TouchableOpacity, View, Text, Image } from 'react-native';
 import { PortfolioItem } from '../store/appStore';
 import { SERVICE_LABELS } from '../utils/helpers';
+import { C, R } from '../theme';
 
 interface Props {
   item: PortfolioItem;
@@ -13,41 +14,113 @@ export function PortfolioCard({ item, onPress }: Props) {
   const image = showAfter ? item.afterImage : item.beforeImage;
 
   return (
-    <TouchableOpacity onPress={onPress} className="bg-white rounded-2xl overflow-hidden mb-4 shadow-sm" activeOpacity={0.9}>
-      <View className="relative h-48">
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={0.9}
+      style={{
+        backgroundColor: C.bgSurface,
+        borderRadius: R.lg, overflow: 'hidden',
+        marginBottom: 14,
+        borderWidth: 1, borderColor: C.border,
+        shadowColor: '#000', shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2, shadowRadius: 12, elevation: 4,
+      }}
+    >
+      {/* Image */}
+      <View style={{ position: 'relative', height: 190 }}>
         {image?.url ? (
-          <Image source={{ uri: image.url }} className="w-full h-full" resizeMode="cover" />
+          <Image source={{ uri: image.url }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
         ) : (
-          <View className="w-full h-full bg-gray-100 items-center justify-center">
-            <Text className="text-4xl">🖼️</Text>
+          <View style={{ width: '100%', height: '100%', backgroundColor: C.bgElevated, alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ fontSize: 40 }}>🖼️</Text>
           </View>
         )}
 
+        {/* Before/After toggle */}
         {item.beforeImage?.url && item.afterImage?.url && (
-          <View className="absolute top-2 right-2 flex-row bg-black/50 rounded-full p-1">
-            <TouchableOpacity onPress={() => setShowAfter(false)} className="px-2 py-1 rounded-full" style={{ backgroundColor: !showAfter ? '#fff' : 'transparent' }}>
-              <Text className="text-xs font-bold" style={{ color: !showAfter ? '#000' : '#fff' }}>Antes</Text>
+          <View style={{
+            position: 'absolute', top: 10, right: 10,
+            flexDirection: 'row',
+            backgroundColor: 'rgba(0,0,0,0.65)',
+            borderRadius: R.full, padding: 3,
+            borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)',
+          }}>
+            <TouchableOpacity
+              onPress={() => setShowAfter(false)}
+              style={{
+                paddingHorizontal: 10, paddingVertical: 4, borderRadius: R.full,
+                backgroundColor: !showAfter ? C.amber : 'transparent',
+              }}
+            >
+              <Text style={{ fontSize: 11, fontWeight: '700', color: !showAfter ? '#fff' : 'rgba(255,255,255,0.6)' }}>
+                Antes
+              </Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setShowAfter(true)} className="px-2 py-1 rounded-full" style={{ backgroundColor: showAfter ? '#fff' : 'transparent' }}>
-              <Text className="text-xs font-bold" style={{ color: showAfter ? '#000' : '#fff' }}>Depois</Text>
+            <TouchableOpacity
+              onPress={() => setShowAfter(true)}
+              style={{
+                paddingHorizontal: 10, paddingVertical: 4, borderRadius: R.full,
+                backgroundColor: showAfter ? C.amber : 'transparent',
+              }}
+            >
+              <Text style={{ fontSize: 11, fontWeight: '700', color: showAfter ? '#fff' : 'rgba(255,255,255,0.6)' }}>
+                Depois
+              </Text>
             </TouchableOpacity>
           </View>
         )}
 
+        {/* Featured badge */}
         {item.featured && (
-          <View className="absolute top-2 left-2 bg-yellow-400 rounded-full px-2 py-1">
-            <Text className="text-xs font-bold text-yellow-900">⭐ Destaque</Text>
+          <View style={{
+            position: 'absolute', top: 10, left: 10,
+            backgroundColor: C.amber,
+            borderRadius: R.full, paddingHorizontal: 10, paddingVertical: 4,
+            flexDirection: 'row', alignItems: 'center', gap: 4,
+          }}>
+            <Text style={{ fontSize: 10 }}>⭐</Text>
+            <Text style={{ fontSize: 10, fontWeight: '800', color: '#fff' }}>Destaque</Text>
           </View>
         )}
+
+        {/* Bottom image gradient */}
+        <View style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0,
+          height: 60,
+          backgroundColor: 'transparent',
+          // gradient overlay via nested views
+        }}>
+          <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)' }} />
+        </View>
       </View>
 
-      <View className="p-3">
-        <Text className="text-base font-bold text-gray-800 mb-1">{item.title}</Text>
-        <Text className="text-sm text-gray-500 mb-2">{SERVICE_LABELS[item.serviceType]}</Text>
-        <View className="flex-row gap-4">
-          {item.area && <Text className="text-xs text-gray-400">📐 {item.area} m²</Text>}
-          {item.duration && <Text className="text-xs text-gray-400">⏱️ {item.duration}</Text>}
-          {item.location && <Text className="text-xs text-gray-400">📍 {item.location}</Text>}
+      {/* Info */}
+      <View style={{ padding: 14 }}>
+        <Text style={{ fontSize: 15, fontWeight: '700', color: C.textPrimary, marginBottom: 3 }}>
+          {item.title}
+        </Text>
+        <Text style={{ fontSize: 12, color: C.amber, marginBottom: 8, fontWeight: '600' }}>
+          {SERVICE_LABELS[item.serviceType]}
+        </Text>
+        <View style={{ flexDirection: 'row', gap: 14, flexWrap: 'wrap' }}>
+          {item.area && (
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+              <Text style={{ color: C.textDisabled, fontSize: 12 }}>📐</Text>
+              <Text style={{ fontSize: 11, color: C.textSecondary }}>{item.area} m²</Text>
+            </View>
+          )}
+          {item.duration && (
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+              <Text style={{ color: C.textDisabled, fontSize: 12 }}>⏱️</Text>
+              <Text style={{ fontSize: 11, color: C.textSecondary }}>{item.duration}</Text>
+            </View>
+          )}
+          {item.location && (
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+              <Text style={{ color: C.textDisabled, fontSize: 12 }}>📍</Text>
+              <Text style={{ fontSize: 11, color: C.textSecondary }}>{item.location}</Text>
+            </View>
+          )}
         </View>
       </View>
     </TouchableOpacity>
