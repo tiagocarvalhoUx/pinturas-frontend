@@ -14,7 +14,7 @@ interface Props {
   onBudget: () => void;
   onPortfolio: () => void;
   onServiceDetail: (serviceId: string) => void;
-  onPortfolioDetail: (itemId: string) => void;
+  onPortfolioDetail: (item: any) => void;
   onAllServices: () => void;
 }
 
@@ -250,7 +250,7 @@ export function HomeScreen({ onBudget, onPortfolio, onServiceDetail, onPortfolio
               </TouchableOpacity>
             </View>
             {portfolio.slice(0, 2).map((item) => (
-              <PortfolioCard key={item._id} item={item} onPress={() => onPortfolioDetail(item._id)} />
+              <PortfolioCard key={item._id} item={item} onPress={() => onPortfolioDetail(item)} />
             ))}
           </View>
         )}

@@ -12,7 +12,7 @@ const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - 48) / 2;
 
 interface Props {
-  onDetail: (id: string) => void;
+  onDetail: (item: PortfolioItem) => void;
 }
 
 const FILTERS = [
@@ -242,7 +242,7 @@ export function PortfolioScreen({ onDetail }: Props) {
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: S.md, gap: 12 }}>
               {featured.map((item) => (
-                <TouchableOpacity key={item._id} onPress={() => onDetail(item._id)} activeOpacity={0.88}
+                <TouchableOpacity key={item._id} onPress={() => onDetail(item)} activeOpacity={0.88}
                   style={{
                     width: 210, backgroundColor: C.bgSurface, borderRadius: R.lg,
                     overflow: 'hidden', borderWidth: 1, borderColor: C.border,
@@ -300,12 +300,12 @@ export function PortfolioScreen({ onDetail }: Props) {
             <View style={{ flexDirection: 'row', gap: 14 }}>
               <View style={{ flex: 1 }}>
                 {leftCol.map((item) => (
-                  <GridCard key={item._id} item={item} onPress={() => onDetail(item._id)} />
+                  <GridCard key={item._id} item={item} onPress={() => onDetail(item)} />
                 ))}
               </View>
               <View style={{ flex: 1 }}>
                 {rightCol.map((item) => (
-                  <GridCard key={item._id} item={item} onPress={() => onDetail(item._id)} />
+                  <GridCard key={item._id} item={item} onPress={() => onDetail(item)} />
                 ))}
               </View>
             </View>

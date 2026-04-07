@@ -16,10 +16,12 @@ import { ProfileScreen } from '../screens/ProfileScreen';
 import { AdminDashboard } from '../screens/AdminDashboard';
 import { BottomTabBar } from '../components/BottomTabBar';
 import { BudgetDetailScreen } from '../screens/BudgetDetailScreen';
+import { PortfolioDetailScreen } from '../screens/PortfolioDetailScreen';
+import { PortfolioItem } from '../store/appStore';
 
 type Screen =
   | 'Splash' | 'Onboarding' | 'Login' | 'Register'
-  | 'Main' | 'Budget' | 'Chat' | 'BudgetDetail';
+  | 'Main' | 'Budget' | 'Chat' | 'BudgetDetail' | 'PortfolioDetail';
 
 type TabScreen = 'Home' | 'BudgetsList' | 'Portfolio' | 'Chat' | 'Profile' | 'AdminDashboard';
 
@@ -73,7 +75,8 @@ export function AppNavigator() {
   const [screen, setScreen] = useState<Screen>('Splash');
   const [activeTab, setActiveTab] = useState<TabScreen>('Home');
   const [selectedServiceType, setSelectedServiceType] = useState<string | undefined>();
-  const [selectedBudgetId, setSelectedBudgetId] = useState<string | undefined>();
+  const [selectedBudgetId, setSelectedBudgetId]         = useState<string | undefined>();
+  const [selectedPortfolioItem, setSelectedPortfolioItem] = useState<PortfolioItem | undefined>();
   const [showToast, setShowToast] = useState(false);
   const toastTimer = useRef<ReturnType<typeof setTimeout>>();
 
@@ -92,6 +95,11 @@ export function AppNavigator() {
   const goToBudgetDetail = (id: string) => {
     setSelectedBudgetId(id);
     go('BudgetDetail');
+  };
+
+  const goToPortfolioDetail = (item: PortfolioItem) => {
+    setSelectedPortfolioItem(item);
+    go('PortfolioDetail');
   };
 
   const handleBudgetSuccess = () => {
@@ -166,6 +174,15 @@ export function AppNavigator() {
     );
   }
 
+  if (screen === 'PortfolioDetail') {
+    return (
+      <PortfolioDetailScreen
+        item={selectedPortfolioItem!}
+        onBack={() => go('Main')}
+      />
+    );
+  }
+
   // Main Tab Layout
   const renderTab = () => {
     switch (activeTab) {
@@ -176,7 +193,7 @@ export function AppNavigator() {
             onPortfolio={() => setActiveTab('Portfolio')}
             onServiceDetail={goToService}
             onAllServices={goToBudget}
-            onPortfolioDetail={() => {}}
+            onPortfolioDetail={goToPortfolioDetail}
           />
         );
       case 'BudgetsList':
@@ -187,7 +204,7 @@ export function AppNavigator() {
           />
         );
       case 'Portfolio':
-        return <PortfolioScreen onDetail={() => {}} />;
+        return <PortfolioScreen onDetail={goToPortfolioDetail} />;
       case 'Chat':
         return <ChatScreen onBack={() => setActiveTab('Home')} />;
       case 'Profile':
@@ -213,7 +230,7 @@ export function AppNavigator() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#fff' }}>
+    <View style={{ flex: 1, backgroundColor: '#0F0D0A' }}>
       <View style={{ flex: 1 }}>{renderTab()}</View>
       <BottomTabBar
         activeTab={activeTab}
