@@ -5,20 +5,21 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'luxury-black':      '#121212',
-        'luxury-dark-grey':  '#1E1E1E',
-        'luxury-gold':       '#D4AF37',
-        'luxury-light-gold': '#E0B95B',
-        'luxury-deep-gold':  '#B8960C',
-        'luxury-text-light': '#F5F5F5',
-        'luxury-text-dark':  '#A0A0A0',
+        'neon-black':      '#000000',
+        'neon-dark-grey':  '#1A1A1A',
+        'neon-violet':     '#8A2BE2',
+        'neon-blue':       '#0000FF',
+        'neon-light-blue': '#00BFFF',
+        'neon-text-light': '#E0E0E0',
+        'neon-text-dark':  '#A0A0A0',
         success: '#4ABA79',
         warning: '#E0B95B',
         danger:  '#E05252',
-        info:    '#5AAAE0',
+        info:    '#00BFFF',
       },
       boxShadow: {
-        'gold-glow': '0 0 15px rgba(212, 175, 55, 0.4)',
+        'neon-glow-violet': '0 0 10px rgba(138, 43, 226, 0.7), 0 0 20px rgba(138, 43, 226, 0.5)',
+        'neon-glow-blue':   '0 0 10px rgba(0, 0, 255, 0.7), 0 0 20px rgba(0, 0, 255, 0.5)',
       },
       fontFamily: {
         sans: ['System'],

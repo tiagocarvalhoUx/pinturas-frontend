@@ -1,61 +1,61 @@
-// Design tokens — Luxury Gold
-// Palette: deep black base + gold accent for a sophisticated premium look
+// Design tokens — Neon Violet Grid
+// Palette: pure black base + neon violet & electric blue accent for a futuristic look
 
 import { Platform } from 'react-native';
 
 export const C = {
   // Backgrounds
-  bgDeep:     '#121212',   // deepest background  (luxury-black)
-  bgBase:     '#121212',   // page background      (luxury-black)
-  bgSurface:  '#1E1E1E',   // card / surface       (luxury-dark-grey)
-  bgElevated: '#252525',   // elevated cards, inputs
+  bgDeep:     '#000000',   // deepest background  (neon-black)
+  bgBase:     '#000000',   // page background      (neon-black)
+  bgSurface:  '#1A1A1A',   // card / surface       (neon-dark-grey)
+  bgElevated: '#222222',   // elevated cards, inputs
   bgMuted:    '#2A2A2A',   // hover / pressed state
 
-  // Accent — Luxury Gold
-  amber:      '#D4AF37',   // primary gold accent   (luxury-gold)
-  amberLight: '#E0B95B',   // hover / highlight     (luxury-light-gold)
-  amberDeep:  '#B8960C',   // pressed / deep gold   (luxury-deep-gold)
-  amberGlow:  '#D4AF3722', // translucent gold for badges / overlays
+  // Accent — Neon Violet (primary)
+  amber:      '#8A2BE2',   // neon-violet (primary accent)
+  amberLight: '#A855F7',   // lighter violet for hover/highlight
+  amberDeep:  '#6A1ABE',   // darker violet for pressed/shadow
+  amberGlow:  '#8A2BE222', // translucent violet for badges/overlays
 
-  // Warm secondary (kept harmonious with gold)
-  terra:      '#C09040',
-  terraLight: '#D4AA5A',
+  // Secondary — Electric Blue
+  terra:      '#0000FF',   // neon-blue
+  terraLight: '#00BFFF',   // neon-light-blue
 
   // Service palette
-  blue:       '#5AAAE0',
-  blueBg:     '#5AAAE020',
-  purple:     '#A04ABA',
-  purpleBg:   '#A04ABA20',
+  blue:       '#00BFFF',
+  blueBg:     '#00BFFF20',
+  purple:     '#8A2BE2',
+  purpleBg:   '#8A2BE220',
   green:      '#4ABA79',
   greenBg:    '#4ABA7920',
   whatsapp:   '#25D366',
   whatsappBg: '#25D36620',
 
   // Text
-  textPrimary:   '#F5F5F5',  // luxury-text-light
-  textSecondary: '#A0A0A0',  // luxury-text-dark
-  textDisabled:  '#5A5A5A',  // disabled
+  textPrimary:   '#E0E0E0',  // neon-text-light
+  textSecondary: '#A0A0A0',  // neon-text-dark
+  textDisabled:  '#4A4A4A',  // disabled
 
   // Border / divider
-  border:     '#2A2A2A',
-  borderSoft: '#222222',
+  border:     '#8A2BE240',   // violet border (subtle)
+  borderSoft: '#1A1A1A',
 
   // Status colours
   success:    '#4ABA79',
   warning:    '#E0B95B',
   error:      '#E05252',
-  info:       '#5AAAE0',
+  info:       '#00BFFF',
 
   // Status badge bg (translucent)
   successBg:  '#4ABA7920',
   warningBg:  '#E0B95B20',
   errorBg:    '#E0525220',
-  infoBg:     '#5AAAE020',
+  infoBg:     '#00BFFF20',
 
   // Utility
   white:   '#FFFFFF',
   black:   '#000000',
-  overlay: 'rgba(0,0,0,0.65)',
+  overlay: 'rgba(0,0,0,0.75)',
 };
 
 // Typography — Inter on web, system on native
@@ -70,11 +70,11 @@ export const F = {
 
 // Gradient presets
 export const G = {
-  amber:   [C.amberDeep, C.amber, C.amberLight] as const,
-  amberH:  [C.amberDeep, C.amberLight] as const,  // horizontal
+  amber:   [C.amberDeep, C.amber, C.amberLight] as const,   // violet gradient
+  amberH:  [C.amber, C.terra] as const,                      // violet → blue horizontal
   dark:    [C.bgDeep, C.bgBase, C.bgSurface] as const,
   surface: [C.bgSurface, C.bgElevated] as const,
-  terra:   [C.terra, C.terraLight] as const,
+  terra:   [C.terra, C.terraLight] as const,                  // blue gradient
 };
 
 // Radii
