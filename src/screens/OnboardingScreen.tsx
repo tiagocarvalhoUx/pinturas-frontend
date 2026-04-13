@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Dimensions, Animated } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Dimensions, Animated, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../store/appStore';
@@ -105,6 +105,23 @@ export function OnboardingScreen({ onFinish }: Props) {
                 position: 'absolute', width: 260, height: 260, borderRadius: 130,
                 backgroundColor: item.accent, opacity: 0.06,
               }} />
+
+              {/* Logo no topo */}
+              <View style={{
+                position: 'absolute', top: 16,
+                width: 72, height: 72, borderRadius: 18,
+                borderWidth: 1.5, borderColor: item.accent + '80',
+                backgroundColor: '#fff',
+                alignItems: 'center', justifyContent: 'center',
+                shadowColor: item.accent, shadowOffset: { width: 0, height: 0 },
+                shadowOpacity: 0.5, shadowRadius: 10, elevation: 8,
+              }}>
+                <Image
+                  source={require('../../assets/logo-pintura.png')}
+                  style={{ width: 64, height: 64 }}
+                  resizeMode="contain"
+                />
+              </View>
 
               {/* Tag pill */}
               <View style={{

@@ -71,16 +71,18 @@ export function LoginScreen({ onLogin, onGoRegister }: Props) {
 
           {/* Logo */}
           <View style={{
-            width: 92, height: 92, borderRadius: 26,
+            width: 120, height: 120, borderRadius: 26,
             borderWidth: 2, borderColor: C.amber,
-            overflow: 'hidden', marginBottom: 18,
-            shadowColor: C.amber, shadowOffset: { width: 0, height: 6 },
-            shadowOpacity: 0.3, shadowRadius: 14, elevation: 10,
+            backgroundColor: '#fff',
+            alignItems: 'center', justifyContent: 'center',
+            marginBottom: 18,
+            shadowColor: C.amber, shadowOffset: { width: 0, height: 0 },
+            shadowOpacity: 0.6, shadowRadius: 18, elevation: 12,
           }}>
             <Image
               source={require('../../assets/logo-pintura.png')}
-              style={{ width: '100%', height: '100%' }}
-              resizeMode="cover"
+              style={{ width: 108, height: 108 }}
+              resizeMode="contain"
             />
           </View>
 

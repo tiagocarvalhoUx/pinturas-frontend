@@ -273,7 +273,7 @@ function ChatMessages({
             </View>
           ) : (
             <View style={{ borderRadius: 24, overflow: 'hidden', width: 44, height: 44, borderWidth: 2, borderColor: C.amber }}>
-              <Image source={require('../../assets/logo-pintura.png')} style={{ width: 44, height: 44 }} resizeMode="cover" />
+              <Image source={require('../../assets/logo-pintura.png')} style={{ width: 40, height: 40 }} resizeMode="contain" />
             </View>
           )}
 

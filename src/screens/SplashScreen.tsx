@@ -88,23 +88,18 @@ export function SplashScreen({ onFinish }: Props) {
       {/* Logo container */}
       <Animated.View style={{ transform: [{ scale }], opacity, alignItems: 'center' }}>
         <View style={{
-          width: 116, height: 116, borderRadius: 32,
-          borderWidth: 2, borderColor: C.amber,
-          overflow: 'hidden',
-          shadowColor: C.amber, shadowOffset: { width: 0, height: 8 },
-          shadowOpacity: 0.4, shadowRadius: 20, elevation: 12,
+          width: 140, height: 140, borderRadius: 32,
+          borderWidth: 2.5, borderColor: C.amber,
+          backgroundColor: '#fff',
+          alignItems: 'center', justifyContent: 'center',
+          shadowColor: C.amber, shadowOffset: { width: 0, height: 0 },
+          shadowOpacity: 0.7, shadowRadius: 24, elevation: 14,
         }}>
           <Image
             source={require('../../assets/logo-pintura.png')}
-            style={{ width: '100%', height: '100%' }}
-            resizeMode="cover"
+            style={{ width: 126, height: 126 }}
+            resizeMode="contain"
           />
-          {/* Amber overlay shimmer */}
-          <Animated.View style={{
-            position: 'absolute', inset: 0,
-            backgroundColor: C.amber,
-            opacity: Animated.multiply(shimmerOp, new Animated.Value(0.08)),
-          }} />
         </View>
       </Animated.View>
 

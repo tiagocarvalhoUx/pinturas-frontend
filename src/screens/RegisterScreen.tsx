@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity,
-  KeyboardAvoidingView, Platform, ScrollView,
+  KeyboardAvoidingView, Platform, ScrollView, Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -79,11 +79,19 @@ export function RegisterScreen({ onRegister, onGoLogin }: Props) {
             borderRadius: 90, backgroundColor: C.amber, opacity: 0.05,
           }} />
           <View style={{
-            width: 72, height: 72, borderRadius: 22,
-            backgroundColor: C.amberGlow, borderWidth: 1.5, borderColor: C.amber + '55',
-            alignItems: 'center', justifyContent: 'center', marginBottom: 16,
+            width: 120, height: 120, borderRadius: 26,
+            borderWidth: 2, borderColor: C.amber,
+            backgroundColor: '#fff',
+            alignItems: 'center', justifyContent: 'center',
+            marginBottom: 16,
+            shadowColor: C.amber, shadowOffset: { width: 0, height: 0 },
+            shadowOpacity: 0.6, shadowRadius: 18, elevation: 12,
           }}>
-            <Ionicons name="person-add" size={32} color={C.amber} />
+            <Image
+              source={require('../../assets/logo-pintura.png')}
+              style={{ width: 108, height: 108 }}
+              resizeMode="contain"
+            />
           </View>
           <View style={{ width: 28, height: 2, backgroundColor: C.amber, borderRadius: 1, marginBottom: 12 }} />
           <Text style={{ color: C.textPrimary, fontSize: 22, fontWeight: '800', letterSpacing: 0.3, fontFamily: F.base }}>
