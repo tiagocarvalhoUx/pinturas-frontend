@@ -40,13 +40,17 @@ export function LogoHero({ size = 'md' }: Props) {
         { width: s.frameW, height: s.frameH, borderRadius: R.lg },
         SH.neon,
       ]}>
-        {/* Gradient background inside frame */}
-        <LinearGradient
-          colors={[C.bgElevated, C.bgSurface]}
-          style={[StyleSheet.absoluteFill, { borderRadius: R.lg }]}
+        {/* Fundo branco — igual ao bg do logo, preenche cantos */}
+        <View style={[StyleSheet.absoluteFill, { backgroundColor: '#ffffff', borderRadius: R.lg }]} />
+
+        {/* Logo image — preenche o frame inteiro */}
+        <Image
+          source={require('../../src/image/logo-pintura.png')}
+          style={{ width: s.frameW, height: s.frameH }}
+          resizeMode="contain"
         />
 
-        {/* Neon border */}
+        {/* Neon border (por cima da imagem) */}
         <View style={[styles.border, { borderRadius: R.lg }]} />
 
         {/* Corner accents — top-left (violet) */}
@@ -57,13 +61,6 @@ export function LogoHero({ size = 'md' }: Props) {
         <View style={[styles.corner, styles.cornerBL, { width: s.corner, height: s.corner, borderColor: C.terra }]} />
         {/* Corner accents — bottom-right (violet) */}
         <View style={[styles.corner, styles.cornerBR, { width: s.corner, height: s.corner }]} />
-
-        {/* Logo image — fills frame with padding */}
-        <Image
-          source={require('../../assets/logo-pintura.png')}
-          style={{ width: s.imgW, height: s.imgH }}
-          resizeMode="contain"
-        />
       </View>
 
       {/* Bottom scan line */}
