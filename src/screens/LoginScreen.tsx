@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../store/appStore';
 import { authService } from '../services/auth';
 import { C, R, S, F } from '../theme';
+import { LogoHero } from '../components/LogoHero';
 
 interface Props {
   onLogin: () => void;
@@ -70,21 +71,7 @@ export function LoginScreen({ onLogin, onGoRegister }: Props) {
           }} />
 
           {/* Logo */}
-          <View style={{
-            width: 120, height: 120, borderRadius: 26,
-            borderWidth: 2, borderColor: C.amber,
-            backgroundColor: '#fff',
-            alignItems: 'center', justifyContent: 'center',
-            marginBottom: 18,
-            shadowColor: C.amber, shadowOffset: { width: 0, height: 0 },
-            shadowOpacity: 0.6, shadowRadius: 18, elevation: 12,
-          }}>
-            <Image
-              source={require('../../assets/logo-pintura.png')}
-              style={{ width: 108, height: 108 }}
-              resizeMode="contain"
-            />
-          </View>
+          <LogoHero size="md" />
 
           <View style={{ width: 32, height: 2, backgroundColor: C.amber, borderRadius: 1, marginBottom: 14 }} />
           <Text style={{ color: C.textPrimary, fontSize: 22, fontWeight: '800', letterSpacing: 0.3, fontFamily: F.base }}>

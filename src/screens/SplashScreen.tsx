@@ -88,7 +88,7 @@ export function SplashScreen({ onFinish }: Props) {
       {/* Logo container */}
       <Animated.View style={{ transform: [{ scale }], opacity, alignItems: 'center' }}>
         <View style={{
-          width: 140, height: 140, borderRadius: 32,
+          width: 160, height: 140, borderRadius: 32,
           borderWidth: 2.5, borderColor: C.amber,
           backgroundColor: '#fff',
           alignItems: 'center', justifyContent: 'center',

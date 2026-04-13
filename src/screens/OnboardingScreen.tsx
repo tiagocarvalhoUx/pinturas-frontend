@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../store/appStore';
 import { C, R, F } from '../theme';
+import { LogoHero } from '../components/LogoHero';
 
 const { width, height } = Dimensions.get('window');
 
@@ -107,20 +108,8 @@ export function OnboardingScreen({ onFinish }: Props) {
               }} />
 
               {/* Logo no topo */}
-              <View style={{
-                position: 'absolute', top: 16,
-                width: 72, height: 72, borderRadius: 18,
-                borderWidth: 1.5, borderColor: item.accent + '80',
-                backgroundColor: '#fff',
-                alignItems: 'center', justifyContent: 'center',
-                shadowColor: item.accent, shadowOffset: { width: 0, height: 0 },
-                shadowOpacity: 0.5, shadowRadius: 10, elevation: 8,
-              }}>
-                <Image
-                  source={require('../../assets/logo-pintura.png')}
-                  style={{ width: 64, height: 64 }}
-                  resizeMode="contain"
-                />
+              <View style={{ position: 'absolute', top: 8 }}>
+                <LogoHero size="sm" />
               </View>
 
               {/* Tag pill */}
