@@ -268,24 +268,20 @@ export function BudgetScreen({ onSuccess, onBack, initialServiceType }: Props) {
               <View style={{ flex: 1 }}>
                 <DarkInput icon="business-outline" placeholder="Cidade" value={city} onChangeText={setCity} />
               </View>
-              <View style={{ width: 80 }}>
-                <View style={{
-                  flexDirection: 'row', alignItems: 'center',
-                  backgroundColor: C.bgElevated,
-                  borderWidth: 1.5, borderColor: C.border,
-                  borderRadius: R.md, paddingHorizontal: 10,
-                }}>
-                  <TextInput
-                    style={{ flex: 1, paddingVertical: 13, fontSize: 14, color: C.textPrimary, textAlign: 'center', fontFamily: F.base }}
-                    placeholder="UF"
-                    placeholderTextColor={C.textDisabled}
-                    value={state}
-                    onChangeText={setState}
-                    maxLength={2}
-                    autoCapitalize="characters"
-                  />
-                </View>
-              </View>
+              <TextInput
+                style={{
+                  width: 72, paddingVertical: 13, paddingHorizontal: 10,
+                  fontSize: 14, color: C.textPrimary, textAlign: 'center',
+                  fontFamily: F.base, backgroundColor: C.bgElevated,
+                  borderWidth: 1.5, borderColor: C.border, borderRadius: R.md,
+                }}
+                placeholder="UF"
+                placeholderTextColor={C.textDisabled}
+                value={state}
+                onChangeText={setState}
+                maxLength={2}
+                autoCapitalize="characters"
+              />
             </View>
           </SectionCard>
 

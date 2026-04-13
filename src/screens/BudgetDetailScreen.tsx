@@ -171,7 +171,6 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
 
   const [successBanner, setSuccessBanner] = useState('');
 
-  const [ratingModal, setRatingModal]         = useState(false);
   const [ratingStars, setRatingStars]         = useState(0);
   const [ratingComment, setRatingComment]     = useState('');
   const [submittingRating, setSubmittingRating] = useState(false);
@@ -194,7 +193,8 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
   const isCancelled = budget.status === 'cancelled';
   const nextAction  = isAdmin ? ADMIN_NEXT[budget.status] : CLIENT_NEXT[budget.status];
   const canCancel   = isAdmin && budget.status !== 'completed' && budget.status !== 'cancelled';
-  const canRate     = !isAdmin && budget.status === 'completed' && !budget.rating?.stars;
+  const alreadyRated = !!budget.rating?.stars;
+  const canRate      = !isAdmin && budget.status === 'completed' && !alreadyRated;
 
   const applyUpdate = (updated: Budget) => { setBudget(updated); updateBudgetStore(updated._id, updated); };
 
@@ -362,19 +362,6 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
           </TouchableOpacity>
         )}
 
-        {/* Rate */}
-        {canRate && (
-          <TouchableOpacity onPress={() => setRatingModal(true)} activeOpacity={0.85} style={{ marginBottom: 12 }}>
-            <LinearGradient
-              colors={[C.amberDeep, C.amber]}
-              start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
-              style={{ borderRadius: R.md, paddingVertical: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 }}
-            >
-              <Ionicons name="star-outline" size={20} color="#fff" />
-              <Text style={{ color: '#fff', fontSize: 15, fontWeight: '700', fontFamily: F.base }}>Avaliar Serviço</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        )}
 
         {/* ── Progress Tracker ── */}
         {!isCancelled ? (
@@ -517,18 +504,88 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
           )}
         </View>
 
-        {/* ── Rating ── */}
-        {!!budget.rating?.stars && (
-          <View style={{ backgroundColor: C.bgSurface, borderRadius: R.lg, padding: S.md, marginBottom: S.md, borderWidth: 1, borderColor: C.border }}>
-            <Text style={{ fontSize: 13, fontWeight: '800', color: C.textPrimary, marginBottom: 12, fontFamily: F.base }}>Avaliação do Cliente</Text>
-            <View style={{ flexDirection: 'row', marginBottom: 8, gap: 4 }}>
-              {[1, 2, 3, 4, 5].map((s) => (
-                <Ionicons key={s} name={s <= budget.rating!.stars ? 'star' : 'star-outline'} size={24} color={C.amber} />
-              ))}
+        {/* ── Rating Card ── */}
+        {!isCancelled && (
+          <View style={{ backgroundColor: C.bgSurface, borderRadius: R.lg, padding: S.md, marginBottom: S.md, borderWidth: 1, borderColor: alreadyRated ? C.amber + '40' : C.border }}>
+            {/* Header */}
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+              <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: C.amberGlow, alignItems: 'center', justifyContent: 'center' }}>
+                <Ionicons name="star" size={18} color={C.amber} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontSize: 14, fontWeight: '800', color: C.textPrimary, fontFamily: F.base }}>Avaliação do Serviço</Text>
+                <Text style={{ fontSize: 11, color: C.textSecondary, marginTop: 1, fontFamily: F.base }}>
+                  {alreadyRated ? 'Avaliação enviada pelo cliente' : isAdmin ? 'Aguardando avaliação do cliente' : budget.status === 'completed' ? 'Conte como foi sua experiência' : 'Disponível após a conclusão do serviço'}
+                </Text>
+              </View>
             </View>
-            {budget.rating.comment ? (
-              <Text style={{ fontSize: 14, color: C.textSecondary, fontStyle: 'italic', fontFamily: F.base }}>"{budget.rating.comment}"</Text>
+
+            {/* Stars */}
+            <View style={{ flexDirection: 'row', gap: 8, marginBottom: 12, justifyContent: 'center' }}>
+              {[1, 2, 3, 4, 5].map((s) => {
+                const filled = alreadyRated ? s <= (budget.rating?.stars ?? 0) : s <= ratingStars;
+                const interactive = canRate;
+                return (
+                  <TouchableOpacity
+                    key={s}
+                    onPress={() => interactive && setRatingStars(s)}
+                    activeOpacity={interactive ? 0.7 : 1}
+                    disabled={!interactive}
+                  >
+                    <Ionicons
+                      name={filled ? 'star' : 'star-outline'}
+                      size={38}
+                      color={filled ? C.amber : (interactive ? C.amber + '50' : C.textDisabled)}
+                    />
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+
+            {/* Already rated: show comment */}
+            {alreadyRated && budget.rating?.comment ? (
+              <View style={{ backgroundColor: C.bgElevated, borderRadius: R.md, padding: 12, borderWidth: 1, borderColor: C.border }}>
+                <Text style={{ fontSize: 13, color: C.textSecondary, fontStyle: 'italic', textAlign: 'center', fontFamily: F.base }}>"{budget.rating.comment}"</Text>
+              </View>
             ) : null}
+
+            {/* Client: comment + submit */}
+            {canRate && ratingStars > 0 && (
+              <>
+                <View style={{ backgroundColor: C.bgElevated, borderWidth: 1.5, borderColor: C.border, borderRadius: R.md, paddingHorizontal: 14, marginBottom: 12 }}>
+                  <TextInput
+                    style={{ fontSize: 14, color: C.textPrimary, minHeight: 70, textAlignVertical: 'top', paddingVertical: 10, fontFamily: F.base }}
+                    placeholder="Comentário opcional..."
+                    placeholderTextColor={C.textDisabled}
+                    value={ratingComment}
+                    onChangeText={setRatingComment}
+                    multiline
+                  />
+                </View>
+                <TouchableOpacity onPress={handleRatingSubmit} disabled={submittingRating} activeOpacity={0.85}>
+                  <LinearGradient
+                    colors={[C.amberDeep, C.amber]}
+                    start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+                    style={{ borderRadius: R.md, paddingVertical: 14, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 8 }}
+                  >
+                    {submittingRating
+                      ? <ActivityIndicator color="#fff" size="small" />
+                      : <Ionicons name="send" size={16} color="#fff" />}
+                    <Text style={{ color: '#fff', fontSize: 14, fontWeight: '700', fontFamily: F.base }}>
+                      {submittingRating ? 'Enviando...' : 'Enviar Avaliação'}
+                    </Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </>
+            )}
+
+            {/* Not completed yet — lock hint */}
+            {!isAdmin && !alreadyRated && budget.status !== 'completed' && (
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 4 }}>
+                <Ionicons name="lock-closed-outline" size={13} color={C.textDisabled} />
+                <Text style={{ fontSize: 12, color: C.textDisabled, fontFamily: F.base }}>Disponível após a conclusão</Text>
+              </View>
+            )}
           </View>
         )}
       </ScrollView>
@@ -568,43 +625,6 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
         </View>
       </Modal>
 
-      {/* ── Rating Modal ── */}
-      <Modal visible={ratingModal} transparent animationType="slide">
-        <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.7)' }}>
-          <View style={{ backgroundColor: C.bgSurface, borderTopLeftRadius: R.xl, borderTopRightRadius: R.xl, padding: S.lg, paddingBottom: 44, borderTopWidth: 1, borderColor: C.border }}>
-            <View style={{ width: 36, height: 4, backgroundColor: C.border, borderRadius: 2, alignSelf: 'center', marginBottom: 20 }} />
-            <Text style={{ fontSize: 18, fontWeight: '800', color: C.textPrimary, marginBottom: 4, fontFamily: F.base }}>Avaliar Serviço</Text>
-            <Text style={{ fontSize: 13, color: C.textSecondary, marginBottom: 20, fontFamily: F.base }}>Como foi sua experiência?</Text>
-            <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 10, marginBottom: 24 }}>
-              {[1, 2, 3, 4, 5].map((s) => (
-                <TouchableOpacity key={s} onPress={() => setRatingStars(s)}>
-                  <Ionicons name={s <= ratingStars ? 'star' : 'star-outline'} size={42} color={C.amber} />
-                </TouchableOpacity>
-              ))}
-            </View>
-            <Text style={{ fontSize: 11, fontWeight: '700', color: C.textSecondary, marginBottom: 8, letterSpacing: 1.2, textTransform: 'uppercase', fontFamily: F.base }}>Comentário (opcional)</Text>
-            <View style={{ backgroundColor: C.bgElevated, borderWidth: 1.5, borderColor: C.border, borderRadius: R.md, paddingHorizontal: 14, marginBottom: 24 }}>
-              <TextInput
-                style={{ fontSize: 14, color: C.textPrimary, minHeight: 80, textAlignVertical: 'top', paddingVertical: 10, fontFamily: F.base }}
-                placeholder="Conte como foi o serviço..."
-                placeholderTextColor={C.textDisabled}
-                value={ratingComment}
-                onChangeText={setRatingComment}
-                multiline
-              />
-            </View>
-            <TouchableOpacity onPress={handleRatingSubmit} disabled={submittingRating} activeOpacity={0.85}>
-              <LinearGradient colors={[C.amberDeep, C.amber]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ borderRadius: R.md, paddingVertical: 15, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 8 }}>
-                {submittingRating ? <ActivityIndicator color="#fff" /> : <Ionicons name="star" size={18} color="#fff" />}
-                <Text style={{ color: '#fff', fontSize: 15, fontWeight: '700', fontFamily: F.base }}>Enviar Avaliação</Text>
-              </LinearGradient>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setRatingModal(false)} style={{ marginTop: 12, alignItems: 'center', paddingVertical: 12 }}>
-              <Text style={{ color: C.textDisabled, fontSize: 14, fontFamily: F.base }}>Agora não</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 }
