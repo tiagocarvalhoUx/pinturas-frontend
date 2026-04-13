@@ -7,7 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../store/appStore';
 import { authService } from '../services/auth';
-import { C, R, S } from '../theme';
+import { C, R, S, F } from '../theme';
 
 interface Props {
   onLogin: () => void;
@@ -60,11 +60,7 @@ export function LoginScreen({ onLogin, onGoRegister }: Props) {
         showsVerticalScrollIndicator={false}
       >
         {/* Top brand area */}
-        <View style={{
-          backgroundColor: C.bgDeep,
-          paddingTop: 80, paddingBottom: 52, alignItems: 'center',
-        }}>
-          {/* Ambient glow */}
+        <View style={{ backgroundColor: C.bgDeep, paddingTop: 80, paddingBottom: 52, alignItems: 'center' }}>
           <View style={{
             position: 'absolute', top: 40, width: 200, height: 200,
             borderRadius: 100, backgroundColor: C.amber, opacity: 0.05,
@@ -86,15 +82,15 @@ export function LoginScreen({ onLogin, onGoRegister }: Props) {
           </View>
 
           <View style={{ width: 32, height: 2, backgroundColor: C.amber, borderRadius: 1, marginBottom: 14 }} />
-          <Text style={{ color: C.textPrimary, fontSize: 22, fontWeight: '800', letterSpacing: 0.3 }}>
+          <Text style={{ color: C.textPrimary, fontSize: 22, fontWeight: '800', letterSpacing: 0.3, fontFamily: F.base }}>
             Bem-vindo de volta
           </Text>
-          <Text style={{ color: C.textSecondary, fontSize: 14, marginTop: 5 }}>
+          <Text style={{ color: C.textSecondary, fontSize: 14, marginTop: 5, fontFamily: F.base }}>
             Entre na sua conta
           </Text>
         </View>
 
-        {/* Form Card — floats over dark header */}
+        {/* Form Card */}
         <View style={{
           backgroundColor: C.bgSurface,
           marginHorizontal: S.md, borderRadius: R.xl,
@@ -106,13 +102,13 @@ export function LoginScreen({ onLogin, onGoRegister }: Props) {
 
           {/* Email */}
           <View style={{ marginBottom: S.md }}>
-            <Text style={{ fontSize: 11, fontWeight: '700', color: C.textSecondary, marginBottom: 8, letterSpacing: 1.2, textTransform: 'uppercase' }}>
+            <Text style={{ fontSize: 11, fontWeight: '700', color: C.textSecondary, marginBottom: 8, letterSpacing: 1.2, textTransform: 'uppercase', fontFamily: F.base }}>
               E-mail
             </Text>
             <View style={inputStyle('email')}>
               <Ionicons name="mail-outline" size={18} color={focusedField === 'email' ? C.amber : C.textDisabled} />
               <TextInput
-                style={{ flex: 1, paddingVertical: 14, paddingHorizontal: 10, fontSize: 15, color: C.textPrimary }}
+                style={{ flex: 1, paddingVertical: 14, paddingHorizontal: 10, fontSize: 15, color: C.textPrimary, fontFamily: F.base }}
                 placeholder="seu@email.com"
                 placeholderTextColor={C.textDisabled}
                 value={email}
@@ -128,13 +124,13 @@ export function LoginScreen({ onLogin, onGoRegister }: Props) {
 
           {/* Password */}
           <View style={{ marginBottom: S.lg }}>
-            <Text style={{ fontSize: 11, fontWeight: '700', color: C.textSecondary, marginBottom: 8, letterSpacing: 1.2, textTransform: 'uppercase' }}>
+            <Text style={{ fontSize: 11, fontWeight: '700', color: C.textSecondary, marginBottom: 8, letterSpacing: 1.2, textTransform: 'uppercase', fontFamily: F.base }}>
               Senha
             </Text>
             <View style={inputStyle('password')}>
               <Ionicons name="lock-closed-outline" size={18} color={focusedField === 'password' ? C.amber : C.textDisabled} />
               <TextInput
-                style={{ flex: 1, paddingVertical: 14, paddingHorizontal: 10, fontSize: 15, color: C.textPrimary }}
+                style={{ flex: 1, paddingVertical: 14, paddingHorizontal: 10, fontSize: 15, color: C.textPrimary, fontFamily: F.base }}
                 placeholder="••••••••"
                 placeholderTextColor={C.textDisabled}
                 value={password}
@@ -164,7 +160,7 @@ export function LoginScreen({ onLogin, onGoRegister }: Props) {
                 style={{ borderRadius: R.md, paddingVertical: 16, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 8 }}
               >
                 {!loading && <Ionicons name="log-in-outline" size={20} color="#fff" />}
-                <Text style={{ color: loading ? C.textDisabled : '#fff', fontSize: 16, fontWeight: '800', letterSpacing: 0.3 }}>
+                <Text style={{ color: loading ? C.textDisabled : '#fff', fontSize: 16, fontWeight: '800', letterSpacing: 0.3, fontFamily: F.base }}>
                   {loading ? 'Entrando...' : 'Entrar'}
                 </Text>
               </LinearGradient>
@@ -174,7 +170,7 @@ export function LoginScreen({ onLogin, onGoRegister }: Props) {
           {/* Divider */}
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginVertical: 20 }}>
             <View style={{ flex: 1, height: 1, backgroundColor: C.border }} />
-            <Text style={{ color: C.textDisabled, fontSize: 12 }}>ou</Text>
+            <Text style={{ color: C.textDisabled, fontSize: 12, fontFamily: F.base }}>ou</Text>
             <View style={{ flex: 1, height: 1, backgroundColor: C.border }} />
           </View>
 
@@ -188,13 +184,13 @@ export function LoginScreen({ onLogin, onGoRegister }: Props) {
               alignItems: 'center',
             }}
           >
-            <Text style={{ color: C.amber, fontWeight: '700', fontSize: 15 }}>Criar nova conta</Text>
+            <Text style={{ color: C.amber, fontWeight: '700', fontSize: 15, fontFamily: F.base }}>Criar nova conta</Text>
           </TouchableOpacity>
         </View>
 
         {/* Footer */}
         <View style={{ alignItems: 'center', paddingVertical: 36 }}>
-          <Text style={{ color: C.textDisabled, fontSize: 11, letterSpacing: 0.3 }}>
+          <Text style={{ color: C.textDisabled, fontSize: 11, letterSpacing: 0.3, fontFamily: F.base }}>
             A. Coraça & T. Carvalho Pinturas e Reformas
           </Text>
         </View>

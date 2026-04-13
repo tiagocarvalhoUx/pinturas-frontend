@@ -6,7 +6,7 @@ import { useAppStore } from '../store/appStore';
 import { budgetService } from '../services/budgets';
 import { BudgetCard } from '../components/BudgetCard';
 import { LoadingSpinner } from '../components/LoadingSpinner';
-import { C, R, S } from '../theme';
+import { C, R, S, F } from '../theme';
 
 interface Props {
   onBudgetDetail: (id: string) => void;
@@ -25,9 +25,9 @@ export function BudgetsListScreen({ onBudgetDetail, onNewBudget }: Props) {
   const budgets    = useAppStore((s) => s.budgets);
   const setBudgets = useAppStore((s) => s.setBudgets);
   const user       = useAppStore((s) => s.user);
-  const [loading, setLoading]     = useState(true);
+  const [loading, setLoading]       = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [filter, setFilter]       = useState('all');
+  const [filter, setFilter]         = useState('all');
 
   const loadBudgets = async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true);
@@ -37,10 +37,7 @@ export function BudgetsListScreen({ onBudgetDetail, onNewBudget }: Props) {
         : await budgetService.getMyBudgets();
       setBudgets(data);
     } catch { /* keep cached */ }
-    finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
+    finally { setLoading(false); setRefreshing(false); }
   };
 
   useEffect(() => { loadBudgets(); }, []);
@@ -59,15 +56,14 @@ export function BudgetsListScreen({ onBudgetDetail, onNewBudget }: Props) {
 
       {/* ── Header ── */}
       <View style={{ backgroundColor: C.bgDeep, paddingTop: 52, paddingHorizontal: S.md, paddingBottom: 24 }}>
-        {/* ambient glow */}
         <View style={{ position: 'absolute', top: 0, right: -10, width: 180, height: 180, borderRadius: 90, backgroundColor: C.amber, opacity: 0.05 }} />
 
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
           <View>
-            <Text style={{ color: C.textSecondary, fontSize: 13 }}>
+            <Text style={{ color: C.textSecondary, fontSize: 13, fontFamily: F.base }}>
               {isAdmin ? 'Administrador' : 'Minha conta'}
             </Text>
-            <Text style={{ color: C.textPrimary, fontSize: 20, fontWeight: '800', marginTop: 2 }}>
+            <Text style={{ color: C.textPrimary, fontSize: 20, fontWeight: '800', marginTop: 2, fontFamily: F.base }}>
               {isAdmin ? 'Todos os Pedidos' : 'Meus Orçamentos'}
             </Text>
           </View>
@@ -84,7 +80,7 @@ export function BudgetsListScreen({ onBudgetDetail, onNewBudget }: Props) {
               }}
             >
               <Ionicons name="add" size={18} color="#fff" />
-              <Text style={{ color: '#fff', fontWeight: '800', fontSize: 13 }}>Novo</Text>
+              <Text style={{ color: '#fff', fontWeight: '800', fontSize: 13, fontFamily: F.base }}>Novo</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -101,8 +97,8 @@ export function BudgetsListScreen({ onBudgetDetail, onNewBudget }: Props) {
               borderRadius: R.md, padding: 12, alignItems: 'center',
               borderWidth: 1, borderColor: C.border,
             }}>
-              <Text style={{ color: s.color, fontSize: 22, fontWeight: '800' }}>{s.value}</Text>
-              <Text style={{ color: C.textSecondary, fontSize: 11, marginTop: 2 }}>{s.label}</Text>
+              <Text style={{ color: s.color, fontSize: 22, fontWeight: '800', fontFamily: F.base }}>{s.value}</Text>
+              <Text style={{ color: C.textSecondary, fontSize: 11, marginTop: 2, fontFamily: F.base }}>{s.label}</Text>
             </View>
           ))}
         </View>
@@ -128,7 +124,7 @@ export function BudgetsListScreen({ onBudgetDetail, onNewBudget }: Props) {
                   borderWidth: 1, borderColor: active ? C.amber : C.border,
                 }}
               >
-                <Text style={{ fontSize: 12, fontWeight: '700', color: active ? '#fff' : C.textSecondary }}>
+                <Text style={{ fontSize: 12, fontWeight: '700', color: active ? '#fff' : C.textSecondary, fontFamily: F.base }}>
                   {item.label}
                 </Text>
               </TouchableOpacity>
@@ -164,10 +160,10 @@ export function BudgetsListScreen({ onBudgetDetail, onNewBudget }: Props) {
             }}>
               <Ionicons name="clipboard-outline" size={36} color={C.amber} />
             </View>
-            <Text style={{ fontSize: 17, fontWeight: '700', color: C.textPrimary, marginBottom: 6 }}>
+            <Text style={{ fontSize: 17, fontWeight: '700', color: C.textPrimary, marginBottom: 6, fontFamily: F.base }}>
               {filter === 'all' ? 'Nenhum orçamento' : 'Nenhum resultado'}
             </Text>
-            <Text style={{ fontSize: 14, color: C.textSecondary, textAlign: 'center', marginBottom: 28, lineHeight: 20 }}>
+            <Text style={{ fontSize: 14, color: C.textSecondary, textAlign: 'center', marginBottom: 28, lineHeight: 20, fontFamily: F.base }}>
               {filter === 'all' ? 'Solicite seu primeiro orçamento agora!' : 'Tente outro filtro.'}
             </Text>
             {filter === 'all' && !isAdmin && (
@@ -178,7 +174,7 @@ export function BudgetsListScreen({ onBudgetDetail, onNewBudget }: Props) {
                   style={{ borderRadius: R.md, paddingHorizontal: 24, paddingVertical: 13, flexDirection: 'row', alignItems: 'center', gap: 8 }}
                 >
                   <Ionicons name="add-circle-outline" size={18} color="#fff" />
-                  <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14 }}>Solicitar Orçamento</Text>
+                  <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14, fontFamily: F.base }}>Solicitar Orçamento</Text>
                 </LinearGradient>
               </TouchableOpacity>
             )}

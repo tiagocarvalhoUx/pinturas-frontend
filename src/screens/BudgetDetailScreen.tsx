@@ -7,7 +7,7 @@ import { budgetService } from '../services/budgets';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { Budget } from '../store/appStore';
 import { SERVICE_LABELS, STATUS_LABELS, STATUS_COLORS, formatCurrency, formatDate } from '../utils/helpers';
-import { C, R, S } from '../theme';
+import { C, R, S, F } from '../theme';
 
 interface Props {
   budgetId: string;
@@ -19,8 +19,8 @@ const SERVICE_ICONS: Record<string, string> = {
   lacquering: 'sparkles', waterproofing: 'water', restoration: 'construct',
 };
 const SERVICE_COLOR: Record<string, string> = {
-  internal: C.amber, external: '#5AAAE0', texture: C.terra,
-  lacquering: '#A04ABA', waterproofing: '#4ABA79', restoration: C.amberLight,
+  internal: C.amber, external: C.blue, texture: C.terra,
+  lacquering: C.purple, waterproofing: C.green, restoration: C.amberLight,
 };
 
 const STEPS = ['pending', 'quoted', 'approved', 'in_progress', 'completed'];
@@ -53,13 +53,13 @@ function ModalInput({ label, icon, placeholder, value, onChangeText, keyboardTyp
 }) {
   return (
     <View style={{ marginBottom: 16 }}>
-      <Text style={{ fontSize: 11, fontWeight: '700', color: C.textSecondary, marginBottom: 8, letterSpacing: 1.2, textTransform: 'uppercase' }}>
+      <Text style={{ fontSize: 11, fontWeight: '700', color: C.textSecondary, marginBottom: 8, letterSpacing: 1.2, textTransform: 'uppercase', fontFamily: F.base }}>
         {label}
       </Text>
       <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: C.bgElevated, borderWidth: 1.5, borderColor: C.border, borderRadius: R.md, paddingHorizontal: 14 }}>
         <Ionicons name={icon as any} size={18} color={C.textDisabled} />
         <TextInput
-          style={{ flex: 1, paddingVertical: 13, paddingHorizontal: 10, fontSize: 15, color: C.textPrimary }}
+          style={{ flex: 1, paddingVertical: 13, paddingHorizontal: 10, fontSize: 15, color: C.textPrimary, fontFamily: F.base }}
           placeholder={placeholder}
           placeholderTextColor={C.textDisabled}
           value={value}
@@ -187,29 +187,29 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
             <Ionicons name="arrow-back" size={20} color={C.textPrimary} />
           </TouchableOpacity>
           <View style={{ flex: 1 }}>
-            <Text style={{ color: C.textSecondary, fontSize: 12 }}>Detalhes do Pedido</Text>
-            <Text style={{ color: C.textPrimary, fontSize: 18, fontWeight: '800' }} numberOfLines={1}>
+            <Text style={{ color: C.textSecondary, fontSize: 12, fontFamily: F.base }}>Detalhes do Pedido</Text>
+            <Text style={{ color: C.textPrimary, fontSize: 18, fontWeight: '800', fontFamily: F.base }} numberOfLines={1}>
               {SERVICE_LABELS[budget.serviceType]}
             </Text>
           </View>
           <View style={{ backgroundColor: statusColor + '25', borderRadius: R.full, paddingHorizontal: 12, paddingVertical: 5, borderWidth: 1, borderColor: statusColor + '50' }}>
-            <Text style={{ color: statusColor, fontSize: 11, fontWeight: '700' }}>{STATUS_LABELS[budget.status]}</Text>
+            <Text style={{ color: statusColor, fontSize: 11, fontWeight: '700', fontFamily: F.base }}>{STATUS_LABELS[budget.status]}</Text>
           </View>
         </View>
 
         {/* Price / area strip */}
         <View style={{ backgroundColor: C.bgElevated, borderRadius: R.md, padding: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderWidth: 1, borderColor: C.border }}>
           <View>
-            <Text style={{ color: C.textSecondary, fontSize: 11, marginBottom: 4 }}>
+            <Text style={{ color: C.textSecondary, fontSize: 11, marginBottom: 4, fontFamily: F.base }}>
               {budget.finalPrice ? 'Valor Final' : 'Estimativa'}
             </Text>
-            <Text style={{ color: iconColor, fontSize: 24, fontWeight: '800' }}>
+            <Text style={{ color: iconColor, fontSize: 24, fontWeight: '800', fontFamily: F.base }}>
               {price ? formatCurrency(price) : 'A calcular'}
             </Text>
           </View>
           <View style={{ alignItems: 'flex-end' }}>
-            <Text style={{ color: C.textSecondary, fontSize: 11, marginBottom: 4 }}>Área</Text>
-            <Text style={{ color: C.textPrimary, fontSize: 20, fontWeight: '700' }}>{budget.area} m²</Text>
+            <Text style={{ color: C.textSecondary, fontSize: 11, marginBottom: 4, fontFamily: F.base }}>Área</Text>
+            <Text style={{ color: C.textPrimary, fontSize: 20, fontWeight: '700', fontFamily: F.base }}>{budget.area} m²</Text>
           </View>
         </View>
       </View>
@@ -220,7 +220,7 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
         {updating ? (
           <View style={{ backgroundColor: C.bgSurface, borderRadius: R.md, paddingVertical: 15, alignItems: 'center', marginBottom: 12, flexDirection: 'row', justifyContent: 'center', gap: 10, borderWidth: 1, borderColor: C.border }}>
             <ActivityIndicator color={C.amber} />
-            <Text style={{ color: C.textSecondary, fontSize: 14 }}>Atualizando status...</Text>
+            <Text style={{ color: C.textSecondary, fontSize: 14, fontFamily: F.base }}>Atualizando status...</Text>
           </View>
         ) : nextAction ? (
           <TouchableOpacity onPress={handleNextPress} activeOpacity={0.85} style={{ marginBottom: 12 }}>
@@ -230,7 +230,7 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
               style={{ borderRadius: R.md, paddingVertical: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 }}
             >
               <Ionicons name={nextAction.icon as any} size={20} color="#fff" />
-              <Text style={{ color: '#fff', fontSize: 15, fontWeight: '800' }}>{nextAction.label}</Text>
+              <Text style={{ color: '#fff', fontSize: 15, fontWeight: '800', fontFamily: F.base }}>{nextAction.label}</Text>
             </LinearGradient>
           </TouchableOpacity>
         ) : !isCancelled && !isAdmin && statusBanners[budget.status] ? (
@@ -242,10 +242,10 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
           }}>
             <Ionicons name={statusBanners[budget.status].icon as any} size={24} color={statusBanners[budget.status].accent} />
             <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 13, fontWeight: '700', color: statusBanners[budget.status].accent }}>
+              <Text style={{ fontSize: 13, fontWeight: '700', color: statusBanners[budget.status].accent, fontFamily: F.base }}>
                 {statusBanners[budget.status].title}
               </Text>
-              <Text style={{ fontSize: 12, color: C.textSecondary, marginTop: 2 }}>
+              <Text style={{ fontSize: 12, color: C.textSecondary, marginTop: 2, fontFamily: F.base }}>
                 {statusBanners[budget.status].body}
               </Text>
             </View>
@@ -257,7 +257,7 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
           <TouchableOpacity onPress={handleCancel} activeOpacity={0.8}
             style={{ borderWidth: 1.5, borderColor: C.error + '50', borderRadius: R.md, paddingVertical: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 12, backgroundColor: C.error + '12' }}>
             <Ionicons name="close-circle-outline" size={18} color={C.error} />
-            <Text style={{ color: C.error, fontSize: 14, fontWeight: '700' }}>Cancelar Pedido</Text>
+            <Text style={{ color: C.error, fontSize: 14, fontWeight: '700', fontFamily: F.base }}>Cancelar Pedido</Text>
           </TouchableOpacity>
         )}
 
@@ -270,7 +270,7 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
               style={{ borderRadius: R.md, paddingVertical: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 }}
             >
               <Ionicons name="star-outline" size={20} color="#fff" />
-              <Text style={{ color: '#fff', fontSize: 15, fontWeight: '700' }}>Avaliar Serviço</Text>
+              <Text style={{ color: '#fff', fontSize: 15, fontWeight: '700', fontFamily: F.base }}>Avaliar Serviço</Text>
             </LinearGradient>
           </TouchableOpacity>
         )}
@@ -278,7 +278,7 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
         {/* ── Progress Tracker ── */}
         {!isCancelled ? (
           <View style={{ backgroundColor: C.bgSurface, borderRadius: R.lg, padding: S.md, marginBottom: S.md, borderWidth: 1, borderColor: C.border }}>
-            <Text style={{ fontSize: 13, fontWeight: '800', color: C.textPrimary, marginBottom: 18 }}>Progresso do Pedido</Text>
+            <Text style={{ fontSize: 13, fontWeight: '800', color: C.textPrimary, marginBottom: 18, fontFamily: F.base }}>Progresso do Pedido</Text>
             <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
               {STEPS.map((step, i) => {
                 const done      = i <= stepIndex;
@@ -306,6 +306,7 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
                         fontSize: 9, marginTop: 6, textAlign: 'center', width: 52,
                         color: isCurrent ? C.amber : done ? C.success : C.textDisabled,
                         fontWeight: isCurrent ? '800' : done ? '600' : '400',
+                        fontFamily: F.base,
                       }} numberOfLines={2}>
                         {STEP_LABELS[step]}
                       </Text>
@@ -322,15 +323,15 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
           <View style={{ backgroundColor: C.error + '15', borderRadius: R.md, padding: S.md, marginBottom: S.md, flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1, borderColor: C.error + '40' }}>
             <Ionicons name="close-circle" size={28} color={C.error} />
             <View>
-              <Text style={{ fontSize: 14, fontWeight: '700', color: C.error }}>Pedido Cancelado</Text>
-              <Text style={{ fontSize: 12, color: C.textSecondary, marginTop: 2 }}>Este orçamento foi cancelado.</Text>
+              <Text style={{ fontSize: 14, fontWeight: '700', color: C.error, fontFamily: F.base }}>Pedido Cancelado</Text>
+              <Text style={{ fontSize: 12, color: C.textSecondary, marginTop: 2, fontFamily: F.base }}>Este orçamento foi cancelado.</Text>
             </View>
           </View>
         )}
 
         {/* ── Service Info ── */}
         <View style={{ backgroundColor: C.bgSurface, borderRadius: R.lg, padding: S.md, marginBottom: S.md, borderWidth: 1, borderColor: C.border }}>
-          <Text style={{ fontSize: 13, fontWeight: '800', color: C.textPrimary, marginBottom: 14 }}>Informações do Serviço</Text>
+          <Text style={{ fontSize: 13, fontWeight: '800', color: C.textPrimary, marginBottom: 14, fontFamily: F.base }}>Informações do Serviço</Text>
           {[
             { icon: SERVICE_ICONS[budget.serviceType] || 'brush', label: 'Tipo',          value: SERVICE_LABELS[budget.serviceType],              color: iconColor           },
             { icon: 'document-text-outline',                       label: 'Descrição',     value: budget.description,                              color: C.textSecondary     },
@@ -344,8 +345,8 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
                 <Ionicons name={row.icon as any} size={17} color={row.color} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ fontSize: 10, color: C.textDisabled, fontWeight: '600', marginBottom: 2, letterSpacing: 0.5 }}>{row.label}</Text>
-                <Text style={{ fontSize: 14, color: C.textPrimary, fontWeight: '500' }}>{row.value}</Text>
+                <Text style={{ fontSize: 10, color: C.textDisabled, fontWeight: '600', marginBottom: 2, letterSpacing: 0.5, fontFamily: F.base }}>{row.label}</Text>
+                <Text style={{ fontSize: 14, color: C.textPrimary, fontWeight: '500', fontFamily: F.base }}>{row.value}</Text>
               </View>
             </View>
           ))}
@@ -355,10 +356,10 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
                 <Ionicons name="person-outline" size={17} color={C.textSecondary} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ fontSize: 10, color: C.textDisabled, fontWeight: '600', marginBottom: 2, letterSpacing: 0.5 }}>Cliente</Text>
-                <Text style={{ fontSize: 14, color: C.textPrimary, fontWeight: '500' }}>{budget.client.name}</Text>
-                <Text style={{ fontSize: 12, color: C.textSecondary }}>{budget.client.email}</Text>
-                {budget.client.phone && <Text style={{ fontSize: 12, color: C.textSecondary }}>{budget.client.phone}</Text>}
+                <Text style={{ fontSize: 10, color: C.textDisabled, fontWeight: '600', marginBottom: 2, letterSpacing: 0.5, fontFamily: F.base }}>Cliente</Text>
+                <Text style={{ fontSize: 14, color: C.textPrimary, fontWeight: '500', fontFamily: F.base }}>{budget.client.name}</Text>
+                <Text style={{ fontSize: 12, color: C.textSecondary, fontFamily: F.base }}>{budget.client.email}</Text>
+                {budget.client.phone && <Text style={{ fontSize: 12, color: C.textSecondary, fontFamily: F.base }}>{budget.client.phone}</Text>}
               </View>
             </View>
           )}
@@ -367,8 +368,8 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
         {/* ── Photos ── */}
         <View style={{ backgroundColor: C.bgSurface, borderRadius: R.lg, padding: S.md, marginBottom: S.md, borderWidth: 1, borderColor: C.border }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-            <Text style={{ fontSize: 13, fontWeight: '800', color: C.textPrimary }}>Fotos do Ambiente</Text>
-            <Text style={{ fontSize: 12, color: C.textDisabled }}>{budget.photos?.length || 0} foto(s)</Text>
+            <Text style={{ fontSize: 13, fontWeight: '800', color: C.textPrimary, fontFamily: F.base }}>Fotos do Ambiente</Text>
+            <Text style={{ fontSize: 12, color: C.textDisabled, fontFamily: F.base }}>{budget.photos?.length || 0} foto(s)</Text>
           </View>
           {budget.photos?.length > 0 ? (
             <>
@@ -394,7 +395,7 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
           ) : (
             <View style={{ height: 100, backgroundColor: C.bgElevated, borderRadius: R.md, alignItems: 'center', justifyContent: 'center', gap: 6, borderWidth: 1, borderColor: C.border }}>
               <Ionicons name="images-outline" size={28} color={C.textDisabled} />
-              <Text style={{ fontSize: 13, color: C.textDisabled }}>Nenhuma foto enviada</Text>
+              <Text style={{ fontSize: 13, color: C.textDisabled, fontFamily: F.base }}>Nenhuma foto enviada</Text>
             </View>
           )}
         </View>
@@ -402,14 +403,14 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
         {/* ── Rating ── */}
         {budget.rating && (
           <View style={{ backgroundColor: C.bgSurface, borderRadius: R.lg, padding: S.md, marginBottom: S.md, borderWidth: 1, borderColor: C.border }}>
-            <Text style={{ fontSize: 13, fontWeight: '800', color: C.textPrimary, marginBottom: 12 }}>Avaliação do Cliente</Text>
+            <Text style={{ fontSize: 13, fontWeight: '800', color: C.textPrimary, marginBottom: 12, fontFamily: F.base }}>Avaliação do Cliente</Text>
             <View style={{ flexDirection: 'row', marginBottom: 8, gap: 4 }}>
               {[1, 2, 3, 4, 5].map((s) => (
                 <Ionicons key={s} name={s <= budget.rating!.stars ? 'star' : 'star-outline'} size={24} color={C.amber} />
               ))}
             </View>
             {budget.rating.comment ? (
-              <Text style={{ fontSize: 14, color: C.textSecondary, fontStyle: 'italic' }}>"{budget.rating.comment}"</Text>
+              <Text style={{ fontSize: 14, color: C.textSecondary, fontStyle: 'italic', fontFamily: F.base }}>"{budget.rating.comment}"</Text>
             ) : null}
           </View>
         )}
@@ -420,17 +421,17 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
         <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.7)' }}>
           <View style={{ backgroundColor: C.bgSurface, borderTopLeftRadius: R.xl, borderTopRightRadius: R.xl, padding: S.lg, paddingBottom: 44, borderTopWidth: 1, borderColor: C.border }}>
             <View style={{ width: 36, height: 4, backgroundColor: C.border, borderRadius: 2, alignSelf: 'center', marginBottom: 20 }} />
-            <Text style={{ fontSize: 18, fontWeight: '800', color: C.textPrimary, marginBottom: 4 }}>Enviar Orçamento</Text>
-            <Text style={{ fontSize: 13, color: C.textSecondary, marginBottom: 20 }}>Informe o valor e data para o cliente aprovar.</Text>
+            <Text style={{ fontSize: 18, fontWeight: '800', color: C.textPrimary, marginBottom: 4, fontFamily: F.base }}>Enviar Orçamento</Text>
+            <Text style={{ fontSize: 13, color: C.textSecondary, marginBottom: 20, fontFamily: F.base }}>Informe o valor e data para o cliente aprovar.</Text>
             <ModalInput label="Valor do Orçamento (R$)" icon="cash-outline" placeholder="Ex: 2500.00" value={quotePrice} onChangeText={setQuotePrice} keyboardType="decimal-pad" />
             <ModalInput label="Data Prevista (opcional)" icon="calendar-outline" placeholder="DD/MM/AAAA" value={quoteDate} onChangeText={setQuoteDate} />
             <TouchableOpacity onPress={handleQuoteSubmit} activeOpacity={0.85}>
               <LinearGradient colors={[C.amberDeep, C.amber]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ borderRadius: R.md, paddingVertical: 15, alignItems: 'center' }}>
-                <Text style={{ color: '#fff', fontSize: 15, fontWeight: '700' }}>Enviar Orçamento ao Cliente</Text>
+                <Text style={{ color: '#fff', fontSize: 15, fontWeight: '700', fontFamily: F.base }}>Enviar Orçamento ao Cliente</Text>
               </LinearGradient>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setQuoteModal(false)} style={{ marginTop: 12, alignItems: 'center', paddingVertical: 12 }}>
-              <Text style={{ color: C.textDisabled, fontSize: 14 }}>Cancelar</Text>
+              <Text style={{ color: C.textDisabled, fontSize: 14, fontFamily: F.base }}>Cancelar</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -441,8 +442,8 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
         <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.7)' }}>
           <View style={{ backgroundColor: C.bgSurface, borderTopLeftRadius: R.xl, borderTopRightRadius: R.xl, padding: S.lg, paddingBottom: 44, borderTopWidth: 1, borderColor: C.border }}>
             <View style={{ width: 36, height: 4, backgroundColor: C.border, borderRadius: 2, alignSelf: 'center', marginBottom: 20 }} />
-            <Text style={{ fontSize: 18, fontWeight: '800', color: C.textPrimary, marginBottom: 4 }}>Avaliar Serviço</Text>
-            <Text style={{ fontSize: 13, color: C.textSecondary, marginBottom: 20 }}>Como foi sua experiência?</Text>
+            <Text style={{ fontSize: 18, fontWeight: '800', color: C.textPrimary, marginBottom: 4, fontFamily: F.base }}>Avaliar Serviço</Text>
+            <Text style={{ fontSize: 13, color: C.textSecondary, marginBottom: 20, fontFamily: F.base }}>Como foi sua experiência?</Text>
             <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 10, marginBottom: 24 }}>
               {[1, 2, 3, 4, 5].map((s) => (
                 <TouchableOpacity key={s} onPress={() => setRatingStars(s)}>
@@ -450,10 +451,10 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
                 </TouchableOpacity>
               ))}
             </View>
-            <Text style={{ fontSize: 11, fontWeight: '700', color: C.textSecondary, marginBottom: 8, letterSpacing: 1.2, textTransform: 'uppercase' }}>Comentário (opcional)</Text>
+            <Text style={{ fontSize: 11, fontWeight: '700', color: C.textSecondary, marginBottom: 8, letterSpacing: 1.2, textTransform: 'uppercase', fontFamily: F.base }}>Comentário (opcional)</Text>
             <View style={{ backgroundColor: C.bgElevated, borderWidth: 1.5, borderColor: C.border, borderRadius: R.md, paddingHorizontal: 14, marginBottom: 24 }}>
               <TextInput
-                style={{ fontSize: 14, color: C.textPrimary, minHeight: 80, textAlignVertical: 'top', paddingVertical: 10 }}
+                style={{ fontSize: 14, color: C.textPrimary, minHeight: 80, textAlignVertical: 'top', paddingVertical: 10, fontFamily: F.base }}
                 placeholder="Conte como foi o serviço..."
                 placeholderTextColor={C.textDisabled}
                 value={ratingComment}
@@ -464,11 +465,11 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
             <TouchableOpacity onPress={handleRatingSubmit} disabled={submittingRating} activeOpacity={0.85}>
               <LinearGradient colors={[C.amberDeep, C.amber]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ borderRadius: R.md, paddingVertical: 15, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 8 }}>
                 {submittingRating ? <ActivityIndicator color="#fff" /> : <Ionicons name="star" size={18} color="#fff" />}
-                <Text style={{ color: '#fff', fontSize: 15, fontWeight: '700' }}>Enviar Avaliação</Text>
+                <Text style={{ color: '#fff', fontSize: 15, fontWeight: '700', fontFamily: F.base }}>Enviar Avaliação</Text>
               </LinearGradient>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setRatingModal(false)} style={{ marginTop: 12, alignItems: 'center', paddingVertical: 12 }}>
-              <Text style={{ color: C.textDisabled, fontSize: 14 }}>Agora não</Text>
+              <Text style={{ color: C.textDisabled, fontSize: 14, fontFamily: F.base }}>Agora não</Text>
             </TouchableOpacity>
           </View>
         </View>

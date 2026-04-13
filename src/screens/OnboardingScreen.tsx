@@ -3,7 +3,7 @@ import { View, Text, FlatList, TouchableOpacity, Dimensions, Animated } from 're
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../store/appStore';
-import { C, R } from '../theme';
+import { C, R, F } from '../theme';
 
 const { width, height } = Dimensions.get('window');
 
@@ -112,7 +112,7 @@ export function OnboardingScreen({ onFinish }: Props) {
                 backgroundColor: item.accent + '18',
                 borderRadius: R.full, paddingHorizontal: 16, paddingVertical: 6, marginBottom: 32,
               }}>
-                <Text style={{ color: item.accent, fontSize: 11, fontWeight: '700', letterSpacing: 2, textTransform: 'uppercase' }}>
+                <Text style={{ color: item.accent, fontSize: 11, fontWeight: '700', letterSpacing: 2, textTransform: 'uppercase', fontFamily: F.base }}>
                   {item.tag}
                 </Text>
               </View>
@@ -135,7 +135,7 @@ export function OnboardingScreen({ onFinish }: Props) {
               {/* Title */}
               <Text style={{
                 color: C.textPrimary, fontSize: 38, fontWeight: '900',
-                textAlign: 'center', lineHeight: 44, letterSpacing: -0.5,
+                textAlign: 'center', lineHeight: 44, letterSpacing: -0.5, fontFamily: F.base,
               }}>
                 {item.title}
               </Text>
@@ -148,7 +148,7 @@ export function OnboardingScreen({ onFinish }: Props) {
             <View style={{ flex: 1, backgroundColor: C.bgSurface, paddingHorizontal: 28, paddingTop: 28 }}>
               <Text style={{
                 fontSize: 15, color: C.textSecondary, textAlign: 'center',
-                lineHeight: 23, marginBottom: 24,
+                lineHeight: 23, marginBottom: 24, fontFamily: F.base,
               }}>
                 {item.description}
               </Text>
@@ -164,7 +164,7 @@ export function OnboardingScreen({ onFinish }: Props) {
                     }}>
                       <Ionicons name="checkmark" size={16} color={item.accent} />
                     </View>
-                    <Text style={{ fontSize: 14, color: C.textPrimary, fontWeight: '600' }}>{f}</Text>
+                    <Text style={{ fontSize: 14, color: C.textPrimary, fontWeight: '600', fontFamily: F.base }}>{f}</Text>
                   </View>
                 ))}
               </View>

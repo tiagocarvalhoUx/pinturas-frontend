@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { UserRole } from '../store/appStore';
-import { C, R } from '../theme';
+import { C, R, F } from '../theme';
 
 interface Tab {
   id: string;
@@ -83,6 +83,7 @@ export function BottomTabBar({ activeTab, onTabChange, role }: Props) {
               fontWeight: isActive ? '700' : '500',
               color: isActive ? C.amber : C.textDisabled,
               letterSpacing: 0.2,
+              fontFamily: F.base,
             }}>
               {tab.label}
             </Text>

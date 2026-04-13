@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -24,6 +24,28 @@ type Screen =
   | 'Main' | 'Budget' | 'Chat' | 'BudgetDetail' | 'PortfolioDetail';
 
 type TabScreen = 'Home' | 'BudgetsList' | 'Portfolio' | 'Chat' | 'Profile' | 'AdminDashboard';
+
+// Wraps any screen with a fade + slide-up entrance animation.
+// Re-runs when `screenKey` changes (screen or active tab switched).
+function ScreenTransition({ children, screenKey }: { children: React.ReactNode; screenKey: string }) {
+  const opacity    = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(14)).current;
+
+  useEffect(() => {
+    opacity.setValue(0);
+    translateY.setValue(14);
+    Animated.parallel([
+      Animated.timing(opacity,    { toValue: 1, duration: 260, useNativeDriver: true }),
+      Animated.spring(translateY, { toValue: 0, tension: 100, friction: 14, useNativeDriver: true }),
+    ]).start();
+  }, [screenKey]);
+
+  return (
+    <Animated.View style={{ flex: 1, opacity, transform: [{ translateY }] }}>
+      {children}
+    </Animated.View>
+  );
+}
 
 function SuccessToast({ visible }: { visible: boolean }) {
   const translateY = useRef(new Animated.Value(-100)).current;
@@ -80,7 +102,11 @@ export function AppNavigator() {
   const [showToast, setShowToast] = useState(false);
   const toastTimer = useRef<ReturnType<typeof setTimeout>>();
 
-  const go = (s: Screen) => setScreen(s);
+  // Unique key for ScreenTransition — changes on every navigation action
+  const [transitionKey, setTransitionKey] = useState(0);
+  const bumpKey = useCallback(() => setTransitionKey((k) => k + 1), []);
+
+  const go = (s: Screen) => { setScreen(s); bumpKey(); };
 
   const goToService = (serviceId: string) => {
     setSelectedServiceType(serviceId);
@@ -112,7 +138,7 @@ export function AppNavigator() {
     }, 100);
   };
 
-  // Splash
+  // Splash (no transition — intentional)
   if (screen === 'Splash') {
     return (
       <SplashScreen onFinish={() => {
@@ -127,59 +153,77 @@ export function AppNavigator() {
   }
 
   if (screen === 'Onboarding') {
-    return <OnboardingScreen onFinish={() => go('Login')} />;
+    return (
+      <ScreenTransition screenKey={`onboarding-${transitionKey}`}>
+        <OnboardingScreen onFinish={() => go('Login')} />
+      </ScreenTransition>
+    );
   }
 
   if (screen === 'Login') {
     return (
-      <LoginScreen
-        onLogin={() => {
-          setActiveTab(user?.role === 'admin' ? 'AdminDashboard' : 'Home');
-          go('Main');
-        }}
-        onGoRegister={() => go('Register')}
-      />
+      <ScreenTransition screenKey={`login-${transitionKey}`}>
+        <LoginScreen
+          onLogin={() => {
+            setActiveTab(user?.role === 'admin' ? 'AdminDashboard' : 'Home');
+            go('Main');
+          }}
+          onGoRegister={() => go('Register')}
+        />
+      </ScreenTransition>
     );
   }
 
   if (screen === 'Register') {
     return (
-      <RegisterScreen
-        onRegister={() => { setActiveTab('Home'); go('Main'); }}
-        onGoLogin={() => go('Login')}
-      />
+      <ScreenTransition screenKey={`register-${transitionKey}`}>
+        <RegisterScreen
+          onRegister={() => { setActiveTab('Home'); go('Main'); }}
+          onGoLogin={() => go('Login')}
+        />
+      </ScreenTransition>
     );
   }
 
   if (screen === 'Budget') {
     return (
-      <BudgetScreen
-        initialServiceType={selectedServiceType}
-        onSuccess={handleBudgetSuccess}
-        onBack={() => go('Main')}
-      />
+      <ScreenTransition screenKey={`budget-${transitionKey}`}>
+        <BudgetScreen
+          initialServiceType={selectedServiceType}
+          onSuccess={handleBudgetSuccess}
+          onBack={() => go('Main')}
+        />
+      </ScreenTransition>
     );
   }
 
   if (screen === 'Chat') {
-    return <ChatScreen onBack={() => go('Main')} />;
+    return (
+      <ScreenTransition screenKey={`chat-${transitionKey}`}>
+        <ChatScreen onBack={() => go('Main')} />
+      </ScreenTransition>
+    );
   }
 
   if (screen === 'BudgetDetail') {
     return (
-      <BudgetDetailScreen
-        budgetId={selectedBudgetId!}
-        onBack={() => go('Main')}
-      />
+      <ScreenTransition screenKey={`budgetdetail-${transitionKey}`}>
+        <BudgetDetailScreen
+          budgetId={selectedBudgetId!}
+          onBack={() => go('Main')}
+        />
+      </ScreenTransition>
     );
   }
 
   if (screen === 'PortfolioDetail') {
     return (
-      <PortfolioDetailScreen
-        item={selectedPortfolioItem!}
-        onBack={() => go('Main')}
-      />
+      <ScreenTransition screenKey={`portfoliodetail-${transitionKey}`}>
+        <PortfolioDetailScreen
+          item={selectedPortfolioItem!}
+          onBack={() => go('Main')}
+        />
+      </ScreenTransition>
     );
   }
 
@@ -226,12 +270,15 @@ export function AppNavigator() {
       go('Chat');
     } else {
       setActiveTab(tab as TabScreen);
+      bumpKey();
     }
   };
 
   return (
     <View style={{ flex: 1, backgroundColor: '#0F0D0A' }}>
-      <View style={{ flex: 1 }}>{renderTab()}</View>
+      <ScreenTransition screenKey={`tab-${activeTab}-${transitionKey}`}>
+        {renderTab()}
+      </ScreenTransition>
       <BottomTabBar
         activeTab={activeTab}
         onTabChange={handleTabChange}

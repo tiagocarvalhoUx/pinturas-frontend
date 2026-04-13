@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, FlatList, Linking, Alert, TextInput } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, FlatList, Linking, Alert, TextInput, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../store/appStore';
@@ -8,7 +8,7 @@ import { LoadingSpinner } from '../components/LoadingSpinner';
 import api from '../services/api';
 import { portfolioService } from '../services/portfolio';
 import { formatCurrency } from '../utils/helpers';
-import { C, R, S } from '../theme';
+import { C, R, S, F } from '../theme';
 
 interface Props {
   onBudget: () => void;
@@ -19,24 +19,28 @@ interface Props {
 }
 
 const SERVICE_ICONS: Record<string, { icon: string; color: string }> = {
-  internal:      { icon: 'home',          color: C.amber },
-  external:      { icon: 'business',      color: '#5AAAE0' },
-  texture:       { icon: 'color-palette', color: C.terra },
-  lacquering:    { icon: 'sparkles',      color: '#A04ABA' },
-  waterproofing: { icon: 'water',         color: '#4ABA79' },
+  internal:      { icon: 'home',          color: C.amber  },
+  external:      { icon: 'business',      color: C.blue   },
+  texture:       { icon: 'color-palette', color: C.terra  },
+  lacquering:    { icon: 'sparkles',      color: C.purple },
+  waterproofing: { icon: 'water',         color: C.green  },
   restoration:   { icon: 'construct',     color: C.amberLight },
 };
 
 const WHATSAPP = '5518998210220';
 
 export function HomeScreen({ onBudget, onPortfolio, onServiceDetail, onPortfolioDetail, onAllServices }: Props) {
-  const user       = useAppStore((s) => s.user);
-  const portfolio  = useAppStore((s) => s.portfolio);
+  const user         = useAppStore((s) => s.user);
+  const portfolio    = useAppStore((s) => s.portfolio);
   const setPortfolio = useAppStore((s) => s.setPortfolio);
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading]   = useState(true);
   const [search, setSearch]     = useState('');
   const [searchFocused, setSearchFocused] = useState(false);
+
+  // Grid item width — 4 columns with padding and gaps accounted for
+  const screenWidth = Dimensions.get('window').width;
+  const gridItemWidth = (screenWidth - S.md * 2 - S.md * 2 - 12 * 3) / 4;
 
   useEffect(() => {
     (async () => {
@@ -77,8 +81,8 @@ export function HomeScreen({ onBudget, onPortfolio, onServiceDetail, onPortfolio
         {/* Greeting row */}
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
           <View>
-            <Text style={{ color: C.textSecondary, fontSize: 13, letterSpacing: 0.3 }}>Olá,</Text>
-            <Text style={{ color: C.textPrimary, fontSize: 21, fontWeight: '800', marginTop: 2 }}>
+            <Text style={{ color: C.textSecondary, fontSize: 13, letterSpacing: 0.3, fontFamily: F.base }}>Olá,</Text>
+            <Text style={{ color: C.textPrimary, fontSize: 21, fontWeight: '800', marginTop: 2, fontFamily: F.base }}>
               {firstName} 👋
             </Text>
           </View>
@@ -104,7 +108,7 @@ export function HomeScreen({ onBudget, onPortfolio, onServiceDetail, onPortfolio
         }}>
           <Ionicons name="search-outline" size={18} color={searchFocused ? C.amber : C.textDisabled} />
           <TextInput
-            style={{ flex: 1, paddingVertical: 12, paddingHorizontal: 10, fontSize: 14, color: C.textPrimary }}
+            style={{ flex: 1, paddingVertical: 12, paddingHorizontal: 10, fontSize: 14, color: C.textPrimary, fontFamily: F.base }}
             placeholder="Buscar serviços..."
             placeholderTextColor={C.textDisabled}
             value={search}
@@ -131,7 +135,7 @@ export function HomeScreen({ onBudget, onPortfolio, onServiceDetail, onPortfolio
               <TouchableOpacity
                 key={key}
                 onPress={() => onServiceDetail(key)}
-                style={{ width: '21%', alignItems: 'center', gap: 6 }}
+                style={{ width: gridItemWidth, alignItems: 'center', gap: 6 }}
                 activeOpacity={0.7}
               >
                 <View style={{
@@ -142,7 +146,7 @@ export function HomeScreen({ onBudget, onPortfolio, onServiceDetail, onPortfolio
                 }}>
                   <Ionicons name={val.icon as any} size={24} color={val.color} />
                 </View>
-                <Text style={{ fontSize: 10, color: C.textSecondary, fontWeight: '600', textAlign: 'center' }}>
+                <Text style={{ fontSize: 10, color: C.textSecondary, fontWeight: '600', textAlign: 'center', fontFamily: F.base }}>
                   {key === 'internal' ? 'Interna' : key === 'external' ? 'Externa' : key === 'texture' ? 'Textura' : 'Laqueação'}
                 </Text>
               </TouchableOpacity>
@@ -169,13 +173,13 @@ export function HomeScreen({ onBudget, onPortfolio, onServiceDetail, onPortfolio
               backgroundColor: 'rgba(255,255,255,0.06)',
             }} />
 
-            <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 11, fontWeight: '700', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 6 }}>
+            <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 11, fontWeight: '700', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 6, fontFamily: F.base }}>
               Solicite agora
             </Text>
-            <Text style={{ color: '#fff', fontWeight: '900', fontSize: 20, marginBottom: 4, letterSpacing: -0.3 }}>
+            <Text style={{ color: '#fff', fontWeight: '900', fontSize: 20, marginBottom: 4, letterSpacing: -0.3, fontFamily: F.base }}>
               Orçamento Gratuito
             </Text>
-            <Text style={{ color: 'rgba(255,255,255,0.75)', fontSize: 13, marginBottom: 14 }}>
+            <Text style={{ color: 'rgba(255,255,255,0.75)', fontSize: 13, marginBottom: 14, fontFamily: F.base }}>
               Rápido, fácil e sem compromisso
             </Text>
             <View style={{
@@ -183,7 +187,7 @@ export function HomeScreen({ onBudget, onPortfolio, onServiceDetail, onPortfolio
               paddingHorizontal: 14, paddingVertical: 8,
               alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 6,
             }}>
-              <Text style={{ color: '#fff', fontWeight: '700', fontSize: 13 }}>Começar</Text>
+              <Text style={{ color: '#fff', fontWeight: '700', fontSize: 13, fontFamily: F.base }}>Começar</Text>
               <Ionicons name="arrow-forward" size={13} color="#fff" />
             </View>
           </LinearGradient>
@@ -192,11 +196,11 @@ export function HomeScreen({ onBudget, onPortfolio, onServiceDetail, onPortfolio
         {/* ── Services list ── */}
         <View style={{ marginBottom: S.md }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-            <Text style={{ fontSize: 17, fontWeight: '800', color: C.textPrimary, letterSpacing: -0.2 }}>
+            <Text style={{ fontSize: 17, fontWeight: '800', color: C.textPrimary, letterSpacing: -0.2, fontFamily: F.base }}>
               Nossos Serviços
             </Text>
             <TouchableOpacity onPress={onAllServices} style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
-              <Text style={{ color: C.amber, fontSize: 13, fontWeight: '700' }}>Ver todos</Text>
+              <Text style={{ color: C.amber, fontSize: 13, fontWeight: '700', fontFamily: F.base }}>Ver todos</Text>
               <Ionicons name="chevron-forward" size={14} color={C.amber} />
             </TouchableOpacity>
           </View>
@@ -226,8 +230,8 @@ export function HomeScreen({ onBudget, onPortfolio, onServiceDetail, onPortfolio
                   <Ionicons name={meta.icon as any} size={22} color={meta.color} />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: 15, fontWeight: '700', color: C.textPrimary }}>{svc.name}</Text>
-                  <Text style={{ fontSize: 12, color: C.textSecondary, marginTop: 2 }}>
+                  <Text style={{ fontSize: 15, fontWeight: '700', color: C.textPrimary, fontFamily: F.base }}>{svc.name}</Text>
+                  <Text style={{ fontSize: 12, color: C.textSecondary, marginTop: 2, fontFamily: F.base }}>
                     A partir de {formatCurrency(svc.pricePerM2)}/m²
                   </Text>
                 </View>
@@ -241,11 +245,11 @@ export function HomeScreen({ onBudget, onPortfolio, onServiceDetail, onPortfolio
         {portfolio.length > 0 && (
           <View style={{ marginBottom: S.md }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-              <Text style={{ fontSize: 17, fontWeight: '800', color: C.textPrimary, letterSpacing: -0.2 }}>
+              <Text style={{ fontSize: 17, fontWeight: '800', color: C.textPrimary, letterSpacing: -0.2, fontFamily: F.base }}>
                 Portfólio
               </Text>
               <TouchableOpacity onPress={onPortfolio} style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
-                <Text style={{ color: C.amber, fontSize: 13, fontWeight: '700' }}>Ver todos</Text>
+                <Text style={{ color: C.amber, fontSize: 13, fontWeight: '700', fontFamily: F.base }}>Ver todos</Text>
                 <Ionicons name="chevron-forward" size={14} color={C.amber} />
               </TouchableOpacity>
             </View>
@@ -262,24 +266,23 @@ export function HomeScreen({ onBudget, onPortfolio, onServiceDetail, onPortfolio
           alignItems: 'center', marginBottom: 36,
           borderWidth: 1, borderColor: C.border,
         }}>
-          {/* WhatsApp green icon circle */}
           <View style={{
             width: 56, height: 56, borderRadius: 28,
-            backgroundColor: '#25D36620',
-            borderWidth: 1.5, borderColor: '#25D36640',
+            backgroundColor: C.whatsappBg,
+            borderWidth: 1.5, borderColor: C.whatsapp + '40',
             alignItems: 'center', justifyContent: 'center', marginBottom: 12,
           }}>
-            <Ionicons name="logo-whatsapp" size={30} color="#25D366" />
+            <Ionicons name="logo-whatsapp" size={30} color={C.whatsapp} />
           </View>
-          <Text style={{ color: C.textPrimary, fontWeight: '800', fontSize: 17, marginBottom: 4 }}>
+          <Text style={{ color: C.textPrimary, fontWeight: '800', fontSize: 17, marginBottom: 4, fontFamily: F.base }}>
             Precisa de ajuda?
           </Text>
-          <Text style={{ color: C.textSecondary, fontSize: 13, marginBottom: 18, textAlign: 'center' }}>
+          <Text style={{ color: C.textSecondary, fontSize: 13, marginBottom: 18, textAlign: 'center', fontFamily: F.base }}>
             Entre em contato direto pelo WhatsApp
           </Text>
           <TouchableOpacity onPress={openWhatsApp} activeOpacity={0.85}>
             <LinearGradient
-              colors={['#1AAD4C', '#25D366']}
+              colors={['#1AAD4C', C.whatsapp]}
               start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
               style={{
                 borderRadius: R.md, paddingHorizontal: 24, paddingVertical: 13,
@@ -287,7 +290,7 @@ export function HomeScreen({ onBudget, onPortfolio, onServiceDetail, onPortfolio
               }}
             >
               <Ionicons name="logo-whatsapp" size={18} color="#fff" />
-              <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14 }}>Chamar no WhatsApp</Text>
+              <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14, fontFamily: F.base }}>Chamar no WhatsApp</Text>
             </LinearGradient>
           </TouchableOpacity>
         </View>

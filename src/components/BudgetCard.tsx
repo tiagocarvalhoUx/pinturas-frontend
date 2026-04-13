@@ -3,7 +3,7 @@ import { TouchableOpacity, View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Budget } from '../store/appStore';
 import { SERVICE_LABELS, STATUS_LABELS, STATUS_COLORS, formatCurrency, formatDate } from '../utils/helpers';
-import { C, R } from '../theme';
+import { C, R, F } from '../theme';
 
 interface Props {
   budget: Budget;
@@ -21,10 +21,10 @@ const SERVICE_ICONS: Record<string, string> = {
 
 const SERVICE_COLORS: Record<string, string> = {
   internal:      C.amber,
-  external:      '#5AAAE0',
+  external:      C.blue,
   texture:       C.terra,
-  lacquering:    '#A04ABA',
-  waterproofing: '#4ABA79',
+  lacquering:    C.purple,
+  waterproofing: C.green,
   restoration:   C.amberLight,
 };
 
@@ -60,7 +60,7 @@ export function BudgetCard({ budget, onPress }: Props) {
         {/* Info */}
         <View style={{ flex: 1 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
-            <Text style={{ fontSize: 15, fontWeight: '700', color: C.textPrimary }} numberOfLines={1}>
+            <Text style={{ fontSize: 15, fontWeight: '700', color: C.textPrimary, fontFamily: F.base }} numberOfLines={1}>
               {SERVICE_LABELS[budget.serviceType] || budget.serviceType}
             </Text>
             <View style={{
@@ -68,7 +68,7 @@ export function BudgetCard({ budget, onPress }: Props) {
               borderRadius: R.full, paddingHorizontal: 10, paddingVertical: 3,
               borderWidth: 1, borderColor: statusColor + '40',
             }}>
-              <Text style={{ fontSize: 10, fontWeight: '700', color: statusColor }}>
+              <Text style={{ fontSize: 10, fontWeight: '700', color: statusColor, fontFamily: F.base }}>
                 {STATUS_LABELS[budget.status]}
               </Text>
             </View>
@@ -76,7 +76,7 @@ export function BudgetCard({ budget, onPress }: Props) {
 
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 2 }}>
             <Ionicons name="location-outline" size={12} color={C.textDisabled} />
-            <Text style={{ fontSize: 12, color: C.textSecondary }} numberOfLines={1}>
+            <Text style={{ fontSize: 12, color: C.textSecondary, fontFamily: F.base }} numberOfLines={1}>
               {budget.address.city}, {budget.address.state}
             </Text>
           </View>
@@ -84,14 +84,14 @@ export function BudgetCard({ budget, onPress }: Props) {
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 6 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
               <Ionicons name="resize-outline" size={12} color={C.textDisabled} />
-              <Text style={{ fontSize: 12, color: C.textSecondary }}>{budget.area} m²</Text>
+              <Text style={{ fontSize: 12, color: C.textSecondary, fontFamily: F.base }}>{budget.area} m²</Text>
             </View>
             {price ? (
-              <Text style={{ fontSize: 14, fontWeight: '800', color: iconColor }}>
+              <Text style={{ fontSize: 14, fontWeight: '800', color: iconColor, fontFamily: F.base }}>
                 {formatCurrency(price)}
               </Text>
             ) : (
-              <Text style={{ fontSize: 12, color: C.textDisabled, fontStyle: 'italic' }}>Aguardando valor</Text>
+              <Text style={{ fontSize: 12, color: C.textDisabled, fontStyle: 'italic', fontFamily: F.base }}>Aguardando valor</Text>
             )}
           </View>
         </View>
@@ -99,19 +99,19 @@ export function BudgetCard({ budget, onPress }: Props) {
         <Ionicons name="chevron-forward" size={16} color={C.textDisabled} />
       </View>
 
-      {/* Footer divider */}
+      {/* Footer */}
       <View style={{
         marginTop: 10, paddingTop: 10,
         borderTopWidth: 1, borderTopColor: C.border,
         flexDirection: 'row', alignItems: 'center', gap: 4,
       }}>
         <Ionicons name="calendar-outline" size={12} color={C.textDisabled} />
-        <Text style={{ fontSize: 11, color: C.textDisabled }}>{formatDate(budget.createdAt)}</Text>
+        <Text style={{ fontSize: 11, color: C.textDisabled, fontFamily: F.base }}>{formatDate(budget.createdAt)}</Text>
         {budget.photos?.length > 0 && (
           <>
             <Text style={{ color: C.border, marginHorizontal: 4 }}>•</Text>
             <Ionicons name="images-outline" size={12} color={C.textDisabled} />
-            <Text style={{ fontSize: 11, color: C.textDisabled }}>
+            <Text style={{ fontSize: 11, color: C.textDisabled, fontFamily: F.base }}>
               {budget.photos.length} foto{budget.photos.length > 1 ? 's' : ''}
             </Text>
           </>

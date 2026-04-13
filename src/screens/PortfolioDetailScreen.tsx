@@ -6,7 +6,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { PortfolioItem } from '../store/appStore';
 import { SERVICE_LABELS } from '../utils/helpers';
-import { C, R, S } from '../theme';
+import { C, R, S, F } from '../theme';
 
 const { width: W, height: H } = Dimensions.get('window');
 
@@ -92,7 +92,7 @@ function Lightbox({
             position: 'absolute', top: 56, left: 0, right: 0, alignItems: 'center', zIndex: 10,
           }}>
             <View style={{ backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: R.full, paddingHorizontal: 12, paddingVertical: 4 }}>
-              <Text style={{ color: '#fff', fontSize: 13, fontWeight: '700' }}>
+              <Text style={{ color: '#fff', fontSize: 13, fontWeight: '700', fontFamily: F.base }}>
                 {index + 1} / {images.length}
               </Text>
             </View>
@@ -107,7 +107,7 @@ function Lightbox({
             backgroundColor: C.amber + 'CC',
             borderRadius: R.full, paddingHorizontal: 18, paddingVertical: 6,
           }}>
-            <Text style={{ color: '#fff', fontSize: 13, fontWeight: '800', letterSpacing: 1 }}>
+            <Text style={{ color: '#fff', fontSize: 13, fontWeight: '800', letterSpacing: 1, fontFamily: F.base }}>
               {images[index]?.label}
             </Text>
           </View>
@@ -203,8 +203,8 @@ export function PortfolioDetailScreen({ item, onBack }: Props) {
   };
 
   const serviceColor = {
-    internal: C.amber, external: '#5AAAE0', texture: C.terra,
-    lacquering: '#A04ABA', waterproofing: '#4ABA79', restoration: C.amberLight,
+    internal: C.amber, external: C.blue, texture: C.terra,
+    lacquering: C.purple, waterproofing: C.green, restoration: C.amberLight,
   }[item.serviceType] || C.amber;
 
   return (
@@ -221,15 +221,15 @@ export function PortfolioDetailScreen({ item, onBack }: Props) {
             <Ionicons name="arrow-back" size={20} color={C.textPrimary} />
           </TouchableOpacity>
           <View style={{ flex: 1 }}>
-            <Text style={{ color: C.textSecondary, fontSize: 11, letterSpacing: 0.5 }}>Portfólio</Text>
-            <Text style={{ color: C.textPrimary, fontSize: 17, fontWeight: '800' }} numberOfLines={1}>
+            <Text style={{ color: C.textSecondary, fontSize: 11, letterSpacing: 0.5, fontFamily: F.base }}>Portfólio</Text>
+            <Text style={{ color: C.textPrimary, fontSize: 17, fontWeight: '800', fontFamily: F.base }} numberOfLines={1}>
               {item.title}
             </Text>
           </View>
           {item.featured && (
             <View style={{ backgroundColor: C.amber, borderRadius: R.full, paddingHorizontal: 10, paddingVertical: 4, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
               <Ionicons name="star" size={11} color="#fff" />
-              <Text style={{ color: '#fff', fontSize: 10, fontWeight: '800' }}>DESTAQUE</Text>
+              <Text style={{ color: '#fff', fontSize: 10, fontWeight: '800', fontFamily: F.base }}>DESTAQUE</Text>
             </View>
           )}
         </View>
@@ -256,7 +256,7 @@ export function PortfolioDetailScreen({ item, onBack }: Props) {
               ) : (
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                   <Ionicons name="image-outline" size={48} color={C.textDisabled} />
-                  <Text style={{ color: C.textDisabled, fontSize: 13 }}>Sem imagem</Text>
+                  <Text style={{ color: C.textDisabled, fontSize: 13, fontFamily: F.base }}>Sem imagem</Text>
                 </View>
               )}
 
@@ -291,7 +291,7 @@ export function PortfolioDetailScreen({ item, onBack }: Props) {
                         backgroundColor: showAfter === after ? C.amber : 'transparent',
                       }}
                     >
-                      <Text style={{ fontSize: 12, fontWeight: '800', color: '#fff' }}>
+                      <Text style={{ fontSize: 12, fontWeight: '800', color: '#fff', fontFamily: F.base }}>
                         {after ? 'Depois' : 'Antes'}
                       </Text>
                     </TouchableOpacity>
@@ -327,12 +327,12 @@ export function PortfolioDetailScreen({ item, onBack }: Props) {
                     position: 'absolute', bottom: 0, left: 0, right: 0,
                     backgroundColor: 'rgba(0,0,0,0.55)', paddingVertical: 2, alignItems: 'center',
                   }}>
-                    <Text style={{ color: '#fff', fontSize: 9, fontWeight: '800' }}>{img.label}</Text>
+                    <Text style={{ color: '#fff', fontSize: 9, fontWeight: '800', fontFamily: F.base }}>{img.label}</Text>
                   </View>
                 </TouchableOpacity>
               ))}
               <View style={{ flex: 1, justifyContent: 'center', paddingLeft: 8 }}>
-                <Text style={{ color: C.textSecondary, fontSize: 12 }}>
+                <Text style={{ color: C.textSecondary, fontSize: 12, fontFamily: F.base }}>
                   Toque numa imagem para expandir
                 </Text>
               </View>
@@ -354,18 +354,18 @@ export function PortfolioDetailScreen({ item, onBack }: Props) {
                 paddingHorizontal: 12, paddingVertical: 5,
                 borderWidth: 1, borderColor: serviceColor + '40',
               }}>
-                <Text style={{ color: serviceColor, fontSize: 12, fontWeight: '800' }}>
+                <Text style={{ color: serviceColor, fontSize: 12, fontWeight: '800', fontFamily: F.base }}>
                   {SERVICE_LABELS[item.serviceType]}
                 </Text>
               </View>
             </View>
 
-            <Text style={{ fontSize: 20, fontWeight: '900', color: C.textPrimary, marginBottom: 8, letterSpacing: -0.3 }}>
+            <Text style={{ fontSize: 20, fontWeight: '900', color: C.textPrimary, marginBottom: 8, letterSpacing: -0.3, fontFamily: F.base }}>
               {item.title}
             </Text>
 
             {item.description && (
-              <Text style={{ fontSize: 14, color: C.textSecondary, lineHeight: 21, marginBottom: 16 }}>
+              <Text style={{ fontSize: 14, color: C.textSecondary, lineHeight: 21, marginBottom: 16, fontFamily: F.base }}>
                 {item.description}
               </Text>
             )}
@@ -381,8 +381,8 @@ export function PortfolioDetailScreen({ item, onBack }: Props) {
                     <Ionicons name="resize-outline" size={15} color={serviceColor} />
                   </View>
                   <View>
-                    <Text style={{ fontSize: 10, color: C.textDisabled, fontWeight: '600', letterSpacing: 0.5 }}>ÁREA</Text>
-                    <Text style={{ fontSize: 14, color: C.textPrimary, fontWeight: '700' }}>{item.area} m²</Text>
+                    <Text style={{ fontSize: 10, color: C.textDisabled, fontWeight: '600', letterSpacing: 0.5, fontFamily: F.base }}>ÁREA</Text>
+                    <Text style={{ fontSize: 14, color: C.textPrimary, fontWeight: '700', fontFamily: F.base }}>{item.area} m²</Text>
                   </View>
                 </View>
               )}
@@ -392,8 +392,8 @@ export function PortfolioDetailScreen({ item, onBack }: Props) {
                     <Ionicons name="time-outline" size={15} color={serviceColor} />
                   </View>
                   <View>
-                    <Text style={{ fontSize: 10, color: C.textDisabled, fontWeight: '600', letterSpacing: 0.5 }}>DURAÇÃO</Text>
-                    <Text style={{ fontSize: 14, color: C.textPrimary, fontWeight: '700' }}>{item.duration}</Text>
+                    <Text style={{ fontSize: 10, color: C.textDisabled, fontWeight: '600', letterSpacing: 0.5, fontFamily: F.base }}>DURAÇÃO</Text>
+                    <Text style={{ fontSize: 14, color: C.textPrimary, fontWeight: '700', fontFamily: F.base }}>{item.duration}</Text>
                   </View>
                 </View>
               )}
@@ -403,8 +403,8 @@ export function PortfolioDetailScreen({ item, onBack }: Props) {
                     <Ionicons name="location-outline" size={15} color={serviceColor} />
                   </View>
                   <View>
-                    <Text style={{ fontSize: 10, color: C.textDisabled, fontWeight: '600', letterSpacing: 0.5 }}>LOCAL</Text>
-                    <Text style={{ fontSize: 14, color: C.textPrimary, fontWeight: '700' }}>{item.location}</Text>
+                    <Text style={{ fontSize: 10, color: C.textDisabled, fontWeight: '600', letterSpacing: 0.5, fontFamily: F.base }}>LOCAL</Text>
+                    <Text style={{ fontSize: 14, color: C.textPrimary, fontWeight: '700', fontFamily: F.base }}>{item.location}</Text>
                   </View>
                 </View>
               )}
@@ -424,7 +424,7 @@ export function PortfolioDetailScreen({ item, onBack }: Props) {
               }}
             >
               <Ionicons name="expand-outline" size={18} color={C.amber} />
-              <Text style={{ color: C.amber, fontWeight: '700', fontSize: 14 }}>Ver em tela cheia</Text>
+              <Text style={{ color: C.amber, fontWeight: '700', fontSize: 14, fontFamily: F.base }}>Ver em tela cheia</Text>
             </TouchableOpacity>
           )}
         </View>

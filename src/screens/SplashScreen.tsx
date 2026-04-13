@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, Animated, Dimensions, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { C, G } from '../theme';
+import { C, G, F } from '../theme';
 
 const { width } = Dimensions.get('window');
 
@@ -117,13 +117,13 @@ export function SplashScreen({ onFinish }: Props) {
         <View style={{ width: 40, height: 2, backgroundColor: C.amber, borderRadius: 1, marginBottom: 14, opacity: 0.9 }} />
         <Text style={{
           fontSize: 22, fontWeight: '800', color: C.textPrimary,
-          letterSpacing: 0.8, textAlign: 'center',
+          letterSpacing: 0.8, textAlign: 'center', fontFamily: F.base,
         }}>
           A. Coraça & T. Carvalho
         </Text>
         <Text style={{
           fontSize: 13, color: C.amber, marginTop: 6,
-          letterSpacing: 3, fontWeight: '600', textTransform: 'uppercase',
+          letterSpacing: 3, fontWeight: '600', textTransform: 'uppercase', fontFamily: F.base,
         }}>
           Pinturas e Reformas
         </Text>
@@ -131,7 +131,7 @@ export function SplashScreen({ onFinish }: Props) {
 
       {/* Bottom tagline */}
       <View style={{ position: 'absolute', bottom: 52, alignItems: 'center' }}>
-        <Text style={{ color: C.textDisabled, fontSize: 12, letterSpacing: 0.8 }}>
+        <Text style={{ color: C.textDisabled, fontSize: 12, letterSpacing: 0.8, fontFamily: F.base }}>
           Qualidade que transforma ambientes
         </Text>
       </View>

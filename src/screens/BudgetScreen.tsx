@@ -9,7 +9,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useAppStore } from '../store/appStore';
 import { budgetService } from '../services/budgets';
 import { SERVICE_LABELS } from '../utils/helpers';
-import { C, R, S } from '../theme';
+import { C, R, S, F } from '../theme';
 
 interface Props {
   onSuccess: () => void;
@@ -24,11 +24,14 @@ const SERVICE_ICONS: Record<string, string> = {
   lacquering: 'sparkles', waterproofing: 'water', restoration: 'construct',
 };
 const SERVICE_COLORS: Record<string, string> = {
-  internal: C.amber, external: '#5AAAE0', texture: C.terra,
-  lacquering: '#A04ABA', waterproofing: '#4ABA79', restoration: C.amberLight,
+  internal:      C.amber,
+  external:      C.blue,
+  texture:       C.terra,
+  lacquering:    C.purple,
+  waterproofing: C.green,
+  restoration:   C.amberLight,
 };
 
-// Reusable section card
 function SectionCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <View style={{
@@ -36,7 +39,7 @@ function SectionCard({ title, children }: { title: string; children: React.React
       padding: S.md, marginBottom: S.md,
       borderWidth: 1, borderColor: C.border,
     }}>
-      <Text style={{ fontSize: 13, fontWeight: '800', color: C.textPrimary, marginBottom: 14, letterSpacing: 0.2 }}>
+      <Text style={{ fontSize: 13, fontWeight: '800', color: C.textPrimary, marginBottom: 14, letterSpacing: 0.2, fontFamily: F.base }}>
         {title}
       </Text>
       {children}
@@ -44,7 +47,6 @@ function SectionCard({ title, children }: { title: string; children: React.React
   );
 }
 
-// Reusable dark input
 function DarkInput({
   icon, placeholder, value, onChangeText, keyboardType, multiline, right, style,
 }: {
@@ -63,7 +65,7 @@ function DarkInput({
     }, style]}>
       <Ionicons name={icon as any} size={18} color={focused ? C.amber : C.textDisabled} style={multiline ? { marginTop: 2 } : undefined} />
       <TextInput
-        style={{ flex: 1, paddingVertical: 13, paddingHorizontal: 10, fontSize: 14, color: C.textPrimary, textAlignVertical: multiline ? 'top' : 'auto', minHeight: multiline ? 90 : undefined }}
+        style={{ flex: 1, paddingVertical: 13, paddingHorizontal: 10, fontSize: 14, color: C.textPrimary, textAlignVertical: multiline ? 'top' : 'auto', minHeight: multiline ? 90 : undefined, fontFamily: F.base }}
         placeholder={placeholder}
         placeholderTextColor={C.textDisabled}
         value={value}
@@ -163,8 +165,8 @@ export function BudgetScreen({ onSuccess, onBack, initialServiceType }: Props) {
             <Ionicons name="arrow-back" size={20} color={C.textPrimary} />
           </TouchableOpacity>
           <View>
-            <Text style={{ color: C.textSecondary, fontSize: 12 }}>Nova solicitação</Text>
-            <Text style={{ color: C.textPrimary, fontSize: 18, fontWeight: '800' }}>Solicitar Orçamento</Text>
+            <Text style={{ color: C.textSecondary, fontSize: 12, fontFamily: F.base }}>Nova solicitação</Text>
+            <Text style={{ color: C.textPrimary, fontSize: 18, fontWeight: '800', fontFamily: F.base }}>Solicitar Orçamento</Text>
           </View>
         </View>
       </View>
@@ -191,7 +193,7 @@ export function BudgetScreen({ onSuccess, onBack, initialServiceType }: Props) {
                     }}
                   >
                     <Ionicons name={SERVICE_ICONS[type] as any} size={14} color={active ? col : C.textDisabled} />
-                    <Text style={{ fontSize: 12, fontWeight: '700', color: active ? col : C.textSecondary }}>
+                    <Text style={{ fontSize: 12, fontWeight: '700', color: active ? col : C.textSecondary, fontFamily: F.base }}>
                       {SERVICE_LABELS[type]}
                     </Text>
                   </TouchableOpacity>
@@ -208,7 +210,7 @@ export function BudgetScreen({ onSuccess, onBack, initialServiceType }: Props) {
               value={area}
               onChangeText={setArea}
               keyboardType="decimal-pad"
-              right={<Text style={{ color: C.textSecondary, fontSize: 14, fontWeight: '600' }}>m²</Text>}
+              right={<Text style={{ color: C.textSecondary, fontSize: 14, fontWeight: '600', fontFamily: F.base }}>m²</Text>}
             />
             {estimate > 0 && (
               <View style={{
@@ -219,10 +221,10 @@ export function BudgetScreen({ onSuccess, onBack, initialServiceType }: Props) {
               }}>
                 <Ionicons name="calculator-outline" size={18} color={accentColor} />
                 <View>
-                  <Text style={{ color: accentColor, fontWeight: '800', fontSize: 16 }}>
+                  <Text style={{ color: accentColor, fontWeight: '800', fontSize: 16, fontFamily: F.base }}>
                     R$ {estimate.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </Text>
-                  <Text style={{ fontSize: 11, color: C.textSecondary, marginTop: 1 }}>*Estimativa aproximada</Text>
+                  <Text style={{ fontSize: 11, color: C.textSecondary, marginTop: 1, fontFamily: F.base }}>*Estimativa aproximada</Text>
                 </View>
               </View>
             )}
@@ -271,7 +273,7 @@ export function BudgetScreen({ onSuccess, onBack, initialServiceType }: Props) {
                   borderRadius: R.md, paddingHorizontal: 10,
                 }}>
                   <TextInput
-                    style={{ flex: 1, paddingVertical: 13, fontSize: 14, color: C.textPrimary, textAlign: 'center' }}
+                    style={{ flex: 1, paddingVertical: 13, fontSize: 14, color: C.textPrimary, textAlign: 'center', fontFamily: F.base }}
                     placeholder="UF"
                     placeholderTextColor={C.textDisabled}
                     value={state}
@@ -308,8 +310,8 @@ export function BudgetScreen({ onSuccess, onBack, initialServiceType }: Props) {
             )}
             <View style={{ flexDirection: 'row', gap: 10 }}>
               {[
-                { onPress: pickImage,  icon: 'images-outline',  label: 'Galeria' },
-                { onPress: takePhoto,  icon: 'camera-outline',  label: 'Câmera'  },
+                { onPress: pickImage, icon: 'images-outline',  label: 'Galeria' },
+                { onPress: takePhoto, icon: 'camera-outline',  label: 'Câmera'  },
               ].map((btn) => (
                 <TouchableOpacity
                   key={btn.label} onPress={btn.onPress} activeOpacity={0.7}
@@ -322,7 +324,7 @@ export function BudgetScreen({ onSuccess, onBack, initialServiceType }: Props) {
                   }}
                 >
                   <Ionicons name={btn.icon as any} size={18} color={C.amber} />
-                  <Text style={{ color: C.amber, fontSize: 13, fontWeight: '700' }}>{btn.label}</Text>
+                  <Text style={{ color: C.amber, fontSize: 13, fontWeight: '700', fontFamily: F.base }}>{btn.label}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -336,7 +338,7 @@ export function BudgetScreen({ onSuccess, onBack, initialServiceType }: Props) {
               style={{ borderRadius: R.md, paddingVertical: 17, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 8 }}
             >
               <Ionicons name="send" size={18} color={loading ? C.textDisabled : '#fff'} />
-              <Text style={{ color: loading ? C.textDisabled : '#fff', fontSize: 16, fontWeight: '800' }}>
+              <Text style={{ color: loading ? C.textDisabled : '#fff', fontSize: 16, fontWeight: '800', fontFamily: F.base }}>
                 {loading ? 'Enviando...' : 'Enviar Orçamento'}
               </Text>
             </LinearGradient>

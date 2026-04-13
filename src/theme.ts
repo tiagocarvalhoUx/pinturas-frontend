@@ -1,6 +1,8 @@
 // Design tokens — Dark Artisan Premium
 // Palette inspired by raw paint pigments: warm charcoal base + amber/ochre accent
 
+import { Platform } from 'react-native';
+
 export const C = {
   // Backgrounds
   bgDeep:     '#0F0D0A',   // deepest background
@@ -18,6 +20,16 @@ export const C = {
   // Terracotta secondary
   terra:      '#C04E28',
   terraLight: '#D96B43',
+
+  // Service palette — full tokens (no more hardcoded hex in screens)
+  blue:       '#5AAAE0',
+  blueBg:     '#5AAAE020',
+  purple:     '#A04ABA',
+  purpleBg:   '#A04ABA20',
+  green:      '#4ABA79',
+  greenBg:    '#4ABA7920',
+  whatsapp:   '#25D366',
+  whatsappBg: '#25D36620',
 
   // Text
   textPrimary:   '#F2EDE3',  // warm cream
@@ -44,6 +56,16 @@ export const C = {
   white:   '#FFFFFF',
   black:   '#000000',
   overlay: 'rgba(0,0,0,0.55)',
+};
+
+// Typography — Inter on web, system on native
+export const F = {
+  base: Platform.select({
+    web:     'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    ios:     'System',
+    android: 'Roboto',
+    default: 'System',
+  }) as string,
 };
 
 // Gradient presets

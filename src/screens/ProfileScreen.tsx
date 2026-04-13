@@ -6,7 +6,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useAppStore } from '../store/appStore';
 import { authService } from '../services/auth';
 import api from '../services/api';
-import { C, R, S } from '../theme';
+import { C, R, S, F } from '../theme';
 
 interface Props {
   onLogout: () => void;
@@ -97,33 +97,18 @@ export function ProfileScreen({ onLogout }: Props) {
           borderRadius: 120, backgroundColor: C.amber, opacity: 0.04,
         }} />
 
-        {/* Avatar */}
         <TouchableOpacity onPress={pickAvatar} activeOpacity={0.85} style={{ position: 'relative', marginBottom: 16 }}>
           {uploadingAvatar ? (
-            <View style={{
-              width: 100, height: 100, borderRadius: 50,
-              backgroundColor: C.bgElevated,
-              borderWidth: 2, borderColor: C.amber,
-              alignItems: 'center', justifyContent: 'center',
-            }}>
+            <View style={{ width: 100, height: 100, borderRadius: 50, backgroundColor: C.bgElevated, borderWidth: 2, borderColor: C.amber, alignItems: 'center', justifyContent: 'center' }}>
               <ActivityIndicator color={C.amber} size="large" />
             </View>
           ) : user?.avatar ? (
-            <Image source={{ uri: user.avatar }} style={{
-              width: 100, height: 100, borderRadius: 50,
-              borderWidth: 2, borderColor: C.amber,
-            }} />
+            <Image source={{ uri: user.avatar }} style={{ width: 100, height: 100, borderRadius: 50, borderWidth: 2, borderColor: C.amber }} />
           ) : (
-            <View style={{
-              width: 100, height: 100, borderRadius: 50,
-              backgroundColor: C.amberGlow,
-              borderWidth: 2, borderColor: C.amber,
-              alignItems: 'center', justifyContent: 'center',
-            }}>
-              <Text style={{ color: C.amber, fontSize: 36, fontWeight: '800' }}>{initials}</Text>
+            <View style={{ width: 100, height: 100, borderRadius: 50, backgroundColor: C.amberGlow, borderWidth: 2, borderColor: C.amber, alignItems: 'center', justifyContent: 'center' }}>
+              <Text style={{ color: C.amber, fontSize: 36, fontWeight: '800', fontFamily: F.base }}>{initials}</Text>
             </View>
           )}
-          {/* Camera badge */}
           <View style={{
             position: 'absolute', bottom: 0, right: 0,
             backgroundColor: C.amber, borderRadius: 14,
@@ -135,9 +120,8 @@ export function ProfileScreen({ onLogout }: Props) {
           </View>
         </TouchableOpacity>
 
-        <Text style={{ color: C.textPrimary, fontSize: 20, fontWeight: '800' }}>{user?.name}</Text>
+        <Text style={{ color: C.textPrimary, fontSize: 20, fontWeight: '800', fontFamily: F.base }}>{user?.name}</Text>
 
-        {/* Role badge */}
         <View style={{
           flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 8,
           backgroundColor: isAdmin ? C.amber + '25' : C.bgElevated,
@@ -145,37 +129,35 @@ export function ProfileScreen({ onLogout }: Props) {
           borderWidth: 1, borderColor: isAdmin ? C.amber + '55' : C.border,
         }}>
           <Ionicons name={isAdmin ? 'shield-checkmark' : 'person'} size={12} color={isAdmin ? C.amber : C.textSecondary} />
-          <Text style={{ color: isAdmin ? C.amber : C.textSecondary, fontSize: 12, fontWeight: '700' }}>
+          <Text style={{ color: isAdmin ? C.amber : C.textSecondary, fontSize: 12, fontWeight: '700', fontFamily: F.base }}>
             {isAdmin ? 'Administrador' : 'Cliente'}
           </Text>
         </View>
 
-        <Text style={{ color: C.textSecondary, fontSize: 13, marginTop: 6 }}>{user?.email}</Text>
+        <Text style={{ color: C.textSecondary, fontSize: 13, marginTop: 6, fontFamily: F.base }}>{user?.email}</Text>
       </View>
 
       <View style={{ padding: S.md, marginTop: -20 }}>
 
         {/* ── Form Card ── */}
         <View style={{
-          backgroundColor: C.bgSurface,
-          borderRadius: R.xl, padding: S.lg, marginBottom: S.md,
+          backgroundColor: C.bgSurface, borderRadius: R.xl, padding: S.lg, marginBottom: S.md,
           borderWidth: 1, borderColor: C.border,
-          shadowColor: '#000', shadowOffset: { width: 0, height: 6 },
-          shadowOpacity: 0.2, shadowRadius: 16, elevation: 6,
+          shadowColor: '#000', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.2, shadowRadius: 16, elevation: 6,
         }}>
-          <Text style={{ fontSize: 13, fontWeight: '800', color: C.textPrimary, marginBottom: 18, letterSpacing: 0.3 }}>
+          <Text style={{ fontSize: 13, fontWeight: '800', color: C.textPrimary, marginBottom: 18, letterSpacing: 0.3, fontFamily: F.base }}>
             Informações Pessoais
           </Text>
 
           {/* Nome */}
           <View style={{ marginBottom: S.md }}>
-            <Text style={{ fontSize: 11, fontWeight: '700', color: C.textSecondary, marginBottom: 8, letterSpacing: 1.2, textTransform: 'uppercase' }}>
+            <Text style={{ fontSize: 11, fontWeight: '700', color: C.textSecondary, marginBottom: 8, letterSpacing: 1.2, textTransform: 'uppercase', fontFamily: F.base }}>
               Nome Completo
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: C.bgElevated, borderWidth: 1.5, borderColor: inputBorder('name'), borderRadius: R.md, paddingHorizontal: 14 }}>
               <Ionicons name="person-outline" size={18} color={inputIcon('name')} />
               <TextInput
-                style={{ flex: 1, paddingVertical: 13, paddingHorizontal: 10, fontSize: 15, color: C.textPrimary }}
+                style={{ flex: 1, paddingVertical: 13, paddingHorizontal: 10, fontSize: 15, color: C.textPrimary, fontFamily: F.base }}
                 value={name}
                 onChangeText={(v) => { setName(v); setEdited(true); }}
                 placeholder="Seu nome"
@@ -188,13 +170,13 @@ export function ProfileScreen({ onLogout }: Props) {
 
           {/* Email readonly */}
           <View style={{ marginBottom: S.md }}>
-            <Text style={{ fontSize: 11, fontWeight: '700', color: C.textSecondary, marginBottom: 8, letterSpacing: 1.2, textTransform: 'uppercase' }}>
+            <Text style={{ fontSize: 11, fontWeight: '700', color: C.textSecondary, marginBottom: 8, letterSpacing: 1.2, textTransform: 'uppercase', fontFamily: F.base }}>
               E-mail
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: C.bgDeep, borderWidth: 1.5, borderColor: C.borderSoft, borderRadius: R.md, paddingHorizontal: 14 }}>
               <Ionicons name="mail-outline" size={18} color={C.textDisabled} />
               <TextInput
-                style={{ flex: 1, paddingVertical: 13, paddingHorizontal: 10, fontSize: 15, color: C.textDisabled }}
+                style={{ flex: 1, paddingVertical: 13, paddingHorizontal: 10, fontSize: 15, color: C.textDisabled, fontFamily: F.base }}
                 value={user?.email}
                 editable={false}
               />
@@ -204,13 +186,13 @@ export function ProfileScreen({ onLogout }: Props) {
 
           {/* Telefone */}
           <View>
-            <Text style={{ fontSize: 11, fontWeight: '700', color: C.textSecondary, marginBottom: 8, letterSpacing: 1.2, textTransform: 'uppercase' }}>
+            <Text style={{ fontSize: 11, fontWeight: '700', color: C.textSecondary, marginBottom: 8, letterSpacing: 1.2, textTransform: 'uppercase', fontFamily: F.base }}>
               Telefone
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: C.bgElevated, borderWidth: 1.5, borderColor: inputBorder('phone'), borderRadius: R.md, paddingHorizontal: 14 }}>
               <Ionicons name="call-outline" size={18} color={inputIcon('phone')} />
               <TextInput
-                style={{ flex: 1, paddingVertical: 13, paddingHorizontal: 10, fontSize: 15, color: C.textPrimary }}
+                style={{ flex: 1, paddingVertical: 13, paddingHorizontal: 10, fontSize: 15, color: C.textPrimary, fontFamily: F.base }}
                 value={phone}
                 onChangeText={(v) => { setPhone(v); setEdited(true); }}
                 placeholder="(11) 99999-9999"
@@ -224,12 +206,7 @@ export function ProfileScreen({ onLogout }: Props) {
         </View>
 
         {/* Save button */}
-        <TouchableOpacity
-          onPress={saveProfile}
-          disabled={saving || !edited}
-          activeOpacity={0.85}
-          style={{ marginBottom: S.md }}
-        >
+        <TouchableOpacity onPress={saveProfile} disabled={saving || !edited} activeOpacity={0.85} style={{ marginBottom: S.md }}>
           <LinearGradient
             colors={edited ? [C.amberDeep, C.amber] : [C.bgElevated, C.bgElevated]}
             start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
@@ -240,36 +217,28 @@ export function ProfileScreen({ onLogout }: Props) {
             ) : (
               <Ionicons name="checkmark-circle-outline" size={20} color={edited ? '#fff' : C.textDisabled} />
             )}
-            <Text style={{ color: edited ? '#fff' : C.textDisabled, fontSize: 15, fontWeight: '700' }}>
+            <Text style={{ color: edited ? '#fff' : C.textDisabled, fontSize: 15, fontWeight: '700', fontFamily: F.base }}>
               {saving ? 'Salvando...' : 'Salvar Alterações'}
             </Text>
           </LinearGradient>
         </TouchableOpacity>
 
         {/* Account info */}
-        <View style={{
-          backgroundColor: C.bgSurface,
-          borderRadius: R.lg, padding: S.md, marginBottom: S.md,
-          borderWidth: 1, borderColor: C.border,
-        }}>
-          <Text style={{ fontSize: 13, fontWeight: '800', color: C.textPrimary, marginBottom: 14, letterSpacing: 0.3 }}>
+        <View style={{ backgroundColor: C.bgSurface, borderRadius: R.lg, padding: S.md, marginBottom: S.md, borderWidth: 1, borderColor: C.border }}>
+          <Text style={{ fontSize: 13, fontWeight: '800', color: C.textPrimary, marginBottom: 14, letterSpacing: 0.3, fontFamily: F.base }}>
             Conta
           </Text>
           {[
-            { icon: 'shield-outline', label: 'Tipo de conta', value: isAdmin ? 'Administrador' : 'Cliente', color: isAdmin ? C.amber : C.textSecondary },
-            { icon: 'calendar-outline', label: 'Membro desde', value: 'Março 2026', color: C.textSecondary },
+            { icon: 'shield-outline',   label: 'Tipo de conta', value: isAdmin ? 'Administrador' : 'Cliente', color: isAdmin ? C.amber : C.textSecondary },
+            { icon: 'calendar-outline', label: 'Membro desde',  value: 'Março 2026',                          color: C.textSecondary },
           ].map((item) => (
             <View key={item.label} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-              <View style={{
-                width: 38, height: 38, borderRadius: R.sm,
-                backgroundColor: C.bgElevated, borderWidth: 1, borderColor: C.border,
-                alignItems: 'center', justifyContent: 'center',
-              }}>
+              <View style={{ width: 38, height: 38, borderRadius: R.sm, backgroundColor: C.bgElevated, borderWidth: 1, borderColor: C.border, alignItems: 'center', justifyContent: 'center' }}>
                 <Ionicons name={item.icon as any} size={18} color={item.color} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ fontSize: 11, color: C.textDisabled, fontWeight: '600', letterSpacing: 0.5 }}>{item.label}</Text>
-                <Text style={{ fontSize: 14, color: C.textPrimary, fontWeight: '600', marginTop: 1 }}>{item.value}</Text>
+                <Text style={{ fontSize: 11, color: C.textDisabled, fontWeight: '600', letterSpacing: 0.5, fontFamily: F.base }}>{item.label}</Text>
+                <Text style={{ fontSize: 14, color: C.textPrimary, fontWeight: '600', marginTop: 1, fontFamily: F.base }}>{item.value}</Text>
               </View>
             </View>
           ))}
@@ -280,18 +249,16 @@ export function ProfileScreen({ onLogout }: Props) {
           onPress={handleLogout}
           activeOpacity={0.8}
           style={{
-            backgroundColor: C.bgSurface,
-            borderRadius: R.md, paddingVertical: 15,
+            backgroundColor: C.bgSurface, borderRadius: R.md, paddingVertical: 15,
             flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10,
-            borderWidth: 1.5, borderColor: C.error + '40',
-            marginBottom: 8,
+            borderWidth: 1.5, borderColor: C.error + '40', marginBottom: 8,
           }}
         >
           <Ionicons name="log-out-outline" size={20} color={C.error} />
-          <Text style={{ color: C.error, fontSize: 15, fontWeight: '700' }}>Sair da Conta</Text>
+          <Text style={{ color: C.error, fontSize: 15, fontWeight: '700', fontFamily: F.base }}>Sair da Conta</Text>
         </TouchableOpacity>
 
-        <Text style={{ textAlign: 'center', color: C.textDisabled, fontSize: 11, marginTop: 16, marginBottom: 12 }}>
+        <Text style={{ textAlign: 'center', color: C.textDisabled, fontSize: 11, marginTop: 16, marginBottom: 12, fontFamily: F.base }}>
           A. Coraça & T. Carvalho Pinturas e Reformas v1.0.0
         </Text>
       </View>

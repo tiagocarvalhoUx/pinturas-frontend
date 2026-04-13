@@ -9,7 +9,7 @@ import { useAppStore } from '../store/appStore';
 import api from '../services/api';
 import { io, Socket } from 'socket.io-client';
 import { ChatMessage } from '../store/appStore';
-import { C, R, S } from '../theme';
+import { C, R, S, F } from '../theme';
 
 const SOCKET_URL = process.env.EXPO_PUBLIC_SOCKET_URL || 'http://localhost:3000';
 
@@ -75,30 +75,26 @@ export function ChatScreen({ onBack }: Props) {
   };
 
   const renderMessage = ({ item, index }: { item: ChatMessage; index: number }) => {
-    const isMe      = item.sender._id === user?._id;
-    const prevItem  = index > 0 ? messages[index - 1] : null;
+    const isMe       = item.sender._id === user?._id;
+    const prevItem   = index > 0 ? messages[index - 1] : null;
     const showAvatar = !isMe && (!prevItem || prevItem.sender._id !== item.sender._id);
     const time       = new Date(item.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
     return (
       <View style={{ marginBottom: 4, paddingHorizontal: S.md }}>
         <View style={{ flexDirection: 'row', justifyContent: isMe ? 'flex-end' : 'flex-start', alignItems: 'flex-end', gap: 8 }}>
-          {/* Other side avatar */}
           {!isMe && (
             <View style={{ width: 30, height: 30, marginBottom: 2, opacity: showAvatar ? 1 : 0 }}>
               <View style={{ width: 30, height: 30, borderRadius: 15, backgroundColor: C.amber + '30', borderWidth: 1.5, borderColor: C.amber, alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ color: C.amber, fontSize: 12, fontWeight: '800' }}>A</Text>
+                <Text style={{ color: C.amber, fontSize: 12, fontWeight: '800', fontFamily: F.base }}>A</Text>
               </View>
             </View>
           )}
 
           <View style={{ maxWidth: '75%' }}>
-            {/* Image message */}
             {item.type === 'image' && item.image?.url && (
               <Image source={{ uri: item.image.url }} style={{ width: 200, height: 150, borderRadius: R.md, marginBottom: 2 }} resizeMode="cover" />
             )}
-
-            {/* Text bubble */}
             {item.content ? (
               <View style={{
                 paddingHorizontal: 14, paddingVertical: 10, borderRadius: 20,
@@ -108,10 +104,10 @@ export function ChatScreen({ onBack }: Props) {
                 borderWidth: isMe ? 0 : 1,
                 borderColor: isMe ? 'transparent' : C.border,
               }}>
-                <Text style={{ color: isMe ? '#fff' : C.textPrimary, fontSize: 15, lineHeight: 21 }}>
+                <Text style={{ color: isMe ? '#fff' : C.textPrimary, fontSize: 15, lineHeight: 21, fontFamily: F.base }}>
                   {item.content}
                 </Text>
-                <Text style={{ color: isMe ? 'rgba(255,255,255,0.6)' : C.textDisabled, fontSize: 10, marginTop: 4, textAlign: isMe ? 'right' : 'left' }}>
+                <Text style={{ color: isMe ? 'rgba(255,255,255,0.6)' : C.textDisabled, fontSize: 10, marginTop: 4, textAlign: isMe ? 'right' : 'left', fontFamily: F.base }}>
                   {time} {isMe && '✓'}
                 </Text>
               </View>
@@ -139,20 +135,16 @@ export function ChatScreen({ onBack }: Props) {
               <Ionicons name="arrow-back" size={20} color={C.textPrimary} />
             </TouchableOpacity>
           )}
-
-          {/* Company avatar */}
           <View style={{ borderRadius: 24, overflow: 'hidden', width: 44, height: 44, borderWidth: 2, borderColor: C.amber }}>
             <Image source={require('../../assets/logo-pintura.jpeg')} style={{ width: 44, height: 44 }} resizeMode="cover" />
           </View>
-
           <View style={{ flex: 1 }}>
-            <Text style={{ color: C.textPrimary, fontSize: 16, fontWeight: '800' }}>A. Coraça & T. Carvalho</Text>
+            <Text style={{ color: C.textPrimary, fontSize: 16, fontWeight: '800', fontFamily: F.base }}>A. Coraça & T. Carvalho</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 2 }}>
               <View style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: C.success }} />
-              <Text style={{ color: C.textSecondary, fontSize: 12 }}>Online agora</Text>
+              <Text style={{ color: C.textSecondary, fontSize: 12, fontFamily: F.base }}>Online agora</Text>
             </View>
           </View>
-
           <TouchableOpacity style={{ backgroundColor: C.bgElevated, borderRadius: R.sm, padding: 9, borderWidth: 1, borderColor: C.border }}>
             <Ionicons name="information-circle-outline" size={22} color={C.textSecondary} />
           </TouchableOpacity>
@@ -163,7 +155,7 @@ export function ChatScreen({ onBack }: Props) {
       {loading ? (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <ActivityIndicator size="large" color={C.amber} />
-          <Text style={{ color: C.textSecondary, marginTop: 12, fontSize: 14 }}>Carregando conversa...</Text>
+          <Text style={{ color: C.textSecondary, marginTop: 12, fontSize: 14, fontFamily: F.base }}>Carregando conversa...</Text>
         </View>
       ) : (
         <FlatList
@@ -183,8 +175,8 @@ export function ChatScreen({ onBack }: Props) {
               }}>
                 <Ionicons name="chatbubbles-outline" size={36} color={C.amber} />
               </View>
-              <Text style={{ fontSize: 17, fontWeight: '700', color: C.textPrimary, marginBottom: 6 }}>Inicie uma conversa</Text>
-              <Text style={{ fontSize: 14, color: C.textSecondary, textAlign: 'center', paddingHorizontal: 40, lineHeight: 20 }}>
+              <Text style={{ fontSize: 17, fontWeight: '700', color: C.textPrimary, marginBottom: 6, fontFamily: F.base }}>Inicie uma conversa</Text>
+              <Text style={{ fontSize: 14, color: C.textSecondary, textAlign: 'center', paddingHorizontal: 40, lineHeight: 20, fontFamily: F.base }}>
                 Tire dúvidas, solicite informações ou acompanhe seu serviço.
               </Text>
             </View>
@@ -208,7 +200,7 @@ export function ChatScreen({ onBack }: Props) {
         }}>
           <TextInput
             ref={inputRef}
-            style={{ flex: 1, fontSize: 15, color: C.textPrimary, maxHeight: 100, paddingVertical: 6, lineHeight: 20 }}
+            style={{ flex: 1, fontSize: 15, color: C.textPrimary, maxHeight: 100, paddingVertical: 6, lineHeight: 20, fontFamily: F.base }}
             placeholder="Digite uma mensagem..."
             placeholderTextColor={C.textDisabled}
             value={text}

@@ -7,7 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../store/appStore';
 import { authService } from '../services/auth';
-import { C, R, S } from '../theme';
+import { C, R, S, F } from '../theme';
 
 interface Props {
   onRegister: () => void;
@@ -27,11 +27,11 @@ interface Field {
 }
 
 const FIELDS: Field[] = [
-  { label: 'Nome completo', key: 'name', placeholder: 'João Silva', icon: 'person-outline' },
-  { label: 'E-mail', key: 'email', placeholder: 'joao@email.com', icon: 'mail-outline', keyboardType: 'email-address', autoCapitalize: 'none' },
-  { label: 'Telefone', key: 'phone', placeholder: '(11) 99999-9999', icon: 'call-outline', keyboardType: 'phone-pad' },
-  { label: 'Senha', key: 'password', placeholder: '••••••••', icon: 'lock-closed-outline', secure: true },
-  { label: 'Confirmar senha', key: 'confirmPassword', placeholder: '••••••••', icon: 'lock-closed-outline', secure: true },
+  { label: 'Nome completo',   key: 'name',            placeholder: 'João Silva',        icon: 'person-outline' },
+  { label: 'E-mail',          key: 'email',           placeholder: 'joao@email.com',    icon: 'mail-outline',        keyboardType: 'email-address', autoCapitalize: 'none' },
+  { label: 'Telefone',        key: 'phone',           placeholder: '(11) 99999-9999',   icon: 'call-outline',        keyboardType: 'phone-pad' },
+  { label: 'Senha',           key: 'password',        placeholder: '••••••••',          icon: 'lock-closed-outline', secure: true },
+  { label: 'Confirmar senha', key: 'confirmPassword', placeholder: '••••••••',          icon: 'lock-closed-outline', secure: true },
 ];
 
 export function RegisterScreen({ onRegister, onGoLogin }: Props) {
@@ -74,7 +74,6 @@ export function RegisterScreen({ onRegister, onGoLogin }: Props) {
             position: 'absolute', top: 30, width: 180, height: 180,
             borderRadius: 90, backgroundColor: C.amber, opacity: 0.05,
           }} />
-
           <View style={{
             width: 72, height: 72, borderRadius: 22,
             backgroundColor: C.amberGlow, borderWidth: 1.5, borderColor: C.amber + '55',
@@ -83,10 +82,10 @@ export function RegisterScreen({ onRegister, onGoLogin }: Props) {
             <Ionicons name="person-add" size={32} color={C.amber} />
           </View>
           <View style={{ width: 28, height: 2, backgroundColor: C.amber, borderRadius: 1, marginBottom: 12 }} />
-          <Text style={{ color: C.textPrimary, fontSize: 22, fontWeight: '800', letterSpacing: 0.3 }}>
+          <Text style={{ color: C.textPrimary, fontSize: 22, fontWeight: '800', letterSpacing: 0.3, fontFamily: F.base }}>
             Criar Conta
           </Text>
-          <Text style={{ color: C.textSecondary, fontSize: 14, marginTop: 5 }}>Rápido e gratuito</Text>
+          <Text style={{ color: C.textSecondary, fontSize: 14, marginTop: 5, fontFamily: F.base }}>Rápido e gratuito</Text>
         </View>
 
         {/* Form Card */}
@@ -99,13 +98,13 @@ export function RegisterScreen({ onRegister, onGoLogin }: Props) {
           shadowOpacity: 0.3, shadowRadius: 28, elevation: 12,
         }}>
           {FIELDS.map((field) => {
-            const isSecure = field.secure;
-            const visible  = showPass[field.key];
+            const isSecure  = field.secure;
+            const visible   = showPass[field.key];
             const isFocused = focusedField === field.key;
 
             return (
               <View key={field.key} style={{ marginBottom: S.md }}>
-                <Text style={{ fontSize: 11, fontWeight: '700', color: C.textSecondary, marginBottom: 8, letterSpacing: 1.2, textTransform: 'uppercase' }}>
+                <Text style={{ fontSize: 11, fontWeight: '700', color: C.textSecondary, marginBottom: 8, letterSpacing: 1.2, textTransform: 'uppercase', fontFamily: F.base }}>
                   {field.label}
                 </Text>
                 <View style={{
@@ -116,7 +115,7 @@ export function RegisterScreen({ onRegister, onGoLogin }: Props) {
                 }}>
                   <Ionicons name={field.icon as any} size={18} color={isFocused ? C.amber : C.textDisabled} />
                   <TextInput
-                    style={{ flex: 1, paddingVertical: 13, paddingHorizontal: 10, fontSize: 15, color: C.textPrimary }}
+                    style={{ flex: 1, paddingVertical: 13, paddingHorizontal: 10, fontSize: 15, color: C.textPrimary, fontFamily: F.base }}
                     placeholder={field.placeholder}
                     placeholderTextColor={C.textDisabled}
                     value={form[field.key]}
@@ -146,7 +145,7 @@ export function RegisterScreen({ onRegister, onGoLogin }: Props) {
               style={{ borderRadius: R.md, paddingVertical: 16, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 8 }}
             >
               {!loading && <Ionicons name="checkmark-circle-outline" size={20} color="#fff" />}
-              <Text style={{ color: loading ? C.textDisabled : '#fff', fontSize: 16, fontWeight: '800' }}>
+              <Text style={{ color: loading ? C.textDisabled : '#fff', fontSize: 16, fontWeight: '800', fontFamily: F.base }}>
                 {loading ? 'Criando conta...' : 'Criar Conta'}
               </Text>
             </LinearGradient>
@@ -154,15 +153,15 @@ export function RegisterScreen({ onRegister, onGoLogin }: Props) {
 
           {/* Login link */}
           <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
-            <Text style={{ color: C.textSecondary, fontSize: 14 }}>Já tem conta? </Text>
+            <Text style={{ color: C.textSecondary, fontSize: 14, fontFamily: F.base }}>Já tem conta? </Text>
             <TouchableOpacity onPress={onGoLogin}>
-              <Text style={{ color: C.amber, fontWeight: '700', fontSize: 14 }}>Entrar</Text>
+              <Text style={{ color: C.amber, fontWeight: '700', fontSize: 14, fontFamily: F.base }}>Entrar</Text>
             </TouchableOpacity>
           </View>
         </View>
 
         <View style={{ alignItems: 'center', paddingVertical: 36 }}>
-          <Text style={{ color: C.textDisabled, fontSize: 11 }}>A. Coraça & T. Carvalho Pinturas e Reformas</Text>
+          <Text style={{ color: C.textDisabled, fontSize: 11, fontFamily: F.base }}>A. Coraça & T. Carvalho Pinturas e Reformas</Text>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
