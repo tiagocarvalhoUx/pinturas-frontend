@@ -10,6 +10,7 @@ import api from '../services/api';
 import { io, Socket } from 'socket.io-client';
 import { ChatMessage } from '../store/appStore';
 import { C, R, S, F } from '../theme';
+import { LogoHero } from '../components/LogoHero';
 
 const SOCKET_URL = process.env.EXPO_PUBLIC_SOCKET_URL || 'http://localhost:3000';
 
@@ -51,9 +52,10 @@ function AdminChatList({ onSelectChat, onBack }: { onSelectChat: (chat: ChatSumm
   return (
     <View style={{ flex: 1, backgroundColor: C.bgBase }}>
       {/* Header */}
-      <View style={{ backgroundColor: C.bgDeep, paddingTop: 52, paddingHorizontal: S.md, paddingBottom: 20, borderBottomWidth: 1, borderBottomColor: C.border }}>
+      <View style={{ backgroundColor: C.bgDeep, paddingTop: 52, paddingHorizontal: S.md, paddingBottom: 20, borderBottomWidth: 1, borderBottomColor: C.amber + '40' }}>
         <View style={{ position: 'absolute', top: 0, right: -10, width: 180, height: 180, borderRadius: 90, backgroundColor: C.amber, opacity: 0.05 }} />
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <LogoHero size="sm" />
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 10 }}>
           {!!onBack && (
             <TouchableOpacity
               onPress={onBack}

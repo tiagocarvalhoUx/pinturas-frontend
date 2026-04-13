@@ -6,6 +6,7 @@ import { useAppStore } from '../store/appStore';
 import { budgetService } from '../services/budgets';
 import { BudgetCard } from '../components/BudgetCard';
 import { LoadingSpinner } from '../components/LoadingSpinner';
+import { LogoHero } from '../components/LogoHero';
 import { C, R, S, F } from '../theme';
 
 interface Props {
@@ -58,7 +59,10 @@ export function BudgetsListScreen({ onBudgetDetail, onNewBudget }: Props) {
       <View style={{ backgroundColor: C.bgDeep, paddingTop: 52, paddingHorizontal: S.md, paddingBottom: 24 }}>
         <View style={{ position: 'absolute', top: 0, right: -10, width: 180, height: 180, borderRadius: 90, backgroundColor: C.amber, opacity: 0.05 }} />
 
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+        {/* Logo centered */}
+        <LogoHero size="md" />
+
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, marginTop: 12 }}>
           <View>
             <Text style={{ color: C.textSecondary, fontSize: 13, fontFamily: F.base }}>
               {isAdmin ? 'Administrador' : 'Minha conta'}

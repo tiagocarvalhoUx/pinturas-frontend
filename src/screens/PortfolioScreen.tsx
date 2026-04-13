@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../store/appStore';
 import { portfolioService } from '../services/portfolio';
 import { LoadingSpinner } from '../components/LoadingSpinner';
+import { LogoHero } from '../components/LogoHero';
 import { SERVICE_LABELS } from '../utils/helpers';
 import { PortfolioItem } from '../store/appStore';
 import { C, R, S, F } from '../theme';
@@ -209,7 +210,8 @@ export function PortfolioScreen({ onDetail }: Props) {
         {/* ── Header ── */}
         <View style={{ backgroundColor: C.bgDeep, paddingTop: 52, paddingHorizontal: S.md, paddingBottom: 28 }}>
           <View style={{ position: 'absolute', top: 0, right: -10, width: 220, height: 220, borderRadius: 110, backgroundColor: C.amber, opacity: 0.05 }} />
-          <Text style={{ color: C.textSecondary, fontSize: 13, marginBottom: 2, fontFamily: F.base }}>Nossos Trabalhos</Text>
+          <LogoHero size="md" />
+          <Text style={{ color: C.textSecondary, fontSize: 13, marginBottom: 2, marginTop: 12, fontFamily: F.base }}>Nossos Trabalhos</Text>
           <Text style={{ color: C.textPrimary, fontSize: 26, fontWeight: '900', marginBottom: 4, letterSpacing: -0.5, fontFamily: F.base }}>Portfólio</Text>
           <View style={{ width: 32, height: 2, backgroundColor: C.amber, borderRadius: 1, marginBottom: 18, opacity: 0.9 }} />
 

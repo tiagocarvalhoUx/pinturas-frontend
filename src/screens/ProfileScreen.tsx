@@ -7,6 +7,7 @@ import { useAppStore } from '../store/appStore';
 import { authService } from '../services/auth';
 import api from '../services/api';
 import { C, R, S, F } from '../theme';
+import { LogoHero } from '../components/LogoHero';
 
 interface Props {
   onLogout: () => void;
@@ -96,6 +97,7 @@ export function ProfileScreen({ onLogout }: Props) {
           position: 'absolute', top: 20, width: 240, height: 240,
           borderRadius: 120, backgroundColor: C.amber, opacity: 0.04,
         }} />
+        <LogoHero size="sm" />
 
         <TouchableOpacity onPress={pickAvatar} activeOpacity={0.85} style={{ position: 'relative', marginBottom: 16 }}>
           {uploadingAvatar ? (

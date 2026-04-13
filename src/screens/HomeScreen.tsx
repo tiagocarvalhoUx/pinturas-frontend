@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../store/appStore';
 import { PortfolioCard } from '../components/PortfolioCard';
 import { LoadingSpinner } from '../components/LoadingSpinner';
+import { LogoHero } from '../components/LogoHero';
 import api from '../services/api';
 import { portfolioService } from '../services/portfolio';
 import { formatCurrency } from '../utils/helpers';
@@ -78,8 +79,11 @@ export function HomeScreen({ onBudget, onPortfolio, onServiceDetail, onPortfolio
           borderRadius: 100, backgroundColor: C.amber, opacity: 0.05,
         }} />
 
+        {/* Logo centered */}
+        <LogoHero size="md" />
+
         {/* Greeting row */}
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, marginTop: 12 }}>
           <View>
             <Text style={{ color: C.textSecondary, fontSize: 13, letterSpacing: 0.3, fontFamily: F.base }}>Olá,</Text>
             <Text style={{ color: C.textPrimary, fontSize: 21, fontWeight: '800', marginTop: 2, fontFamily: F.base }}>

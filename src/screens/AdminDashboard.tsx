@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../store/appStore';
 import { BudgetCard } from '../components/BudgetCard';
 import { LoadingSpinner } from '../components/LoadingSpinner';
+import { LogoHero } from '../components/LogoHero';
 import api from '../services/api';
 import { formatCurrency } from '../utils/helpers';
 import { C, R, S, F, SH } from '../theme';
@@ -62,7 +63,10 @@ export function AdminDashboard({ onBudgetDetail, onAllBudgets }: Props) {
       <View style={{ backgroundColor: C.bgDeep, paddingTop: 52, paddingHorizontal: S.md, paddingBottom: 32 }}>
         <View style={{ position: 'absolute', top: 0, right: -10, width: 220, height: 220, borderRadius: 110, backgroundColor: C.amber, opacity: 0.05 }} />
 
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 22 }}>
+        {/* Logo centered */}
+        <LogoHero size="md" />
+
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 22, marginTop: 12 }}>
           <View>
             <Text style={{ color: C.textSecondary, fontSize: 13, fontFamily: F.base }}>{greeting},</Text>
             <Text style={{ color: C.textPrimary, fontSize: 22, fontWeight: '800', marginTop: 2, fontFamily: F.base }}>{firstName}! 👋</Text>
