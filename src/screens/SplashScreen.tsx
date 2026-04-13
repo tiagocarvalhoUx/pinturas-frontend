@@ -95,7 +95,7 @@ export function SplashScreen({ onFinish }: Props) {
           shadowOpacity: 0.4, shadowRadius: 20, elevation: 12,
         }}>
           <Image
-            source={require('../../assets/logo-pintura.jpeg')}
+            source={require('../../assets/logo-pintura.png')}
             style={{ width: '100%', height: '100%' }}
             resizeMode="cover"
           />

@@ -78,7 +78,7 @@ export function LoginScreen({ onLogin, onGoRegister }: Props) {
             shadowOpacity: 0.3, shadowRadius: 14, elevation: 10,
           }}>
             <Image
-              source={require('../../assets/logo-pintura.jpeg')}
+              source={require('../../assets/logo-pintura.png')}
               style={{ width: '100%', height: '100%' }}
               resizeMode="cover"
             />
