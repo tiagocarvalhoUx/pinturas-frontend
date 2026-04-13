@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, ScrollView,
-  Image, Alert, KeyboardAvoidingView, Platform,
+  Image, KeyboardAvoidingView, Platform, Animated,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -92,11 +92,26 @@ export function BudgetScreen({ onSuccess, onBack, initialServiceType }: Props) {
   const [state, setState]             = useState('');
   const [photos, setPhotos]           = useState<string[]>([]);
   const [loading, setLoading]         = useState(false);
+  const [error, setError]             = useState('');
+  const [submitted, setSubmitted]     = useState(false);
+  const successScale   = useState(new Animated.Value(0.7))[0];
+  const successOpacity = useState(new Animated.Value(0))[0];
+
+  useEffect(() => {
+    if (submitted) {
+      Animated.parallel([
+        Animated.spring(successScale,   { toValue: 1, tension: 80, friction: 8, useNativeDriver: true }),
+        Animated.timing(successOpacity, { toValue: 1, duration: 300, useNativeDriver: true }),
+      ]).start();
+      const timer = setTimeout(() => onSuccess(), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [submitted]);
 
   const estimate = area ? Number(area) * (PRICE_MAP[serviceType] || 30) : 0;
 
   const pickImage = async () => {
-    if (photos.length >= 5) return Alert.alert('Limite', 'Máximo de 5 fotos.');
+    if (photos.length >= 5) { setError('Máximo de 5 fotos permitidas.'); return; }
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images, quality: 0.7, allowsMultipleSelection: true,
     });
@@ -105,16 +120,18 @@ export function BudgetScreen({ onSuccess, onBack, initialServiceType }: Props) {
 
   const takePhoto = async () => {
     const perm = await ImagePicker.requestCameraPermissionsAsync();
-    if (!perm.granted) return Alert.alert('Permissão', 'Permita acesso à câmera nas configurações.');
+    if (!perm.granted) { setError('Permita acesso à câmera nas configurações.'); return; }
     const result = await ImagePicker.launchCameraAsync({ quality: 0.7 });
     if (!result.canceled) setPhotos((prev) => [...prev, result.assets[0].uri].slice(0, 5));
   };
 
   const handleSubmit = async () => {
-    if (!description.trim()) return Alert.alert('Atenção', 'Preencha a descrição do ambiente.');
-    if (!area)               return Alert.alert('Atenção', 'Informe a área em m².');
-    if (!phone.trim())       return Alert.alert('Atenção', 'Informe seu celular para contato.');
-    if (!street.trim() || !city.trim() || !state.trim()) return Alert.alert('Atenção', 'Preencha o endereço completo.');
+    if (loading) return;
+    setError('');
+    if (!description.trim()) { setError('Preencha a descrição do ambiente.'); return; }
+    if (!area)               { setError('Informe a área em m².'); return; }
+    if (!phone.trim())       { setError('Informe seu celular para contato.'); return; }
+    if (!street.trim() || !city.trim() || !state.trim()) { setError('Preencha o endereço completo.'); return; }
     try {
       setLoading(true);
       const fd = new FormData();
@@ -139,15 +156,70 @@ export function BudgetScreen({ onSuccess, onBack, initialServiceType }: Props) {
       }
       const budget = await budgetService.create(fd);
       addBudget(budget);
-      onSuccess();
+      setSubmitted(true);
     } catch (err: any) {
       const msg = err.response?.data?.message ||
         (err.code === 'ECONNABORTED' ? 'Tempo esgotado. Tente novamente.' : err.message || 'Falha ao enviar orçamento.');
-      Alert.alert('Erro ao enviar', msg);
+      setError(msg);
     } finally {
       setLoading(false);
     }
   };
+
+  // ── Tela de sucesso ──────────────────────────────────────────────────────
+  if (submitted) {
+    return (
+      <View style={{ flex: 1, backgroundColor: C.bgBase, alignItems: 'center', justifyContent: 'center', padding: 32 }}>
+        <Animated.View style={{ alignItems: 'center', transform: [{ scale: successScale }], opacity: successOpacity }}>
+          {/* Anel de glow */}
+          <View style={{
+            width: 140, height: 140, borderRadius: 70,
+            backgroundColor: C.success + '15',
+            borderWidth: 1.5, borderColor: C.success + '40',
+            alignItems: 'center', justifyContent: 'center', marginBottom: 28,
+          }}>
+            <View style={{
+              width: 100, height: 100, borderRadius: 50,
+              backgroundColor: C.success + '25',
+              alignItems: 'center', justifyContent: 'center',
+            }}>
+              <Ionicons name="checkmark-circle" size={64} color={C.success} />
+            </View>
+          </View>
+
+          <Text style={{ fontSize: 26, fontWeight: '900', color: C.textPrimary, textAlign: 'center', marginBottom: 10, fontFamily: F.base }}>
+            Orçamento Enviado!
+          </Text>
+          <Text style={{ fontSize: 15, color: C.textSecondary, textAlign: 'center', lineHeight: 22, marginBottom: 8, fontFamily: F.base }}>
+            Recebemos seu pedido com sucesso.{'\n'}Nossa equipe entrará em contato em breve.
+          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 36 }}>
+            <Ionicons name="time-outline" size={14} color={C.textDisabled} />
+            <Text style={{ color: C.textDisabled, fontSize: 13, fontFamily: F.base }}>Resposta em até 24h</Text>
+          </View>
+
+          {/* Barra de progresso automático */}
+          <View style={{ width: 180, height: 3, backgroundColor: C.bgElevated, borderRadius: 2, marginBottom: 28, overflow: 'hidden' }}>
+            <Animated.View style={{
+              height: '100%', backgroundColor: C.success, borderRadius: 2,
+              width: successOpacity.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] }),
+            }} />
+          </View>
+
+          <TouchableOpacity onPress={onSuccess} activeOpacity={0.85} style={{ width: '100%' }}>
+            <LinearGradient
+              colors={[C.amberDeep, C.amber]}
+              start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+              style={{ borderRadius: R.md, paddingVertical: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 }}
+            >
+              <Ionicons name="home-outline" size={20} color="#fff" />
+              <Text style={{ color: '#fff', fontSize: 16, fontWeight: '800', fontFamily: F.base }}>Ir para Início</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </Animated.View>
+      </View>
+    );
+  }
 
   const accentColor = SERVICE_COLORS[serviceType] || C.amber;
 
@@ -329,6 +401,19 @@ export function BudgetScreen({ onSuccess, onBack, initialServiceType }: Props) {
               ))}
             </View>
           </SectionCard>
+
+          {/* ── Error banner ── */}
+          {!!error && (
+            <View style={{
+              backgroundColor: C.error + '18', borderRadius: R.md,
+              borderWidth: 1, borderColor: C.error + '50',
+              flexDirection: 'row', alignItems: 'center', gap: 10,
+              paddingHorizontal: 14, paddingVertical: 12, marginBottom: 14,
+            }}>
+              <Ionicons name="alert-circle-outline" size={18} color={C.error} />
+              <Text style={{ flex: 1, color: C.error, fontSize: 13, fontWeight: '600', fontFamily: F.base }}>{error}</Text>
+            </View>
+          )}
 
           {/* ── Submit ── */}
           <TouchableOpacity onPress={handleSubmit} disabled={loading} activeOpacity={0.85} style={{ marginBottom: 32 }}>
