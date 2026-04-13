@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity,
-  KeyboardAvoidingView, Platform, ScrollView, Alert, Image, Animated,
+  KeyboardAvoidingView, Platform, ScrollView, Image, Animated,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -18,6 +18,7 @@ export function LoginScreen({ onLogin, onGoRegister }: Props) {
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading]   = useState(false);
+  const [error, setError]       = useState('');
   const [showPass, setShowPass] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const setUser           = useAppStore((s) => s.setUser);
@@ -25,7 +26,9 @@ export function LoginScreen({ onLogin, onGoRegister }: Props) {
   const btnScale = useRef(new Animated.Value(1)).current;
 
   const handleLogin = async () => {
-    if (!email.trim() || !password) return Alert.alert('Atenção', 'Preencha e-mail e senha.');
+    if (loading) return;
+    setError('');
+    if (!email.trim() || !password) { setError('Preencha e-mail e senha.'); return; }
     try {
       setLoading(true);
       const { user } = await authService.login(email.trim().toLowerCase(), password);
@@ -33,7 +36,7 @@ export function LoginScreen({ onLogin, onGoRegister }: Props) {
       setAuthenticated(true);
       onLogin();
     } catch (err: any) {
-      Alert.alert('Erro ao entrar', err.response?.data?.message || 'E-mail ou senha incorretos');
+      setError(err.response?.data?.message || 'E-mail ou senha incorretos');
     } finally {
       setLoading(false);
     }
@@ -144,6 +147,19 @@ export function LoginScreen({ onLogin, onGoRegister }: Props) {
               </TouchableOpacity>
             </View>
           </View>
+
+          {/* Error banner */}
+          {!!error && (
+            <View style={{
+              backgroundColor: C.error + '18', borderRadius: R.md,
+              borderWidth: 1, borderColor: C.error + '50',
+              flexDirection: 'row', alignItems: 'center', gap: 10,
+              paddingHorizontal: 14, paddingVertical: 12, marginBottom: 14,
+            }}>
+              <Ionicons name="alert-circle-outline" size={18} color={C.error} />
+              <Text style={{ flex: 1, color: C.error, fontSize: 13, fontWeight: '600', fontFamily: F.base }}>{error}</Text>
+            </View>
+          )}
 
           {/* Login Button */}
           <Animated.View style={{ transform: [{ scale: btnScale }] }}>

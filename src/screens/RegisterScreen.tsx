@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity,
-  KeyboardAvoidingView, Platform, ScrollView, Alert,
+  KeyboardAvoidingView, Platform, ScrollView,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -37,25 +37,29 @@ const FIELDS: Field[] = [
 export function RegisterScreen({ onRegister, onGoLogin }: Props) {
   const [form, setForm]       = useState<Record<FieldKey, string>>({ name: '', email: '', phone: '', password: '', confirmPassword: '' });
   const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState('');
   const [showPass, setShowPass] = useState<Record<string, boolean>>({});
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const setUser          = useAppStore((s) => s.setUser);
   const setAuthenticated = useAppStore((s) => s.setAuthenticated);
 
-  const set = (key: FieldKey) => (value: string) => setForm((f) => ({ ...f, [key]: value }));
+  const set = (key: FieldKey) => (value: string) => { setError(''); setForm((f) => ({ ...f, [key]: value })); };
 
   const handleRegister = async () => {
-    if (!form.name || !form.email || !form.password) return Alert.alert('Atenção', 'Preencha todos os campos obrigatórios.');
-    if (form.password !== form.confirmPassword) return Alert.alert('Atenção', 'As senhas não coincidem.');
-    if (form.password.length < 6) return Alert.alert('Atenção', 'A senha deve ter pelo menos 6 caracteres.');
+    if (loading) return;
+    setError('');
+    if (!form.name || !form.email || !form.password) { setError('Preencha todos os campos obrigatórios.'); return; }
+    if (form.password !== form.confirmPassword) { setError('As senhas não coincidem.'); return; }
+    if (form.password.length < 6) { setError('A senha deve ter pelo menos 6 caracteres.'); return; }
     try {
       setLoading(true);
-      const { user } = await authService.register({ name: form.name, email: form.email.toLowerCase(), password: form.password, phone: form.phone });
+      const { user } = await authService.register({ name: form.name, email: form.email.trim().toLowerCase(), password: form.password, phone: form.phone });
       setUser(user);
       setAuthenticated(true);
       onRegister();
     } catch (err: any) {
-      Alert.alert('Erro', err.response?.data?.message || 'Falha ao criar conta');
+      const msg = err.response?.data?.message || err.message || 'Falha ao criar conta. Tente novamente.';
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -136,6 +140,19 @@ export function RegisterScreen({ onRegister, onGoLogin }: Props) {
               </View>
             );
           })}
+
+          {/* Error banner */}
+          {!!error && (
+            <View style={{
+              backgroundColor: C.error + '18', borderRadius: R.md,
+              borderWidth: 1, borderColor: C.error + '50',
+              flexDirection: 'row', alignItems: 'center', gap: 10,
+              paddingHorizontal: 14, paddingVertical: 12, marginBottom: 14,
+            }}>
+              <Ionicons name="alert-circle-outline" size={18} color={C.error} />
+              <Text style={{ flex: 1, color: C.error, fontSize: 13, fontWeight: '600', fontFamily: F.base }}>{error}</Text>
+            </View>
+          )}
 
           {/* Submit */}
           <TouchableOpacity onPress={handleRegister} disabled={loading} activeOpacity={0.85} style={{ marginTop: 8 }}>
