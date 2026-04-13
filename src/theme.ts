@@ -94,3 +94,40 @@ export const S = {
   lg: 24,
   xl: 32,
 };
+
+// Neon shadow presets — spread directly into React Native style objects
+// These create the glowing border effect seen in futuristic UIs
+export const SH = {
+  // Strong violet glow — use on primary/featured cards
+  neon: {
+    shadowColor: '#8A2BE2',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.75,
+    shadowRadius: 16,
+    elevation: 12,
+  },
+  // Subtle violet glow — use on regular cards
+  neonSubtle: {
+    shadowColor: '#8A2BE2',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.45,
+    shadowRadius: 10,
+    elevation: 8,
+  },
+  // Blue glow — use for secondary/info elements
+  neonBlue: {
+    shadowColor: '#00BFFF',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.65,
+    shadowRadius: 14,
+    elevation: 10,
+  },
+  // Upward glow — use on bottom bars/footers
+  neonUp: {
+    shadowColor: '#8A2BE2',
+    shadowOffset: { width: 0, height: -6 },
+    shadowOpacity: 0.55,
+    shadowRadius: 14,
+    elevation: 20,
+  },
+};

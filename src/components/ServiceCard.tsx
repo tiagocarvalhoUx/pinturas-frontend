@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { C, R, F } from '../theme';
+import { C, R, F, SH } from '../theme';
 
 interface Service {
   id: string;
@@ -39,11 +39,12 @@ export function ServiceCard({ service, onPress }: Props) {
         marginRight: 14, width: 180,
         backgroundColor: C.bgSurface,
         borderRadius: R.lg, overflow: 'hidden',
-        borderWidth: 1.5, borderColor: accentColor + '30',
+        borderWidth: 1.5, borderColor: accentColor + '60',
+        ...SH.neonSubtle,
       }}
     >
       {/* Top accent line */}
-      <View style={{ height: 3, backgroundColor: accentColor, opacity: 0.8 }} />
+      <View style={{ height: 3, backgroundColor: accentColor, opacity: 0.95 }} />
 
       <View style={{ padding: 14 }}>
         <View style={{

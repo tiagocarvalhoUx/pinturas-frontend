@@ -8,7 +8,7 @@ import { LoadingSpinner } from '../components/LoadingSpinner';
 import api from '../services/api';
 import { portfolioService } from '../services/portfolio';
 import { formatCurrency } from '../utils/helpers';
-import { C, R, S, F } from '../theme';
+import { C, R, S, F, SH } from '../theme';
 
 interface Props {
   onBudget: () => void;
@@ -88,8 +88,9 @@ export function HomeScreen({ onBudget, onPortfolio, onServiceDetail, onPortfolio
           </View>
           <TouchableOpacity style={{
             backgroundColor: C.bgElevated, borderRadius: R.md,
-            padding: 10, borderWidth: 1, borderColor: C.border,
+            padding: 10, borderWidth: 1, borderColor: C.amber + '50',
             position: 'relative',
+            ...SH.neonSubtle,
           }}>
             <Ionicons name="notifications-outline" size={22} color={C.textSecondary} />
             <View style={{
@@ -125,10 +126,9 @@ export function HomeScreen({ onBudget, onPortfolio, onServiceDetail, onPortfolio
         <View style={{
           backgroundColor: C.bgSurface,
           borderRadius: R.lg, padding: S.md, marginBottom: S.md,
-          borderWidth: 1, borderColor: C.border,
+          borderWidth: 1, borderColor: C.amber + '50',
           marginTop: -16,
-          shadowColor: '#000', shadowOffset: { width: 0, height: 6 },
-          shadowOpacity: 0.25, shadowRadius: 16, elevation: 6,
+          ...SH.neonSubtle,
         }}>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
             {Object.entries(SERVICE_ICONS).slice(0, 4).map(([key, val]) => (
@@ -155,11 +155,11 @@ export function HomeScreen({ onBudget, onPortfolio, onServiceDetail, onPortfolio
         </View>
 
         {/* ── CTA Banner ── */}
-        <TouchableOpacity onPress={onBudget} activeOpacity={0.88} style={{ marginBottom: S.md }}>
+        <TouchableOpacity onPress={onBudget} activeOpacity={0.88} style={{ marginBottom: S.md, borderRadius: R.lg, ...SH.neon }}>
           <LinearGradient
-            colors={[C.amberDeep, C.amber]}
+            colors={[C.amberDeep, C.amber, C.terra]}
             start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
-            style={{ borderRadius: R.lg, padding: S.lg, overflow: 'hidden' }}
+            style={{ borderRadius: R.lg, padding: S.lg, overflow: 'hidden', borderWidth: 1, borderColor: C.amberLight + '60' }}
           >
             {/* Decorative circles */}
             <View style={{

@@ -7,7 +7,7 @@ import { BudgetCard } from '../components/BudgetCard';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import api from '../services/api';
 import { formatCurrency } from '../utils/helpers';
-import { C, R, S, F } from '../theme';
+import { C, R, S, F, SH } from '../theme';
 
 interface Props {
   onBudgetDetail: (id: string) => void;
@@ -96,7 +96,8 @@ export function AdminDashboard({ onBudgetDetail, onAllBudgets }: Props) {
             <View key={s.label} style={{
               flex: 1, backgroundColor: C.bgElevated,
               borderRadius: R.lg, padding: 16,
-              borderWidth: 1, borderColor: C.border,
+              borderWidth: 1, borderColor: C.amber + '45',
+              ...SH.neonSubtle,
             }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 }}>
                 <Ionicons name={s.icon as any} size={14} color={C.textSecondary} />
@@ -119,9 +120,12 @@ export function AdminDashboard({ onBudgetDetail, onAllBudgets }: Props) {
             <View key={s.label} style={{
               width: '47%', backgroundColor: C.bgSurface,
               borderRadius: R.lg, padding: S.md,
-              borderWidth: 1, borderColor: C.border,
-              shadowColor: '#000', shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.15, shadowRadius: 12, elevation: 4,
+              borderWidth: 1, borderColor: s.color + '55',
+              shadowColor: s.color,
+              shadowOffset: { width: 0, height: 0 },
+              shadowOpacity: 0.45,
+              shadowRadius: 10,
+              elevation: 8,
             }}>
               <View style={{
                 width: 44, height: 44, borderRadius: R.md,
@@ -146,7 +150,8 @@ export function AdminDashboard({ onBudgetDetail, onAllBudgets }: Props) {
         <View style={{
           backgroundColor: C.bgSurface, borderRadius: R.lg,
           padding: S.md, marginBottom: 24,
-          borderWidth: 1, borderColor: C.border,
+          borderWidth: 1, borderColor: C.amber + '50',
+          ...SH.neonSubtle,
         }}>
           <Text style={{ fontSize: 13, fontWeight: '800', color: C.textPrimary, marginBottom: 14, fontFamily: F.base }}>Ações Rápidas</Text>
           <View style={{ flexDirection: 'row', gap: 10 }}>

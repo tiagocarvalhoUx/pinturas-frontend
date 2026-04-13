@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { UserRole } from '../store/appStore';
-import { C, R, F } from '../theme';
+import { C, R, F, SH } from '../theme';
 
 interface Tab {
   id: string;
@@ -40,12 +40,10 @@ export function BottomTabBar({ activeTab, onTabChange, role }: Props) {
     <View style={{
       flexDirection: 'row',
       backgroundColor: C.bgSurface,
-      borderTopWidth: 1, borderTopColor: C.border,
+      borderTopWidth: 1.5, borderTopColor: C.amber + '80',
       paddingBottom: Platform.OS === 'ios' ? 24 : 8,
       paddingTop: 10,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: -6 },
-      shadowOpacity: 0.3, shadowRadius: 16, elevation: 16,
+      ...SH.neonUp,
     }}>
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;

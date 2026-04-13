@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { PortfolioItem } from '../store/appStore';
 import { SERVICE_LABELS } from '../utils/helpers';
-import { C, R, F } from '../theme';
+import { C, R, F, SH } from '../theme';
 
 interface Props {
   item: PortfolioItem;
@@ -23,9 +23,8 @@ export function PortfolioCard({ item, onPress }: Props) {
         backgroundColor: C.bgSurface,
         borderRadius: R.lg, overflow: 'hidden',
         marginBottom: 14,
-        borderWidth: 1, borderColor: C.border,
-        shadowColor: '#000', shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.2, shadowRadius: 12, elevation: 4,
+        borderWidth: 1, borderColor: C.amber + '55',
+        ...SH.neonSubtle,
       }}
     >
       {/* Image */}

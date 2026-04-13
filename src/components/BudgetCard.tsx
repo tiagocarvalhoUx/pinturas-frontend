@@ -3,7 +3,7 @@ import { TouchableOpacity, View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Budget } from '../store/appStore';
 import { SERVICE_LABELS, STATUS_LABELS, STATUS_COLORS, formatCurrency, formatDate } from '../utils/helpers';
-import { C, R, F } from '../theme';
+import { C, R, F, SH } from '../theme';
 
 interface Props {
   budget: Budget;
@@ -41,11 +41,14 @@ export function BudgetCard({ budget, onPress }: Props) {
       style={{
         backgroundColor: C.bgSurface,
         borderRadius: R.lg, marginBottom: 12,
-        padding: 16, borderWidth: 1, borderColor: C.border,
-        shadowColor: '#000', shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.18, shadowRadius: 12, elevation: 4,
+        padding: 16, borderWidth: 1, borderColor: C.amber + '55',
+        ...SH.neonSubtle,
       }}
     >
+      {/* Corner accents */}
+      <View style={{ position: 'absolute', top: 0, left: 0, width: 14, height: 14, borderTopWidth: 2, borderLeftWidth: 2, borderColor: C.amber, borderTopLeftRadius: R.lg }} />
+      <View style={{ position: 'absolute', bottom: 0, right: 0, width: 14, height: 14, borderBottomWidth: 2, borderRightWidth: 2, borderColor: C.amber, borderBottomRightRadius: R.lg }} />
+
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
         {/* Icon */}
         <View style={{
