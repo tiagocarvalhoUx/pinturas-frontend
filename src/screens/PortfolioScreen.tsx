@@ -172,7 +172,7 @@ function GridCard({ item, onPress }: { item: PortfolioItem; onPress: () => void 
 export function PortfolioScreen({ onDetail }: Props) {
   const portfolio    = useAppStore((s) => s.portfolio);
   const setPortfolio = useAppStore((s) => s.setPortfolio);
-  const [loading, setLoading]       = useState(true);
+  const [loading, setLoading]       = useState(portfolio.length === 0);
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter]         = useState('Todos');
 

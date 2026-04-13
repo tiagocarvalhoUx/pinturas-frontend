@@ -113,6 +113,9 @@ export const useAppStore = create<AppState>()(
         user: state.user,
         isAuthenticated: state.isAuthenticated,
         hasSeenOnboarding: state.hasSeenOnboarding,
+        budgets: state.budgets,
+        portfolio: state.portfolio,
+        adminStats: state.adminStats,
       }),
     }
   )

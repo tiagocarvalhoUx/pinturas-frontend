@@ -27,7 +27,7 @@ export function BudgetsListScreen({ onBudgetDetail, onNewBudget }: Props) {
   const budgets    = useAppStore((s) => s.budgets);
   const setBudgets = useAppStore((s) => s.setBudgets);
   const user       = useAppStore((s) => s.user);
-  const [loading, setLoading]       = useState(true);
+  const [loading, setLoading]       = useState(budgets.length === 0);
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter]         = useState('all');
 

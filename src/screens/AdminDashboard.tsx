@@ -22,7 +22,7 @@ export function AdminDashboard({ onBudgetDetail, onAllBudgets }: Props) {
   const setBudgets    = useAppStore((s) => s.setBudgets);
   const budgets       = useAppStore((s) => s.budgets);
   const user          = useAppStore((s) => s.user);
-  const [loading, setLoading]       = useState(true);
+  const [loading, setLoading]       = useState(!adminStats);
   const [refreshing, setRefreshing] = useState(false);
 
   const load = async (isRefresh = false) => {
