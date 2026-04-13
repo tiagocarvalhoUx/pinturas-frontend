@@ -6,6 +6,7 @@ import { useAppStore } from '../store/appStore';
 import { BudgetCard } from '../components/BudgetCard';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { LogoHero } from '../components/LogoHero';
+import { NeonFrame } from '../components/NeonFrame';
 import api from '../services/api';
 import { formatCurrency } from '../utils/helpers';
 import { C, R, S, F, SH } from '../theme';
@@ -52,6 +53,7 @@ export function AdminDashboard({ onBudgetDetail, onAllBudgets }: Props) {
   const total = adminStats?.totalBudgets || 1;
 
   return (
+    <NeonFrame>
     <ScrollView
       style={{ flex: 1, backgroundColor: C.bgBase }}
       showsVerticalScrollIndicator={false}
@@ -200,5 +202,6 @@ export function AdminDashboard({ onBudgetDetail, onAllBudgets }: Props) {
         </View>
       </View>
     </ScrollView>
+    </NeonFrame>
   );
 }

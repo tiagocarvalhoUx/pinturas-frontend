@@ -7,6 +7,7 @@ import { budgetService } from '../services/budgets';
 import { BudgetCard } from '../components/BudgetCard';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { LogoHero } from '../components/LogoHero';
+import { NeonFrame } from '../components/NeonFrame';
 import { C, R, S, F } from '../theme';
 
 interface Props {
@@ -53,6 +54,7 @@ export function BudgetsListScreen({ onBudgetDetail, onNewBudget }: Props) {
   const completed = budgets.filter((b) => b.status === 'completed').length;
 
   return (
+    <NeonFrame>
     <View style={{ flex: 1, backgroundColor: C.bgBase }}>
 
       {/* ── Header ── */}
@@ -186,5 +188,6 @@ export function BudgetsListScreen({ onBudgetDetail, onNewBudget }: Props) {
         }
       />
     </View>
+    </NeonFrame>
   );
 }

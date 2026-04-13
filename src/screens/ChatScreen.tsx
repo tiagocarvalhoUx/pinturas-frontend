@@ -11,6 +11,7 @@ import { io, Socket } from 'socket.io-client';
 import { ChatMessage } from '../store/appStore';
 import { C, R, S, F } from '../theme';
 import { LogoHero } from '../components/LogoHero';
+import { NeonFrame } from '../components/NeonFrame';
 
 const SOCKET_URL = process.env.EXPO_PUBLIC_SOCKET_URL || 'http://localhost:3000';
 
@@ -388,54 +389,63 @@ export function ChatScreen({ onBack }: Props) {
   if (isAdmin) {
     if (!chatId) {
       return (
-        <AdminChatList
-          onBack={onBack}
-          onSelectChat={(chat) => {
-            const client = chat.participants.find((p) => p.role !== 'admin');
-            setClientName(client?.name || 'Cliente');
-            setChatId(chat._id);
-          }}
-        />
+        <NeonFrame>
+          <AdminChatList
+            onBack={onBack}
+            onSelectChat={(chat) => {
+              const client = chat.participants.find((p) => p.role !== 'admin');
+              setClientName(client?.name || 'Cliente');
+              setChatId(chat._id);
+            }}
+          />
+        </NeonFrame>
       );
     }
-    // Admin opened a specific chat
     return (
-      <ChatMessages
-        chatId={chatId}
-        userId={user!._id}
-        isAdmin
-        clientName={clientName}
-        onBack={() => setChatId('')}
-      />
+      <NeonFrame>
+        <ChatMessages
+          chatId={chatId}
+          userId={user!._id}
+          isAdmin
+          clientName={clientName}
+          onBack={() => setChatId('')}
+        />
+      </NeonFrame>
     );
   }
 
   // ── Client view ──
   if (initLoading) {
     return (
-      <View style={{ flex: 1, backgroundColor: C.bgBase, alignItems: 'center', justifyContent: 'center' }}>
-        <ActivityIndicator size="large" color={C.amber} />
-      </View>
+      <NeonFrame>
+        <View style={{ flex: 1, backgroundColor: C.bgBase, alignItems: 'center', justifyContent: 'center' }}>
+          <ActivityIndicator size="large" color={C.amber} />
+        </View>
+      </NeonFrame>
     );
   }
 
   if (!chatId) {
     return (
-      <View style={{ flex: 1, backgroundColor: C.bgBase, alignItems: 'center', justifyContent: 'center', padding: 32 }}>
-        <Ionicons name="wifi-outline" size={48} color={C.textDisabled} />
-        <Text style={{ color: C.textSecondary, fontSize: 14, marginTop: 12, textAlign: 'center', fontFamily: F.base }}>
-          Não foi possível conectar ao chat. Tente novamente.
-        </Text>
-      </View>
+      <NeonFrame>
+        <View style={{ flex: 1, backgroundColor: C.bgBase, alignItems: 'center', justifyContent: 'center', padding: 32 }}>
+          <Ionicons name="wifi-outline" size={48} color={C.textDisabled} />
+          <Text style={{ color: C.textSecondary, fontSize: 14, marginTop: 12, textAlign: 'center', fontFamily: F.base }}>
+            Não foi possível conectar ao chat. Tente novamente.
+          </Text>
+        </View>
+      </NeonFrame>
     );
   }
 
   return (
-    <ChatMessages
-      chatId={chatId}
-      userId={user!._id}
-      isAdmin={false}
-      onBack={onBack || (() => {})}
-    />
+    <NeonFrame>
+      <ChatMessages
+        chatId={chatId}
+        userId={user!._id}
+        isAdmin={false}
+        onBack={onBack || (() => {})}
+      />
+    </NeonFrame>
   );
 }

@@ -8,6 +8,7 @@ import { authService } from '../services/auth';
 import api from '../services/api';
 import { C, R, S, F } from '../theme';
 import { LogoHero } from '../components/LogoHero';
+import { NeonFrame } from '../components/NeonFrame';
 
 interface Props {
   onLogout: () => void;
@@ -89,6 +90,7 @@ export function ProfileScreen({ onLogout }: Props) {
   const inputIcon   = (field: string) => focusedField === field ? C.amber : C.textDisabled;
 
   return (
+    <NeonFrame>
     <ScrollView style={{ flex: 1, backgroundColor: C.bgBase }} showsVerticalScrollIndicator={false}>
 
       {/* ── Avatar header ── */}
@@ -265,5 +267,6 @@ export function ProfileScreen({ onLogout }: Props) {
         </Text>
       </View>
     </ScrollView>
+    </NeonFrame>
   );
 }

@@ -5,6 +5,7 @@ import { useAppStore } from '../store/appStore';
 import { portfolioService } from '../services/portfolio';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { LogoHero } from '../components/LogoHero';
+import { NeonFrame } from '../components/NeonFrame';
 import { SERVICE_LABELS } from '../utils/helpers';
 import { PortfolioItem } from '../store/appStore';
 import { C, R, S, F } from '../theme';
@@ -195,6 +196,7 @@ export function PortfolioScreen({ onDetail }: Props) {
   if (loading) return <LoadingSpinner message="Carregando portfólio..." />;
 
   return (
+    <NeonFrame>
     <View style={{ flex: 1, backgroundColor: C.bgBase }}>
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -327,5 +329,6 @@ export function PortfolioScreen({ onDetail }: Props) {
         </View>
       </ScrollView>
     </View>
+    </NeonFrame>
   );
 }

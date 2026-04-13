@@ -6,6 +6,7 @@ import { useAppStore } from '../store/appStore';
 import { PortfolioCard } from '../components/PortfolioCard';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { LogoHero } from '../components/LogoHero';
+import { NeonFrame } from '../components/NeonFrame';
 import api from '../services/api';
 import { portfolioService } from '../services/portfolio';
 import { formatCurrency } from '../utils/helpers';
@@ -69,6 +70,7 @@ export function HomeScreen({ onBudget, onPortfolio, onServiceDetail, onPortfolio
   const firstName = user?.name?.split(' ')[0];
 
   return (
+    <NeonFrame>
     <ScrollView style={{ flex: 1, backgroundColor: C.bgBase }} showsVerticalScrollIndicator={false}>
 
       {/* ── Header ── */}
@@ -300,6 +302,7 @@ export function HomeScreen({ onBudget, onPortfolio, onServiceDetail, onPortfolio
         </View>
       </View>
     </ScrollView>
+    </NeonFrame>
   );
 }
 
