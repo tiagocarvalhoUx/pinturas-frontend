@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, Alert, TextInput, ActivityIndicator, Modal } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Image, TextInput, ActivityIndicator, Modal, Dimensions, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../store/appStore';
@@ -8,6 +8,8 @@ import { LoadingSpinner } from '../components/LoadingSpinner';
 import { Budget } from '../store/appStore';
 import { SERVICE_LABELS, STATUS_LABELS, STATUS_COLORS, formatCurrency, formatDate } from '../utils/helpers';
 import { C, R, S, F } from '../theme';
+
+const { width: W, height: H } = Dimensions.get('window');
 
 interface Props {
   budgetId: string;
@@ -71,6 +73,86 @@ function ModalInput({ label, icon, placeholder, value, onChangeText, keyboardTyp
   );
 }
 
+// ── Full-screen photo lightbox ───────────────────────────────────────────────
+function PhotoLightbox({ photos, index, visible, onClose }: {
+  photos: { url: string }[];
+  index: number;
+  visible: boolean;
+  onClose: () => void;
+}) {
+  const [current, setCurrent] = useState(index);
+  const opacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => { setCurrent(index); }, [index]);
+  useEffect(() => {
+    Animated.timing(opacity, { toValue: visible ? 1 : 0, duration: 220, useNativeDriver: true }).start();
+  }, [visible]);
+
+  if (!visible) return null;
+
+  return (
+    <Modal visible={visible} transparent animationType="none" statusBarTranslucent onRequestClose={onClose}>
+      <Animated.View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.97)', opacity, justifyContent: 'center', alignItems: 'center' }}>
+
+        {/* Close */}
+        <TouchableOpacity onPress={onClose} style={{
+          position: 'absolute', top: 52, right: 20, zIndex: 10,
+          width: 42, height: 42, borderRadius: 21,
+          backgroundColor: 'rgba(255,255,255,0.12)',
+          alignItems: 'center', justifyContent: 'center',
+        }}>
+          <Ionicons name="close" size={22} color="#fff" />
+        </TouchableOpacity>
+
+        {/* Counter */}
+        {photos.length > 1 && (
+          <View style={{ position: 'absolute', top: 56, left: 0, right: 0, alignItems: 'center', zIndex: 10 }}>
+            <View style={{ backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: R.full, paddingHorizontal: 14, paddingVertical: 5 }}>
+              <Text style={{ color: '#fff', fontSize: 13, fontWeight: '700', fontFamily: F.base }}>{current + 1} / {photos.length}</Text>
+            </View>
+          </View>
+        )}
+
+        {/* Main image */}
+        <Image
+          source={{ uri: photos[current]?.url }}
+          style={{ width: W, height: H * 0.75 }}
+          resizeMode="contain"
+        />
+
+        {/* Prev / Next */}
+        {photos.length > 1 && (
+          <>
+            <TouchableOpacity
+              onPress={() => setCurrent((i) => (i > 0 ? i - 1 : photos.length - 1))}
+              style={{ position: 'absolute', left: 16, top: '50%', width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center' }}
+            >
+              <Ionicons name="chevron-back" size={22} color="#fff" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setCurrent((i) => (i < photos.length - 1 ? i + 1 : 0))}
+              style={{ position: 'absolute', right: 16, top: '50%', width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center' }}
+            >
+              <Ionicons name="chevron-forward" size={22} color="#fff" />
+            </TouchableOpacity>
+          </>
+        )}
+
+        {/* Dots */}
+        {photos.length > 1 && (
+          <View style={{ position: 'absolute', bottom: 52, flexDirection: 'row', gap: 6 }}>
+            {photos.map((_, i) => (
+              <TouchableOpacity key={i} onPress={() => setCurrent(i)}>
+                <View style={{ width: i === current ? 24 : 7, height: 7, borderRadius: 4, backgroundColor: i === current ? C.amber : 'rgba(255,255,255,0.3)' }} />
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+      </Animated.View>
+    </Modal>
+  );
+}
+
 export function BudgetDetailScreen({ budgetId, onBack }: Props) {
   const user                = useAppStore((s) => s.user);
   const budgets             = useAppStore((s) => s.budgets);
@@ -80,10 +162,13 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
   const [loading, setLoading]       = useState(!budget);
   const [updating, setUpdating]     = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const [quoteModal, setQuoteModal] = useState(false);
   const [quotePrice, setQuotePrice] = useState('');
   const [quoteDate, setQuoteDate]   = useState('');
+
+  const [successBanner, setSuccessBanner] = useState('');
 
   const [ratingModal, setRatingModal]         = useState(false);
   const [ratingStars, setRatingStars]         = useState(0);
@@ -93,7 +178,7 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
   useEffect(() => {
     budgetService.getById(budgetId)
       .then(setBudget)
-      .catch(() => Alert.alert('Erro', 'Não foi possível carregar o orçamento.'))
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, [budgetId]);
 
@@ -111,24 +196,27 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
   const canRate     = !isAdmin && budget.status === 'completed' && !budget.rating;
 
   const applyUpdate = (updated: Budget) => { setBudget(updated); updateBudgetStore(updated._id, updated); };
-  const showMsg = (title: string, msg: string) => {
-    if (typeof window !== 'undefined') window.alert(`${title}\n${msg}`);
-    else Alert.alert(title, msg);
-  };
 
   const handleAdvance = async (nextStatus: string, extra?: Record<string, any>) => {
     setUpdating(true);
     try {
       const updated = await budgetService.update(budgetId, { status: nextStatus, ...extra });
       applyUpdate(updated);
-      showMsg('✅ Atualizado!', `Status: ${STATUS_LABELS[nextStatus]}`);
+      const label = STATUS_LABELS[nextStatus] || nextStatus;
+      setSuccessBanner(`Status atualizado: ${label}`);
+      // If admin just sent a quote, go back after showing success
+      if (isAdmin && nextStatus === 'quoted') {
+        setTimeout(() => onBack(), 2500);
+      } else {
+        setTimeout(() => setSuccessBanner(''), 3000);
+      }
     } catch (err: any) {
-      showMsg('Erro', err?.response?.data?.message || 'Verifique sua conexão.');
+      setSuccessBanner('');
     } finally { setUpdating(false); }
   };
 
   const handleQuoteSubmit = async () => {
-    if (!quotePrice || isNaN(Number(quotePrice))) return Alert.alert('Atenção', 'Informe um valor válido.');
+    if (!quotePrice || isNaN(Number(quotePrice))) return;
     setQuoteModal(false);
     await handleAdvance('quoted', { estimatedPrice: Number(quotePrice), ...(quoteDate ? { scheduledDate: quoteDate } : {}) });
     setQuotePrice(''); setQuoteDate('');
@@ -137,22 +225,17 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
   const handleCancel = () => {
     const confirmed = typeof window !== 'undefined' ? window.confirm('Cancelar este orçamento?') : false;
     if (confirmed) { handleAdvance('cancelled'); return; }
-    if (typeof window === 'undefined') {
-      Alert.alert('Cancelar Pedido', 'Tem certeza?', [
-        { text: 'Não', style: 'cancel' },
-        { text: 'Cancelar', style: 'destructive', onPress: () => handleAdvance('cancelled') },
-      ]);
-    }
   };
 
   const handleRatingSubmit = async () => {
-    if (ratingStars === 0) return showMsg('Atenção', 'Selecione ao menos 1 estrela.');
+    if (ratingStars === 0) return;
     setSubmittingRating(true);
     try {
       const updated = await budgetService.rate(budgetId, ratingStars, ratingComment);
       applyUpdate(updated); setRatingModal(false);
-      showMsg('Obrigado!', 'Sua avaliação foi enviada.');
-    } catch { showMsg('Erro', 'Não foi possível enviar a avaliação.'); }
+      setSuccessBanner('Avaliação enviada com sucesso!');
+      setTimeout(() => setSuccessBanner(''), 3000);
+    } catch { }
     finally { setSubmittingRating(false); }
   };
 
@@ -160,24 +243,35 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
     if (!nextAction) return;
     if (isAdmin && nextAction.next === 'quoted') { setQuoteModal(true); return; }
     if (!isAdmin && nextAction.next === 'approved') {
-      Alert.alert('Aprovar Orçamento', `Aprovar por ${price ? formatCurrency(price) : 'valor a definir'}?`, [
-        { text: 'Cancelar', style: 'cancel' },
-        { text: 'Aprovar', onPress: () => handleAdvance('approved') },
-      ]);
+      const ok = typeof window !== 'undefined'
+        ? window.confirm(`Aprovar orçamento por ${price ? formatCurrency(price) : 'valor a definir'}?`)
+        : false;
+      if (ok) handleAdvance('approved');
       return;
     }
     handleAdvance(nextAction.next);
   };
 
-  // Status info banners for client
   const statusBanners: Record<string, { icon: string; title: string; body: string; accent: string }> = {
-    pending:     { icon: 'time-outline',     title: 'Aguardando análise',  body: 'Nossa equipe está analisando seu pedido e em breve enviaremos o orçamento.', accent: C.warning },
-    approved:    { icon: 'checkmark-circle', title: 'Orçamento Aprovado', body: 'Nossa equipe iniciará o serviço em breve.', accent: C.success },
-    in_progress: { icon: 'construct',        title: 'Serviço em Andamento', body: 'O serviço está sendo executado. Qualquer dúvida, fale conosco pelo Chat.', accent: C.info },
+    pending:     { icon: 'time-outline',     title: 'Aguardando análise',    body: 'Nossa equipe está analisando seu pedido e em breve enviaremos o orçamento.', accent: C.warning },
+    approved:    { icon: 'checkmark-circle', title: 'Orçamento Aprovado',    body: 'Nossa equipe iniciará o serviço em breve.', accent: C.success },
+    in_progress: { icon: 'construct',        title: 'Serviço em Andamento',  body: 'O serviço está sendo executado. Qualquer dúvida, fale conosco pelo Chat.', accent: C.info },
   };
 
   return (
     <View style={{ flex: 1, backgroundColor: C.bgBase }}>
+
+      {/* ── Success banner (top) ── */}
+      {!!successBanner && (
+        <View style={{
+          position: 'absolute', top: 0, left: 0, right: 0, zIndex: 100,
+          backgroundColor: C.success, paddingTop: 52, paddingBottom: 14,
+          paddingHorizontal: S.md, flexDirection: 'row', alignItems: 'center', gap: 10,
+        }}>
+          <Ionicons name="checkmark-circle" size={22} color="#fff" />
+          <Text style={{ color: '#fff', fontSize: 15, fontWeight: '800', flex: 1, fontFamily: F.base }}>{successBanner}</Text>
+        </View>
+      )}
 
       {/* ── Header ── */}
       <View style={{ backgroundColor: C.bgDeep, paddingTop: 52, paddingHorizontal: S.md, paddingBottom: 20 }}>
@@ -197,7 +291,6 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
           </View>
         </View>
 
-        {/* Price / area strip */}
         <View style={{ backgroundColor: C.bgElevated, borderRadius: R.md, padding: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderWidth: 1, borderColor: C.border }}>
           <View>
             <Text style={{ color: C.textSecondary, fontSize: 11, marginBottom: 4, fontFamily: F.base }}>
@@ -333,11 +426,11 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
         <View style={{ backgroundColor: C.bgSurface, borderRadius: R.lg, padding: S.md, marginBottom: S.md, borderWidth: 1, borderColor: C.border }}>
           <Text style={{ fontSize: 13, fontWeight: '800', color: C.textPrimary, marginBottom: 14, fontFamily: F.base }}>Informações do Serviço</Text>
           {[
-            { icon: SERVICE_ICONS[budget.serviceType] || 'brush', label: 'Tipo',          value: SERVICE_LABELS[budget.serviceType],              color: iconColor           },
-            { icon: 'document-text-outline',                       label: 'Descrição',     value: budget.description,                              color: C.textSecondary     },
+            { icon: SERVICE_ICONS[budget.serviceType] || 'brush', label: 'Tipo',      value: SERVICE_LABELS[budget.serviceType],              color: iconColor       },
+            { icon: 'document-text-outline',                       label: 'Descrição', value: budget.description,                              color: C.textSecondary },
             ...(budget.phone ? [{ icon: 'call-outline', label: 'Celular', value: budget.phone, color: C.success }] : []),
-            { icon: 'location-outline',                            label: 'Endereço',      value: `${budget.address.street}, ${budget.address.city} - ${budget.address.state}`, color: C.textSecondary },
-            { icon: 'calendar-outline',                            label: 'Criado em',     value: formatDate(budget.createdAt),                    color: C.textSecondary     },
+            { icon: 'location-outline', label: 'Endereço', value: `${budget.address.street}, ${budget.address.city} - ${budget.address.state}`, color: C.textSecondary },
+            { icon: 'calendar-outline', label: 'Criado em', value: formatDate(budget.createdAt), color: C.textSecondary },
             ...(budget.scheduledDate ? [{ icon: 'time-outline', label: 'Agendado para', value: formatDate(budget.scheduledDate), color: C.success }] : []),
           ].map((row) => (
             <View key={row.label} style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: 14 }}>
@@ -373,11 +466,27 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
           </View>
           {budget.photos?.length > 0 ? (
             <>
-              <Image
-                source={{ uri: budget.photos[photoIndex].url }}
-                style={{ width: '100%', height: 220, borderRadius: R.md, marginBottom: 10, backgroundColor: C.bgElevated }}
-                resizeMode="cover"
-              />
+              {/* Main photo — tap to open lightbox */}
+              <TouchableOpacity activeOpacity={0.9} onPress={() => { setPhotoIndex(photoIndex); setLightboxOpen(true); }}>
+                <View style={{ position: 'relative' }}>
+                  <Image
+                    source={{ uri: budget.photos[photoIndex].url }}
+                    style={{ width: '100%', height: 220, borderRadius: R.md, marginBottom: 10, backgroundColor: C.bgElevated }}
+                    resizeMode="cover"
+                  />
+                  {/* Expand hint */}
+                  <View style={{
+                    position: 'absolute', bottom: 18, right: 10,
+                    backgroundColor: 'rgba(0,0,0,0.55)',
+                    borderRadius: R.full, padding: 7,
+                    borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)',
+                  }}>
+                    <Ionicons name="expand-outline" size={16} color="#fff" />
+                  </View>
+                </View>
+              </TouchableOpacity>
+
+              {/* Thumbnails */}
               {budget.photos.length > 1 && (
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   {budget.photos.map((p, i) => (
@@ -415,6 +524,14 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
           </View>
         )}
       </ScrollView>
+
+      {/* ── Photo Lightbox ── */}
+      <PhotoLightbox
+        photos={budget.photos || []}
+        index={photoIndex}
+        visible={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+      />
 
       {/* ── Quote Modal ── */}
       <Modal visible={quoteModal} transparent animationType="slide">
