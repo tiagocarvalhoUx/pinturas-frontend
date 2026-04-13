@@ -26,7 +26,7 @@ interface ChatSummary {
 }
 
 // ── Admin: lista de conversas ────────────────────────────────────────────────
-function AdminChatList({ onSelectChat }: { onSelectChat: (chat: ChatSummary) => void }) {
+function AdminChatList({ onSelectChat, onBack }: { onSelectChat: (chat: ChatSummary) => void; onBack?: () => void }) {
   const [chats, setChats]     = useState<ChatSummary[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -53,8 +53,20 @@ function AdminChatList({ onSelectChat }: { onSelectChat: (chat: ChatSummary) => 
       {/* Header */}
       <View style={{ backgroundColor: C.bgDeep, paddingTop: 52, paddingHorizontal: S.md, paddingBottom: 20, borderBottomWidth: 1, borderBottomColor: C.border }}>
         <View style={{ position: 'absolute', top: 0, right: -10, width: 180, height: 180, borderRadius: 90, backgroundColor: C.amber, opacity: 0.05 }} />
-        <Text style={{ color: C.textSecondary, fontSize: 13, fontFamily: F.base }}>Atendimento</Text>
-        <Text style={{ color: C.textPrimary, fontSize: 24, fontWeight: '900', letterSpacing: -0.5, fontFamily: F.base }}>Conversas</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+          {!!onBack && (
+            <TouchableOpacity
+              onPress={onBack}
+              style={{ backgroundColor: C.bgElevated, borderRadius: R.sm, padding: 9, borderWidth: 1, borderColor: C.border }}
+            >
+              <Ionicons name="arrow-back" size={20} color={C.textPrimary} />
+            </TouchableOpacity>
+          )}
+          <View>
+            <Text style={{ color: C.textSecondary, fontSize: 13, fontFamily: F.base }}>Atendimento</Text>
+            <Text style={{ color: C.textPrimary, fontSize: 24, fontWeight: '900', letterSpacing: -0.5, fontFamily: F.base }}>Conversas</Text>
+          </View>
+        </View>
         <View style={{ width: 28, height: 2, backgroundColor: C.amber, borderRadius: 1, marginTop: 8, opacity: 0.9 }} />
       </View>
 
@@ -371,6 +383,7 @@ export function ChatScreen({ onBack }: Props) {
     if (!chatId) {
       return (
         <AdminChatList
+          onBack={onBack}
           onSelectChat={(chat) => {
             const client = chat.participants.find((p) => p.role !== 'admin');
             setClientName(client?.name || 'Cliente');

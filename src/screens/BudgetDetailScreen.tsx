@@ -167,6 +167,7 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
   const [quoteModal, setQuoteModal] = useState(false);
   const [quotePrice, setQuotePrice] = useState('');
   const [quoteDate, setQuoteDate]   = useState('');
+  const [quoteError, setQuoteError] = useState('');
 
   const [successBanner, setSuccessBanner] = useState('');
 
@@ -193,7 +194,7 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
   const isCancelled = budget.status === 'cancelled';
   const nextAction  = isAdmin ? ADMIN_NEXT[budget.status] : CLIENT_NEXT[budget.status];
   const canCancel   = isAdmin && budget.status !== 'completed' && budget.status !== 'cancelled';
-  const canRate     = !isAdmin && budget.status === 'completed' && !budget.rating;
+  const canRate     = !isAdmin && budget.status === 'completed' && !budget.rating?.stars;
 
   const applyUpdate = (updated: Budget) => { setBudget(updated); updateBudgetStore(updated._id, updated); };
 
@@ -216,10 +217,17 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
   };
 
   const handleQuoteSubmit = async () => {
-    if (!quotePrice || isNaN(Number(quotePrice))) return;
+    setQuoteError('');
+    // Accept Brazilian format: "R$ 4.500,00" → 4500.00
+    const raw = quotePrice.replace(/[R$\s]/g, '').replace(/\./g, '').replace(',', '.');
+    const parsed = Number(raw);
+    if (!quotePrice.trim() || isNaN(parsed) || parsed <= 0) {
+      setQuoteError('Informe um valor válido (ex: 2500 ou 2.500,00).');
+      return;
+    }
     setQuoteModal(false);
-    await handleAdvance('quoted', { estimatedPrice: Number(quotePrice), ...(quoteDate ? { scheduledDate: quoteDate } : {}) });
-    setQuotePrice(''); setQuoteDate('');
+    await handleAdvance('quoted', { estimatedPrice: parsed, ...(quoteDate ? { scheduledDate: quoteDate } : {}) });
+    setQuotePrice(''); setQuoteDate(''); setQuoteError('');
   };
 
   const handleCancel = () => {
@@ -510,7 +518,7 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
         </View>
 
         {/* ── Rating ── */}
-        {budget.rating && (
+        {!!budget.rating?.stars && (
           <View style={{ backgroundColor: C.bgSurface, borderRadius: R.lg, padding: S.md, marginBottom: S.md, borderWidth: 1, borderColor: C.border }}>
             <Text style={{ fontSize: 13, fontWeight: '800', color: C.textPrimary, marginBottom: 12, fontFamily: F.base }}>Avaliação do Cliente</Text>
             <View style={{ flexDirection: 'row', marginBottom: 8, gap: 4 }}>
@@ -540,14 +548,20 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
             <View style={{ width: 36, height: 4, backgroundColor: C.border, borderRadius: 2, alignSelf: 'center', marginBottom: 20 }} />
             <Text style={{ fontSize: 18, fontWeight: '800', color: C.textPrimary, marginBottom: 4, fontFamily: F.base }}>Enviar Orçamento</Text>
             <Text style={{ fontSize: 13, color: C.textSecondary, marginBottom: 20, fontFamily: F.base }}>Informe o valor e data para o cliente aprovar.</Text>
-            <ModalInput label="Valor do Orçamento (R$)" icon="cash-outline" placeholder="Ex: 2500.00" value={quotePrice} onChangeText={setQuotePrice} keyboardType="decimal-pad" />
+            <ModalInput label="Valor do Orçamento (R$)" icon="cash-outline" placeholder="Ex: 2500 ou 2.500,00" value={quotePrice} onChangeText={(v) => { setQuotePrice(v); setQuoteError(''); }} keyboardType="decimal-pad" />
             <ModalInput label="Data Prevista (opcional)" icon="calendar-outline" placeholder="DD/MM/AAAA" value={quoteDate} onChangeText={setQuoteDate} />
+            {!!quoteError && (
+              <View style={{ backgroundColor: C.error + '18', borderRadius: R.md, borderWidth: 1, borderColor: C.error + '50', flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 12, paddingVertical: 10, marginBottom: 12 }}>
+                <Ionicons name="alert-circle-outline" size={16} color={C.error} />
+                <Text style={{ flex: 1, color: C.error, fontSize: 13, fontWeight: '600', fontFamily: F.base }}>{quoteError}</Text>
+              </View>
+            )}
             <TouchableOpacity onPress={handleQuoteSubmit} activeOpacity={0.85}>
               <LinearGradient colors={[C.amberDeep, C.amber]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ borderRadius: R.md, paddingVertical: 15, alignItems: 'center' }}>
                 <Text style={{ color: '#fff', fontSize: 15, fontWeight: '700', fontFamily: F.base }}>Enviar Orçamento ao Cliente</Text>
               </LinearGradient>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setQuoteModal(false)} style={{ marginTop: 12, alignItems: 'center', paddingVertical: 12 }}>
+            <TouchableOpacity onPress={() => { setQuoteModal(false); setQuoteError(''); }} style={{ marginTop: 12, alignItems: 'center', paddingVertical: 12 }}>
               <Text style={{ color: C.textDisabled, fontSize: 14, fontFamily: F.base }}>Cancelar</Text>
             </TouchableOpacity>
           </View>
