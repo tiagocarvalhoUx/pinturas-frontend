@@ -8,9 +8,9 @@ interface Props {
 }
 
 const SIZES = {
-  sm: { img: 52,  frame: 76,  corner: 12 },
-  md: { img: 72,  frame: 100, corner: 14 },
-  lg: { img: 96,  frame: 130, corner: 16 },
+  sm: { imgW: 68,  imgH: 68,  frameW: 92,  frameH: 92,  corner: 12 },
+  md: { imgW: 100, imgH: 100, frameW: 128, frameH: 128, corner: 16 },
+  lg: { imgW: 130, imgH: 130, frameW: 160, frameH: 160, corner: 18 },
 };
 
 export function LogoHero({ size = 'md' }: Props) {
@@ -37,7 +37,7 @@ export function LogoHero({ size = 'md' }: Props) {
       {/* Frame container */}
       <View style={[
         styles.frame,
-        { width: s.frame, height: s.frame, borderRadius: R.lg },
+        { width: s.frameW, height: s.frameH, borderRadius: R.lg },
         SH.neon,
       ]}>
         {/* Gradient background inside frame */}
@@ -58,10 +58,10 @@ export function LogoHero({ size = 'md' }: Props) {
         {/* Corner accents — bottom-right (violet) */}
         <View style={[styles.corner, styles.cornerBR, { width: s.corner, height: s.corner }]} />
 
-        {/* Logo image */}
+        {/* Logo image — fills frame with padding */}
         <Image
           source={require('../../assets/logo-pintura.png')}
-          style={{ width: s.img, height: s.img }}
+          style={{ width: s.imgW, height: s.imgH }}
           resizeMode="contain"
         />
       </View>
@@ -84,11 +84,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   ringOuter: {
-    width: 160, height: 160,
+    width: 200, height: 200,
     borderColor: C.amber + '18',
   },
   ringInner: {
-    width: 120, height: 120,
+    width: 160, height: 160,
     borderColor: C.amber + '30',
   },
   frame: {
