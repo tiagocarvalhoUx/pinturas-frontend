@@ -1,27 +1,27 @@
-// Design tokens — Dark Artisan Premium
-// Palette inspired by raw paint pigments: warm charcoal base + amber/ochre accent
+// Design tokens — Luxury Gold
+// Palette: deep black base + gold accent for a sophisticated premium look
 
 import { Platform } from 'react-native';
 
 export const C = {
   // Backgrounds
-  bgDeep:     '#0F0D0A',   // deepest background
-  bgBase:     '#171410',   // page background
-  bgSurface:  '#201D18',   // card / surface
-  bgElevated: '#2A261F',   // elevated cards, inputs
-  bgMuted:    '#312D25',   // hover / pressed state
+  bgDeep:     '#121212',   // deepest background  (luxury-black)
+  bgBase:     '#121212',   // page background      (luxury-black)
+  bgSurface:  '#1E1E1E',   // card / surface       (luxury-dark-grey)
+  bgElevated: '#252525',   // elevated cards, inputs
+  bgMuted:    '#2A2A2A',   // hover / pressed state
 
-  // Accent — warm amber / ochre (paint pigment)
-  amber:      '#D4862A',   // primary accent
-  amberLight: '#E9A84C',   // hover / highlight
-  amberDeep:  '#A8671A',   // pressed / shadow
-  amberGlow:  '#D4862A22', // translucent amber for badges / overlays
+  // Accent — Luxury Gold
+  amber:      '#D4AF37',   // primary gold accent   (luxury-gold)
+  amberLight: '#E0B95B',   // hover / highlight     (luxury-light-gold)
+  amberDeep:  '#B8960C',   // pressed / deep gold   (luxury-deep-gold)
+  amberGlow:  '#D4AF3722', // translucent gold for badges / overlays
 
-  // Terracotta secondary
-  terra:      '#C04E28',
-  terraLight: '#D96B43',
+  // Warm secondary (kept harmonious with gold)
+  terra:      '#C09040',
+  terraLight: '#D4AA5A',
 
-  // Service palette — full tokens (no more hardcoded hex in screens)
+  // Service palette
   blue:       '#5AAAE0',
   blueBg:     '#5AAAE020',
   purple:     '#A04ABA',
@@ -32,30 +32,30 @@ export const C = {
   whatsappBg: '#25D36620',
 
   // Text
-  textPrimary:   '#F2EDE3',  // warm cream
-  textSecondary: '#A09280',  // muted warm
-  textDisabled:  '#5C5448',  // disabled
+  textPrimary:   '#F5F5F5',  // luxury-text-light
+  textSecondary: '#A0A0A0',  // luxury-text-dark
+  textDisabled:  '#5A5A5A',  // disabled
 
   // Border / divider
-  border:     '#2E2922',
-  borderSoft: '#252019',
+  border:     '#2A2A2A',
+  borderSoft: '#222222',
 
-  // Status colours (kept readable on dark)
+  // Status colours
   success:    '#4ABA79',
-  warning:    '#E9A84C',
+  warning:    '#E0B95B',
   error:      '#E05252',
   info:       '#5AAAE0',
 
   // Status badge bg (translucent)
   successBg:  '#4ABA7920',
-  warningBg:  '#E9A84C20',
+  warningBg:  '#E0B95B20',
   errorBg:    '#E0525220',
   infoBg:     '#5AAAE020',
 
   // Utility
   white:   '#FFFFFF',
   black:   '#000000',
-  overlay: 'rgba(0,0,0,0.55)',
+  overlay: 'rgba(0,0,0,0.65)',
 };
 
 // Typography — Inter on web, system on native

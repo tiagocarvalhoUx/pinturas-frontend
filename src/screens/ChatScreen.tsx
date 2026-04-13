@@ -166,10 +166,11 @@ function ChatMessages({
       .finally(() => setLoading(false));
 
     socket.on('new_message', (msg: ChatMessage) => {
-      if (msg.sender._id !== userId) {
-        setMessages((prev) => [...prev, msg]);
-        setTimeout(() => flatRef.current?.scrollToEnd({ animated: true }), 100);
-      }
+      setMessages((prev) => {
+        if (prev.some((m) => m._id === msg._id)) return prev; // dedup
+        return [...prev, msg];
+      });
+      setTimeout(() => flatRef.current?.scrollToEnd({ animated: true }), 100);
     });
 
     return () => { socket.disconnect(); };
@@ -183,7 +184,10 @@ function ChatMessages({
     try {
       const res = await api.post(`/chat/${chatId}/messages`, { content: msgText, type: 'text' });
       const newMsg = res.data.message;
-      setMessages((prev) => [...prev, newMsg]);
+      setMessages((prev) => {
+        if (prev.some((m) => m._id === newMsg._id)) return prev; // dedup
+        return [...prev, newMsg];
+      });
       socketRef.current?.emit('send_message', { chatId, message: newMsg });
       setTimeout(() => flatRef.current?.scrollToEnd({ animated: true }), 100);
     } catch { setText(msgText); }

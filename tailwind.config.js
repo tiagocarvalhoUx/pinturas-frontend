@@ -5,29 +5,20 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          500: '#2563EB',
-          600: '#1d4ed8',
-          700: '#1e40af',
-        },
-        secondary: '#7C3AED',
-        success: '#059669',
-        warning: '#D97706',
-        danger: '#DC2626',
-        gray: {
-          50: '#f9fafb',
-          100: '#f3f4f6',
-          200: '#e5e7eb',
-          300: '#d1d5db',
-          400: '#9ca3af',
-          500: '#6b7280',
-          600: '#4b5563',
-          700: '#374151',
-          800: '#1f2937',
-          900: '#111827',
-        },
+        'luxury-black':      '#121212',
+        'luxury-dark-grey':  '#1E1E1E',
+        'luxury-gold':       '#D4AF37',
+        'luxury-light-gold': '#E0B95B',
+        'luxury-deep-gold':  '#B8960C',
+        'luxury-text-light': '#F5F5F5',
+        'luxury-text-dark':  '#A0A0A0',
+        success: '#4ABA79',
+        warning: '#E0B95B',
+        danger:  '#E05252',
+        info:    '#5AAAE0',
+      },
+      boxShadow: {
+        'gold-glow': '0 0 15px rgba(212, 175, 55, 0.4)',
       },
       fontFamily: {
         sans: ['System'],
