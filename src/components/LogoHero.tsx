@@ -34,33 +34,24 @@ export function LogoHero({ size = 'md' }: Props) {
       <Animated.View style={[styles.ring, styles.ringOuter, { opacity: pulse, transform: [{ scale: pulse }] }]} />
       <Animated.View style={[styles.ring, styles.ringInner, { opacity: pulse }]} />
 
-      {/* Frame container */}
+      {/* Frame elíptico */}
       <View style={[
         styles.frame,
-        { width: s.frameW, height: s.frameH, borderRadius: R.lg },
+        { width: s.frameW, height: s.frameH, borderRadius: 9999 },
         SH.neon,
       ]}>
-        {/* Fundo branco — igual ao bg do logo, preenche cantos */}
-        <View style={[StyleSheet.absoluteFill, { backgroundColor: '#ffffff', borderRadius: R.lg }]} />
+        {/* Fundo branco */}
+        <View style={[StyleSheet.absoluteFill, { backgroundColor: '#ffffff', borderRadius: 9999 }]} />
 
-        {/* Logo image — preenche o frame inteiro */}
+        {/* Logo image */}
         <Image
           source={require('../../src/image/logo-pintura.png')}
           style={{ width: s.frameW, height: s.frameH }}
           resizeMode="contain"
         />
 
-        {/* Neon border (por cima da imagem) */}
-        <View style={[styles.border, { borderRadius: R.lg }]} />
-
-        {/* Corner accents — top-left (violet) */}
-        <View style={[styles.corner, styles.cornerTL, { width: s.corner, height: s.corner }]} />
-        {/* Corner accents — top-right (blue) */}
-        <View style={[styles.corner, styles.cornerTR, { width: s.corner, height: s.corner, borderColor: C.terra }]} />
-        {/* Corner accents — bottom-left (blue) */}
-        <View style={[styles.corner, styles.cornerBL, { width: s.corner, height: s.corner, borderColor: C.terra }]} />
-        {/* Corner accents — bottom-right (violet) */}
-        <View style={[styles.corner, styles.cornerBR, { width: s.corner, height: s.corner }]} />
+        {/* Borda neon elíptica (por cima da imagem) */}
+        <View style={[styles.border, { borderRadius: 9999 }]} />
       </View>
 
       {/* Bottom scan line */}
@@ -95,8 +86,8 @@ const styles = StyleSheet.create({
   },
   border: {
     ...StyleSheet.absoluteFillObject,
-    borderWidth: 1.5,
-    borderColor: C.amber + '70',
+    borderWidth: 2.5,
+    borderColor: C.amber + '99',
   },
   corner: {
     position: 'absolute',
