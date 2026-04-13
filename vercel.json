@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npx expo export --platform web && cp public/og-image.png dist/og-image.png",
+  "buildCommand": "npx expo export --platform web && node inject-og.js",
   "outputDirectory": "dist",
   "framework": null,
   "rewrites": [
