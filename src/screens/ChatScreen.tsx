@@ -55,22 +55,31 @@ function AdminChatList({ onSelectChat, onBack }: { onSelectChat: (chat: ChatSumm
       {/* Header */}
       <View style={{ backgroundColor: C.bgDeep, paddingTop: 52, paddingHorizontal: S.md, paddingBottom: 20, borderBottomWidth: 1, borderBottomColor: C.amber + '40' }}>
         <View style={{ position: 'absolute', top: 0, right: -10, width: 180, height: 180, borderRadius: 90, backgroundColor: C.amber, opacity: 0.05 }} />
-        <LogoHero size="sm" />
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 10 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <LogoHero size="sm" />
+            <View>
+              <Text style={{ color: C.textSecondary, fontSize: 13, fontFamily: F.base }}>Atendimento</Text>
+              <Text style={{ color: C.textPrimary, fontSize: 22, fontWeight: '900', letterSpacing: -0.5, fontFamily: F.base }}>Conversas</Text>
+            </View>
+          </View>
           {!!onBack && (
             <TouchableOpacity
               onPress={onBack}
-              style={{ backgroundColor: C.bgElevated, borderRadius: R.sm, padding: 9, borderWidth: 1, borderColor: C.border }}
+              activeOpacity={0.8}
+              style={{
+                flexDirection: 'row', alignItems: 'center', gap: 6,
+                backgroundColor: C.error + '18',
+                borderWidth: 1.5, borderColor: C.error + '55',
+                borderRadius: R.full, paddingHorizontal: 14, paddingVertical: 8,
+              }}
             >
-              <Ionicons name="arrow-back" size={20} color={C.textPrimary} />
+              <Ionicons name="exit-outline" size={18} color={C.error} />
+              <Text style={{ color: C.error, fontSize: 13, fontWeight: '700', fontFamily: F.base }}>Sair</Text>
             </TouchableOpacity>
           )}
-          <View>
-            <Text style={{ color: C.textSecondary, fontSize: 13, fontFamily: F.base }}>Atendimento</Text>
-            <Text style={{ color: C.textPrimary, fontSize: 24, fontWeight: '900', letterSpacing: -0.5, fontFamily: F.base }}>Conversas</Text>
-          </View>
         </View>
-        <View style={{ width: 28, height: 2, backgroundColor: C.amber, borderRadius: 1, marginTop: 8, opacity: 0.9 }} />
+        <View style={{ width: 28, height: 2, backgroundColor: C.amber, borderRadius: 1, marginTop: 12, opacity: 0.9 }} />
       </View>
 
       {loading ? (
@@ -257,26 +266,24 @@ function ChatMessages({
       style={{ flex: 1, backgroundColor: C.bgBase }}
     >
       {/* Header */}
-      <View style={{ backgroundColor: C.bgDeep, paddingTop: 52, paddingHorizontal: S.md, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: C.border }}>
+      <View style={{ backgroundColor: C.bgDeep, paddingTop: 52, paddingHorizontal: S.md, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: C.amber + '30' }}>
         <View style={{ position: 'absolute', top: 0, right: -10, width: 180, height: 180, borderRadius: 90, backgroundColor: C.amber, opacity: 0.05 }} />
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-          <TouchableOpacity onPress={onBack} style={{ backgroundColor: C.bgElevated, borderRadius: R.sm, padding: 9, borderWidth: 1, borderColor: C.border }}>
-            <Ionicons name="arrow-back" size={20} color={C.textPrimary} />
-          </TouchableOpacity>
 
+          {/* Avatar */}
           {isAdmin ? (
-            // Admin header: client info
-            <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: C.blue + '25', borderWidth: 2, borderColor: C.blue, alignItems: 'center', justifyContent: 'center' }}>
-              <Text style={{ color: C.blue, fontSize: 16, fontWeight: '800', fontFamily: F.base }}>
+            <View style={{ width: 46, height: 46, borderRadius: 23, backgroundColor: C.blue + '25', borderWidth: 2, borderColor: C.blue, alignItems: 'center', justifyContent: 'center' }}>
+              <Text style={{ color: C.blue, fontSize: 17, fontWeight: '800', fontFamily: F.base }}>
                 {(clientName || 'C')[0].toUpperCase()}
               </Text>
             </View>
           ) : (
-            <View style={{ borderRadius: 24, overflow: 'hidden', width: 44, height: 44, borderWidth: 2, borderColor: C.amber }}>
-              <Image source={require('../../assets/logo-pintura.png')} style={{ width: 40, height: 40 }} resizeMode="contain" />
+            <View style={{ borderRadius: 25, overflow: 'hidden', width: 46, height: 46, borderWidth: 2, borderColor: C.amber, backgroundColor: '#fff' }}>
+              <Image source={require('../../assets/logo-pintura.png')} style={{ width: 42, height: 42 }} resizeMode="contain" />
             </View>
           )}
 
+          {/* Info */}
           <View style={{ flex: 1 }}>
             <Text style={{ color: C.textPrimary, fontSize: 16, fontWeight: '800', fontFamily: F.base }}>
               {isAdmin ? (clientName || 'Cliente') : 'A. Coraça & T. Carvalho'}
@@ -288,6 +295,21 @@ function ChatMessages({
               </Text>
             </View>
           </View>
+
+          {/* Botão Sair — destaque visual */}
+          <TouchableOpacity
+            onPress={onBack}
+            activeOpacity={0.8}
+            style={{
+              flexDirection: 'row', alignItems: 'center', gap: 6,
+              backgroundColor: C.error + '18',
+              borderWidth: 1.5, borderColor: C.error + '55',
+              borderRadius: R.full, paddingHorizontal: 14, paddingVertical: 8,
+            }}
+          >
+            <Ionicons name="exit-outline" size={18} color={C.error} />
+            <Text style={{ color: C.error, fontSize: 13, fontWeight: '700', fontFamily: F.base }}>Sair</Text>
+          </TouchableOpacity>
         </View>
       </View>
 
