@@ -135,28 +135,24 @@ export function HomeScreen({ onBudget, onPortfolio, onServiceDetail, onPortfolio
             internal: 'Interna', external: 'Externa',
             texture: 'Textura', lacquering: 'Laqueação',
           };
-          const cols = 2;
-          const gap  = 10;
-          const pad  = S.md;
-          const itemW = (screenWidth - pad * 2 - pad * 2 - gap * (cols - 1)) / cols;
           return (
             <View style={{
               backgroundColor: C.bgSurface,
-              borderRadius: R.lg, padding: pad, marginBottom: S.md,
+              borderRadius: R.lg, padding: S.md, marginBottom: S.md,
               borderWidth: 1, borderColor: C.amber + '50',
               marginTop: -16,
               ...SH.neonSubtle,
             }}>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap }}>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
                 {entries.map(([key, val]) => (
                   <TouchableOpacity
                     key={key}
                     onPress={() => onServiceDetail(key)}
                     activeOpacity={0.75}
-                    style={{ width: itemW, alignItems: 'center', gap: 6 }}
+                    style={{ width: '48%', alignItems: 'center', gap: 6 }}
                   >
                     <View style={{
-                      width: itemW, height: 72,
+                      width: '100%', height: 72,
                       borderRadius: R.md,
                       backgroundColor: val.color + '15',
                       borderWidth: 1.5, borderColor: val.color + '40',
