@@ -152,7 +152,7 @@ export function HomeScreen({ onBudget, onPortfolio, onServiceDetail, onPortfolio
                     style={{ width: '48%', alignItems: 'center', gap: 6 }}
                   >
                     <View style={{
-                      width: '90%', height: 72,
+                      width: '60%', height: 72,
                       borderRadius: R.md,
                       backgroundColor: val.color + '15',
                       borderWidth: 1.5, borderColor: val.color + '40',
