@@ -50,7 +50,7 @@ export function LogoHero({ size = 'md' }: Props) {
         }}>
           <Image
             source={require('../../src/image/logo-pintura.png')}
-            style={{ width: '100%', height: '100%' }}
+            style={{ width: '115%', height: '105%', marginLeft: '-7.5%', marginTop: '0.8%' }}
             resizeMode="cover"
           />
         </View>
