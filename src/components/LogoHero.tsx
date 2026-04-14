@@ -8,9 +8,9 @@ interface Props {
 }
 
 const SIZES = {
-  sm: { imgW: 68,  imgH: 68,  frameW: 92,  frameH: 92,  corner: 12 },
-  md: { imgW: 100, imgH: 100, frameW: 128, frameH: 128, corner: 16 },
-  lg: { imgW: 130, imgH: 130, frameW: 160, frameH: 160, corner: 18 },
+  sm: { imgW: 92,  imgH: 92,  frameW: 92,  frameH: 92,  corner: 12 },
+  md: { imgW: 128, imgH: 128, frameW: 128, frameH: 128, corner: 16 },
+  lg: { imgW: 160, imgH: 160, frameW: 160, frameH: 160, corner: 18 },
 };
 
 export function LogoHero({ size = 'md' }: Props) {
@@ -40,14 +40,11 @@ export function LogoHero({ size = 'md' }: Props) {
         { width: s.frameW, height: s.frameH, borderRadius: 9999 },
         SH.neon,
       ]}>
-        {/* Fundo branco */}
-        <View style={[StyleSheet.absoluteFill, { backgroundColor: '#ffffff', borderRadius: 9999 }]} />
-
-        {/* Logo image */}
+        {/* Logo image — preenche todo o círculo */}
         <Image
           source={require('../../src/image/logo-pintura.png')}
           style={{ width: s.frameW, height: s.frameH }}
-          resizeMode="contain"
+          resizeMode="cover"
         />
 
         {/* Borda neon elíptica (por cima da imagem) */}
