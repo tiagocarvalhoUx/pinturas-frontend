@@ -135,38 +135,38 @@ export function HomeScreen({ onBudget, onPortfolio, onServiceDetail, onPortfolio
             internal: 'Interna', external: 'Externa',
             texture: 'Textura', lacquering: 'Laqueação',
           };
-          const itemW = (screenWidth - S.md * 2 - S.md * 2 - 12) / 2;
+          const cols = 2;
+          const gap  = 10;
+          const pad  = S.md;
+          const itemW = (screenWidth - pad * 2 - pad * 2 - gap * (cols - 1)) / cols;
           return (
             <View style={{
               backgroundColor: C.bgSurface,
-              borderRadius: R.lg, padding: S.md, marginBottom: S.md,
+              borderRadius: R.lg, padding: pad, marginBottom: S.md,
               borderWidth: 1, borderColor: C.amber + '50',
               marginTop: -16,
               ...SH.neonSubtle,
             }}>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap }}>
                 {entries.map(([key, val]) => (
                   <TouchableOpacity
                     key={key}
                     onPress={() => onServiceDetail(key)}
                     activeOpacity={0.75}
-                    style={{ width: itemW, alignItems: 'center' }}
+                    style={{ width: itemW, alignItems: 'center', gap: 6 }}
                   >
                     <View style={{
-                      width: itemW, height: itemW * 0.72,
-                      borderRadius: R.lg,
+                      width: itemW, height: 72,
+                      borderRadius: R.md,
                       backgroundColor: val.color + '15',
                       borderWidth: 1.5, borderColor: val.color + '40',
                       alignItems: 'center', justifyContent: 'center',
                       shadowColor: val.color, shadowOffset: { width: 0, height: 0 },
-                      shadowOpacity: 0.3, shadowRadius: 10, elevation: 4,
+                      shadowOpacity: 0.25, shadowRadius: 8, elevation: 3,
                     }}>
-                      <Ionicons name={val.icon as any} size={38} color={val.color} />
+                      <Ionicons name={val.icon as any} size={28} color={val.color} />
                     </View>
-                    <Text style={{
-                      fontSize: 13, color: C.textPrimary, fontWeight: '700',
-                      textAlign: 'center', fontFamily: F.base, marginTop: 8,
-                    }}>
+                    <Text style={{ fontSize: 12, color: C.textPrimary, fontWeight: '700', textAlign: 'center', fontFamily: F.base }}>
                       {LABELS[key]}
                     </Text>
                   </TouchableOpacity>
