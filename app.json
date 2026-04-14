@@ -4,11 +4,11 @@
     "slug": "a-coraca-t-carvalho-pinturas",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/components/image/logo-pintura.png",
+    "icon": "./src/image/logo-pintura.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./src/components/image/logo-pintura.png",
+      "image": "./src/image/logo-pintura.png",
       "resizeMode": "contain",
       "backgroundColor": "#2563EB"
     },
@@ -18,7 +18,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./src/components/image/logo-pintura.png",
+        "foregroundImage": "./src/image/logo-pintura.png",
         "backgroundColor": "#2563EB"
       },
       "package": "com.adelciopinturas.app",
@@ -26,7 +26,7 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./src/components/image/favicon.png",
+      "favicon": "./src/image/logo-pintura.png",
       "name": "A. Coraça & T. Carvalho Pinturas e Reformas"
     }
   }
