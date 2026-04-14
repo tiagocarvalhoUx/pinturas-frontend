@@ -75,12 +75,12 @@ export function SplashScreen({ onFinish }: Props) {
 
       {/* Pulsing rings */}
       <Animated.View style={{
-        position: 'absolute', width: 130, height: 130, borderRadius: 65,
+        position: 'absolute', width: 180, height: 180, borderRadius: 9999,
         borderWidth: 1.5, borderColor: C.amber,
         transform: [{ scale: ring1Scale }], opacity: ring1Opacity,
       }} />
       <Animated.View style={{
-        position: 'absolute', width: 130, height: 130, borderRadius: 65,
+        position: 'absolute', width: 180, height: 180, borderRadius: 9999,
         borderWidth: 1, borderColor: C.amberLight,
         transform: [{ scale: ring2Scale }], opacity: ring2Opacity,
       }} />
@@ -88,17 +88,16 @@ export function SplashScreen({ onFinish }: Props) {
       {/* Logo container */}
       <Animated.View style={{ transform: [{ scale }], opacity, alignItems: 'center' }}>
         <View style={{
-          width: 160, height: 140, borderRadius: 32,
+          width: 180, height: 180, borderRadius: 9999,
           borderWidth: 2.5, borderColor: C.amber,
-          backgroundColor: '#fff',
-          alignItems: 'center', justifyContent: 'center',
+          overflow: 'hidden',
           shadowColor: C.amber, shadowOffset: { width: 0, height: 0 },
-          shadowOpacity: 0.7, shadowRadius: 24, elevation: 14,
+          shadowOpacity: 0.8, shadowRadius: 28, elevation: 16,
         }}>
           <Image
             source={require('../../assets/logo-pintura.png')}
-            style={{ width: 126, height: 126 }}
-            resizeMode="contain"
+            style={{ width: '100%', height: '100%' }}
+            resizeMode="cover"
           />
         </View>
       </Animated.View>
