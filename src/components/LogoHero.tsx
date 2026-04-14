@@ -40,12 +40,20 @@ export function LogoHero({ size = 'md' }: Props) {
         { width: s.frameW, height: s.frameH, borderRadius: 9999 },
         SH.neon,
       ]}>
-        {/* Logo image — preenche todo o círculo */}
-        <Image
-          source={require('../../src/image/logo-pintura.png')}
-          style={{ width: s.frameW, height: s.frameH }}
-          resizeMode="cover"
-        />
+        {/* Logo image — clipado em círculo */}
+        <View style={{
+          position: 'absolute',
+          top: 0, left: 0, right: 0, bottom: 0,
+          borderRadius: 9999,
+          overflow: 'hidden',
+          backgroundColor: '#0a0a0a',
+        }}>
+          <Image
+            source={require('../../src/image/logo-pintura.png')}
+            style={{ width: '100%', height: '100%' }}
+            resizeMode="cover"
+          />
+        </View>
 
         {/* Borda neon elíptica (por cima da imagem) */}
         <View style={[styles.border, { borderRadius: 9999 }]} />
