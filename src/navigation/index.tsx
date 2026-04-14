@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { View, Text, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useAppStore } from '../store/appStore';
+import { prefetchAll, warmupBackend } from '../services/prefetch';
 import { SplashScreen } from '../screens/SplashScreen';
 import { OnboardingScreen } from '../screens/OnboardingScreen';
 import { LoginScreen } from '../screens/LoginScreen';
@@ -25,31 +26,26 @@ type Screen =
 
 type TabScreen = 'Home' | 'BudgetsList' | 'Portfolio' | 'Chat' | 'Profile' | 'AdminDashboard';
 
-// Wraps any screen with a fade + slide-up entrance animation.
-// Re-runs when `screenKey` changes (screen or active tab switched).
+// ─── Animação de entrada leve ────────────────────────────────────────────────
 function ScreenTransition({ children, screenKey }: { children: React.ReactNode; screenKey: string }) {
-  const opacity    = useRef(new Animated.Value(0)).current;
-  const translateY = useRef(new Animated.Value(14)).current;
+  const opacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     opacity.setValue(0);
-    translateY.setValue(14);
-    Animated.parallel([
-      Animated.timing(opacity,    { toValue: 1, duration: 260, useNativeDriver: true }),
-      Animated.spring(translateY, { toValue: 0, tension: 100, friction: 14, useNativeDriver: true }),
-    ]).start();
+    Animated.timing(opacity, { toValue: 1, duration: 180, useNativeDriver: true }).start();
   }, [screenKey]);
 
   return (
-    <Animated.View style={{ flex: 1, opacity, transform: [{ translateY }] }}>
+    <Animated.View style={{ flex: 1, opacity }}>
       {children}
     </Animated.View>
   );
 }
 
-function SuccessToast({ visible }: { visible: boolean }) {
+// ─── Toast de sucesso ────────────────────────────────────────────────────────
+const SuccessToast = memo(function SuccessToast({ visible }: { visible: boolean }) {
   const translateY = useRef(new Animated.Value(-100)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
+  const opacity    = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (visible) {
@@ -87,67 +83,131 @@ function SuccessToast({ visible }: { visible: boolean }) {
       </View>
     </Animated.View>
   );
+});
+
+// ─── Tabs persistentes — montadas uma vez, mostradas/escondidas com display ──
+interface PersistentTabsProps {
+  activeTab: TabScreen;
+  role?: string;
+  onBudget: () => void;
+  onPortfolio: () => void;
+  onServiceDetail: (id: string) => void;
+  onAllServices: () => void;
+  onPortfolioDetail: (item: PortfolioItem) => void;
+  onBudgetDetail: (id: string) => void;
+  onAllBudgets: () => void;
+  onLogout: () => void;
+  onChatBack: () => void;
 }
 
+const PersistentTabs = memo(function PersistentTabs({
+  activeTab, role,
+  onBudget, onPortfolio, onServiceDetail, onAllServices,
+  onPortfolioDetail, onBudgetDetail, onAllBudgets, onLogout, onChatBack,
+}: PersistentTabsProps) {
+  const isAdmin = role === 'admin';
+
+  return (
+    <>
+      {/* Home */}
+      <View style={{ flex: 1, display: activeTab === 'Home' ? 'flex' : 'none' }}>
+        <HomeScreen
+          onBudget={onBudget}
+          onPortfolio={onPortfolio}
+          onServiceDetail={onServiceDetail}
+          onAllServices={onAllServices}
+          onPortfolioDetail={onPortfolioDetail}
+        />
+      </View>
+
+      {/* Orçamentos */}
+      <View style={{ flex: 1, display: activeTab === 'BudgetsList' ? 'flex' : 'none' }}>
+        <BudgetsListScreen
+          onBudgetDetail={onBudgetDetail}
+          onNewBudget={onBudget}
+        />
+      </View>
+
+      {/* Portfólio */}
+      <View style={{ flex: 1, display: activeTab === 'Portfolio' ? 'flex' : 'none' }}>
+        <PortfolioScreen onDetail={onPortfolioDetail} />
+      </View>
+
+      {/* Chat */}
+      <View style={{ flex: 1, display: activeTab === 'Chat' ? 'flex' : 'none' }}>
+        <ChatScreen onBack={onChatBack} />
+      </View>
+
+      {/* Perfil */}
+      <View style={{ flex: 1, display: activeTab === 'Profile' ? 'flex' : 'none' }}>
+        <ProfileScreen onLogout={onLogout} />
+      </View>
+
+      {/* Admin Dashboard */}
+      {isAdmin && (
+        <View style={{ flex: 1, display: activeTab === 'AdminDashboard' ? 'flex' : 'none' }}>
+          <AdminDashboard
+            onBudgetDetail={onBudgetDetail}
+            onAllBudgets={onAllBudgets}
+          />
+        </View>
+      )}
+    </>
+  );
+});
+
+// ─── Navegador principal ─────────────────────────────────────────────────────
 export function AppNavigator() {
-  const user = useAppStore((s) => s.user);
-  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+  const user             = useAppStore((s) => s.user);
+  const isAuthenticated  = useAppStore((s) => s.isAuthenticated);
   const hasSeenOnboarding = useAppStore((s) => s.hasSeenOnboarding);
 
-  const [screen, setScreen] = useState<Screen>('Splash');
-  const [activeTab, setActiveTab] = useState<TabScreen>('Home');
+  const [screen, setScreen]           = useState<Screen>('Splash');
+  const [activeTab, setActiveTab]     = useState<TabScreen>('Home');
+  const [transitionKey, setTransitionKey] = useState(0);
   const [selectedServiceType, setSelectedServiceType] = useState<string | undefined>();
-  const [selectedBudgetId, setSelectedBudgetId]         = useState<string | undefined>();
+  const [selectedBudgetId, setSelectedBudgetId]       = useState<string | undefined>();
   const [selectedPortfolioItem, setSelectedPortfolioItem] = useState<PortfolioItem | undefined>();
-  const [showToast, setShowToast] = useState(false);
+  const [showToast, setShowToast]     = useState(false);
   const toastTimer = useRef<ReturnType<typeof setTimeout>>();
 
-  // Unique key for ScreenTransition — changes on every navigation action
-  const [transitionKey, setTransitionKey] = useState(0);
   const bumpKey = useCallback(() => setTransitionKey((k) => k + 1), []);
+  const go      = useCallback((s: Screen) => { setScreen(s); bumpKey(); }, [bumpKey]);
 
-  const go = (s: Screen) => { setScreen(s); bumpKey(); };
+  // Prefetch ao entrar no Main
+  const enterMain = useCallback((role: 'client' | 'admin') => {
+    const tab = role === 'admin' ? 'AdminDashboard' : 'Home';
+    setActiveTab(tab);
+    go('Main');
+    prefetchAll(role);
+  }, [go]);
 
-  const goToService = (serviceId: string) => {
-    setSelectedServiceType(serviceId);
-    go('Budget');
-  };
+  const goToBudget          = useCallback(() => { setSelectedServiceType(undefined); go('Budget'); }, [go]);
+  const goToService         = useCallback((id: string) => { setSelectedServiceType(id); go('Budget'); }, [go]);
+  const goToBudgetDetail    = useCallback((id: string) => { setSelectedBudgetId(id); go('BudgetDetail'); }, [go]);
+  const goToPortfolioDetail = useCallback((item: PortfolioItem) => { setSelectedPortfolioItem(item); go('PortfolioDetail'); }, [go]);
 
-  const goToBudget = () => {
-    setSelectedServiceType(undefined);
-    go('Budget');
-  };
-
-  const goToBudgetDetail = (id: string) => {
-    setSelectedBudgetId(id);
-    go('BudgetDetail');
-  };
-
-  const goToPortfolioDetail = (item: PortfolioItem) => {
-    setSelectedPortfolioItem(item);
-    go('PortfolioDetail');
-  };
-
-  const handleBudgetSuccess = () => {
+  const handleBudgetSuccess = useCallback(() => {
     setActiveTab('Home');
     go('Main');
-    // Show toast after navigation settles
     setTimeout(() => {
       setShowToast(true);
       toastTimer.current = setTimeout(() => setShowToast(false), 4000);
     }, 100);
-  };
+  }, [go]);
 
-  // Splash (no transition — intentional)
+  const handleTabChange = useCallback((tab: string) => {
+    setActiveTab(tab as TabScreen);
+  }, []);
+
+  // Splash
   if (screen === 'Splash') {
+    warmupBackend(); // acorda o Render enquanto mostra o splash
     return (
       <SplashScreen onFinish={() => {
         if (!hasSeenOnboarding) go('Onboarding');
         else if (!isAuthenticated) go('Login');
-        else {
-          setActiveTab(user?.role === 'admin' ? 'AdminDashboard' : 'Home');
-          go('Main');
-        }
+        else enterMain(user?.role ?? 'client');
       }} />
     );
   }
@@ -164,10 +224,7 @@ export function AppNavigator() {
     return (
       <ScreenTransition screenKey={`login-${transitionKey}`}>
         <LoginScreen
-          onLogin={() => {
-            setActiveTab(user?.role === 'admin' ? 'AdminDashboard' : 'Home');
-            go('Main');
-          }}
+          onLogin={() => enterMain(user?.role ?? 'client')}
           onGoRegister={() => go('Register')}
         />
       </ScreenTransition>
@@ -178,7 +235,7 @@ export function AppNavigator() {
     return (
       <ScreenTransition screenKey={`register-${transitionKey}`}>
         <RegisterScreen
-          onRegister={() => { setActiveTab('Home'); go('Main'); }}
+          onRegister={() => enterMain(user?.role ?? 'client')}
           onGoLogin={() => go('Login')}
         />
       </ScreenTransition>
@@ -193,14 +250,6 @@ export function AppNavigator() {
           onSuccess={handleBudgetSuccess}
           onBack={() => go('Main')}
         />
-      </ScreenTransition>
-    );
-  }
-
-  if (screen === 'Chat') {
-    return (
-      <ScreenTransition screenKey={`chat-${transitionKey}`}>
-        <ChatScreen onBack={() => go('Main')} />
       </ScreenTransition>
     );
   }
@@ -227,58 +276,22 @@ export function AppNavigator() {
     );
   }
 
-  // Main Tab Layout
-  const renderTab = () => {
-    switch (activeTab) {
-      case 'Home':
-        return (
-          <HomeScreen
-            onBudget={goToBudget}
-            onPortfolio={() => setActiveTab('Portfolio')}
-            onServiceDetail={goToService}
-            onAllServices={goToBudget}
-            onPortfolioDetail={goToPortfolioDetail}
-          />
-        );
-      case 'BudgetsList':
-        return (
-          <BudgetsListScreen
-            onBudgetDetail={goToBudgetDetail}
-            onNewBudget={goToBudget}
-          />
-        );
-      case 'Portfolio':
-        return <PortfolioScreen onDetail={goToPortfolioDetail} />;
-      case 'Chat':
-        return <ChatScreen onBack={() => setActiveTab('Home')} />;
-      case 'Profile':
-        return <ProfileScreen onLogout={() => go('Login')} />;
-      case 'AdminDashboard':
-        return (
-          <AdminDashboard
-            onBudgetDetail={goToBudgetDetail}
-            onAllBudgets={() => setActiveTab('BudgetsList')}
-          />
-        );
-      default:
-        return null;
-    }
-  };
-
-  const handleTabChange = (tab: string) => {
-    if (tab === 'Chat') {
-      go('Chat');
-    } else {
-      setActiveTab(tab as TabScreen);
-      bumpKey();
-    }
-  };
-
+  // ── Main — tabs sempre montadas ──────────────────────────────────────────
   return (
     <View style={{ flex: 1, backgroundColor: '#0F0D0A' }}>
-      <ScreenTransition screenKey={`tab-${activeTab}-${transitionKey}`}>
-        {renderTab()}
-      </ScreenTransition>
+      <PersistentTabs
+        activeTab={activeTab}
+        role={user?.role}
+        onBudget={goToBudget}
+        onPortfolio={() => setActiveTab('Portfolio')}
+        onServiceDetail={goToService}
+        onAllServices={goToBudget}
+        onPortfolioDetail={goToPortfolioDetail}
+        onBudgetDetail={goToBudgetDetail}
+        onAllBudgets={() => setActiveTab('BudgetsList')}
+        onLogout={() => go('Login')}
+        onChatBack={() => setActiveTab('Home')}
+      />
       <BottomTabBar
         activeTab={activeTab}
         onTabChange={handleTabChange}
