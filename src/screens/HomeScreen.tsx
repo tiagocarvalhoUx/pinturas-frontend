@@ -128,37 +128,53 @@ export function HomeScreen({ onBudget, onPortfolio, onServiceDetail, onPortfolio
 
       <View style={{ paddingHorizontal: S.md, marginTop: -1 }}>
 
-        {/* ── Quick icons grid ── */}
-        <View style={{
-          backgroundColor: C.bgSurface,
-          borderRadius: R.lg, padding: S.md, marginBottom: S.md,
-          borderWidth: 1, borderColor: C.amber + '50',
-          marginTop: -16,
-          ...SH.neonSubtle,
-        }}>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
-            {Object.entries(SERVICE_ICONS).slice(0, 4).map(([key, val]) => (
-              <TouchableOpacity
-                key={key}
-                onPress={() => onServiceDetail(key)}
-                style={{ width: gridItemWidth, alignItems: 'center', gap: 6 }}
-                activeOpacity={0.7}
-              >
-                <View style={{
-                  width: 52, height: 52, borderRadius: R.md,
-                  backgroundColor: val.color + '1A',
-                  borderWidth: 1, borderColor: val.color + '30',
-                  alignItems: 'center', justifyContent: 'center',
-                }}>
-                  <Ionicons name={val.icon as any} size={24} color={val.color} />
-                </View>
-                <Text style={{ fontSize: 10, color: C.textSecondary, fontWeight: '600', textAlign: 'center', fontFamily: F.base }}>
-                  {key === 'internal' ? 'Interna' : key === 'external' ? 'Externa' : key === 'texture' ? 'Textura' : 'Laqueação'}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
+        {/* ── Quick icons grid 2×2 ── */}
+        {(() => {
+          const entries = Object.entries(SERVICE_ICONS).slice(0, 4);
+          const LABELS: Record<string, string> = {
+            internal: 'Interna', external: 'Externa',
+            texture: 'Textura', lacquering: 'Laqueação',
+          };
+          const itemW = (screenWidth - S.md * 2 - S.md * 2 - 12) / 2;
+          return (
+            <View style={{
+              backgroundColor: C.bgSurface,
+              borderRadius: R.lg, padding: S.md, marginBottom: S.md,
+              borderWidth: 1, borderColor: C.amber + '50',
+              marginTop: -16,
+              ...SH.neonSubtle,
+            }}>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+                {entries.map(([key, val]) => (
+                  <TouchableOpacity
+                    key={key}
+                    onPress={() => onServiceDetail(key)}
+                    activeOpacity={0.75}
+                    style={{ width: itemW, alignItems: 'center' }}
+                  >
+                    <View style={{
+                      width: itemW, height: itemW * 0.72,
+                      borderRadius: R.lg,
+                      backgroundColor: val.color + '15',
+                      borderWidth: 1.5, borderColor: val.color + '40',
+                      alignItems: 'center', justifyContent: 'center',
+                      shadowColor: val.color, shadowOffset: { width: 0, height: 0 },
+                      shadowOpacity: 0.3, shadowRadius: 10, elevation: 4,
+                    }}>
+                      <Ionicons name={val.icon as any} size={38} color={val.color} />
+                    </View>
+                    <Text style={{
+                      fontSize: 13, color: C.textPrimary, fontWeight: '700',
+                      textAlign: 'center', fontFamily: F.base, marginTop: 8,
+                    }}>
+                      {LABELS[key]}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          );
+        })()}
 
         {/* ── CTA Banner ── */}
         <TouchableOpacity onPress={onBudget} activeOpacity={0.88} style={{ marginBottom: S.md, borderRadius: R.lg, ...SH.neon }}>
