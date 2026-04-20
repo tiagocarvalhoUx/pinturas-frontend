@@ -38,6 +38,7 @@ export interface PortfolioItem {
   serviceType: string;
   beforeImage?: { url: string };
   afterImage?: { url: string };
+  extraImages?: { url: string; publicId?: string; type: 'before' | 'after' }[];
   area?: number;
   duration?: string;
   location?: string;

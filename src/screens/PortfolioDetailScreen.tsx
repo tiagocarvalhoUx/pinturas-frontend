@@ -176,6 +176,7 @@ export function PortfolioDetailScreen({ item, onBack }: Props) {
   const [showAfter, setShowAfter]         = useState(true);
   const [lightboxOpen, setLightboxOpen]   = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [groupIndex, setGroupIndex]       = useState(0);
 
   const enterAnim = useRef(new Animated.Value(30)).current;
   const enterOpacity = useRef(new Animated.Value(0)).current;
@@ -187,15 +188,26 @@ export function PortfolioDetailScreen({ item, onBack }: Props) {
     ]).start();
   }, []);
 
-  // Build image array for lightbox
-  const images: { url: string; label: string }[] = [];
-  if (item.afterImage?.url)  images.push({ url: item.afterImage.url,  label: 'DEPOIS' });
-  if (item.beforeImage?.url) images.push({ url: item.beforeImage.url, label: 'ANTES'  });
+  // Build image array for lightbox — merge single + extra images
+  const afterImages: { url: string; label: string }[] = [];
+  const beforeImages: { url: string; label: string }[] = [];
+  if (item.afterImage?.url)  afterImages.push({ url: item.afterImage.url,  label: 'DEPOIS' });
+  if (item.beforeImage?.url) beforeImages.push({ url: item.beforeImage.url, label: 'ANTES' });
+  (item.extraImages || []).forEach((img) => {
+    if (img.type === 'after')  afterImages.push({ url: img.url, label: 'DEPOIS' });
+    else                       beforeImages.push({ url: img.url, label: 'ANTES'  });
+  });
+  const images = [...afterImages, ...beforeImages];
 
-  const hasBefore = !!item.beforeImage?.url;
-  const hasAfter  = !!item.afterImage?.url;
+  const hasBefore = beforeImages.length > 0;
+  const hasAfter  = afterImages.length > 0;
   const hasBoth   = hasBefore && hasAfter;
-  const currentImage = showAfter ? item.afterImage : item.beforeImage;
+
+  // Current main image from the active group
+  const currentGroupImages = showAfter ? afterImages : beforeImages;
+  const currentImage = currentGroupImages[groupIndex] ? { url: currentGroupImages[groupIndex].url } : undefined;
+  // Global index of current image in the full `images` array (for lightbox)
+  const currentGlobalIndex = images.findIndex((img) => img.url === currentImage?.url);
 
   const openLightbox = (idx: number) => {
     setLightboxIndex(idx);
@@ -244,7 +256,7 @@ export function PortfolioDetailScreen({ item, onBack }: Props) {
         <Animated.View style={{ transform: [{ translateY: enterAnim }] }}>
           <TouchableOpacity
             activeOpacity={0.92}
-            onPress={() => openLightbox(showAfter ? 0 : 1)}
+            onPress={() => openLightbox(currentGlobalIndex >= 0 ? currentGlobalIndex : 0)}
           >
             <View style={{ position: 'relative', height: 300, backgroundColor: C.bgElevated }}>
               {currentImage?.url ? (
@@ -284,7 +296,7 @@ export function PortfolioDetailScreen({ item, onBack }: Props) {
                   {[false, true].map((after) => (
                     <TouchableOpacity
                       key={String(after)}
-                      onPress={() => setShowAfter(after)}
+                      onPress={() => { setShowAfter(after); setGroupIndex(0); }}
                       style={{
                         paddingHorizontal: 14, paddingVertical: 6,
                         borderRadius: R.full,
@@ -301,8 +313,8 @@ export function PortfolioDetailScreen({ item, onBack }: Props) {
             </View>
           </TouchableOpacity>
 
-          {/* Thumbnails row (when both images exist) */}
-          {hasBoth && (
+          {/* Thumbnails row (when there are multiple images total) */}
+          {images.length > 1 && (
             <View style={{
               flexDirection: 'row', gap: 8, paddingHorizontal: S.md,
               paddingVertical: 10, backgroundColor: C.bgSurface,
@@ -311,14 +323,20 @@ export function PortfolioDetailScreen({ item, onBack }: Props) {
               {images.map((img, i) => (
                 <TouchableOpacity
                   key={i}
-                  onPress={() => openLightbox(i)}
+                  onPress={() => {
+                    const isAfter = img.label === 'DEPOIS';
+                    const group = isAfter ? afterImages : beforeImages;
+                    const gi = group.findIndex((g) => g.url === img.url);
+                    setShowAfter(isAfter);
+                    setGroupIndex(gi >= 0 ? gi : 0);
+                  }}
                   activeOpacity={0.8}
                   style={{
                     borderRadius: R.sm, overflow: 'hidden',
                     borderWidth: 2,
-                    borderColor: (showAfter ? 0 : 1) === i ? C.amber : C.border,
+                    borderColor: i === currentGlobalIndex ? C.amber : C.border,
                     shadowColor: C.amber,
-                    shadowOpacity: (showAfter ? 0 : 1) === i ? 0.4 : 0,
+                    shadowOpacity: i === currentGlobalIndex ? 0.4 : 0,
                     shadowOffset: { width: 0, height: 2 }, shadowRadius: 6, elevation: 3,
                   }}
                 >
