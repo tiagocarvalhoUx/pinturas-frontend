@@ -14,9 +14,10 @@ import { C, R, S, F, SH } from '../theme';
 interface Props {
   onBudgetDetail: (id: string) => void;
   onAllBudgets: () => void;
+  onManagePortfolio: () => void;
 }
 
-export function AdminDashboard({ onBudgetDetail, onAllBudgets }: Props) {
+export function AdminDashboard({ onBudgetDetail, onAllBudgets, onManagePortfolio }: Props) {
   const adminStats    = useAppStore((s) => s.adminStats);
   const setAdminStats = useAppStore((s) => s.setAdminStats);
   const setBudgets    = useAppStore((s) => s.setBudgets);
@@ -160,7 +161,7 @@ export function AdminDashboard({ onBudgetDetail, onAllBudgets }: Props) {
           ...SH.neonSubtle,
         }}>
           <Text style={{ fontSize: 13, fontWeight: '800', color: C.textPrimary, marginBottom: 14, fontFamily: F.base }}>Ações Rápidas</Text>
-          <View style={{ flexDirection: 'row', gap: 10 }}>
+          <View style={{ flexDirection: 'row', gap: 10, marginBottom: 10 }}>
             <TouchableOpacity onPress={onAllBudgets} activeOpacity={0.8}
               style={{ flex: 1, backgroundColor: C.amberGlow, borderRadius: R.md, padding: 14, alignItems: 'center', gap: 6, borderWidth: 1, borderColor: C.amber + '35' }}>
               <Ionicons name="list-outline" size={22} color={C.amber} />
@@ -177,6 +178,11 @@ export function AdminDashboard({ onBudgetDetail, onAllBudgets }: Props) {
               </Text>
             </TouchableOpacity>
           </View>
+          <TouchableOpacity onPress={onManagePortfolio} activeOpacity={0.8}
+            style={{ backgroundColor: C.purple + '18', borderRadius: R.md, padding: 14, alignItems: 'center', gap: 6, borderWidth: 1, borderColor: C.purple + '35', flexDirection: 'row', justifyContent: 'center' }}>
+            <Ionicons name="images-outline" size={22} color={C.purple} />
+            <Text style={{ color: C.purple, fontSize: 13, fontWeight: '700', fontFamily: F.base }}>Gerenciar Portfólio</Text>
+          </TouchableOpacity>
         </View>
 
         {/* ── Recent Budgets ── */}

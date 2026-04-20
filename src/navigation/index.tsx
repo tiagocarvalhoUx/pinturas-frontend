@@ -15,6 +15,7 @@ import { PortfolioScreen } from '../screens/PortfolioScreen';
 import { ChatScreen } from '../screens/ChatScreen';
 import { ProfileScreen } from '../screens/ProfileScreen';
 import { AdminDashboard } from '../screens/AdminDashboard';
+import { AdminPortfolioScreen } from '../screens/AdminPortfolioScreen';
 import { BottomTabBar } from '../components/BottomTabBar';
 import { BudgetDetailScreen } from '../screens/BudgetDetailScreen';
 import { PortfolioDetailScreen } from '../screens/PortfolioDetailScreen';
@@ -22,7 +23,7 @@ import { PortfolioItem } from '../store/appStore';
 
 type Screen =
   | 'Splash' | 'Onboarding' | 'Login' | 'Register'
-  | 'Main' | 'Budget' | 'Chat' | 'BudgetDetail' | 'PortfolioDetail';
+  | 'Main' | 'Budget' | 'Chat' | 'BudgetDetail' | 'PortfolioDetail' | 'AdminPortfolio';
 
 type TabScreen = 'Home' | 'BudgetsList' | 'Portfolio' | 'Chat' | 'Profile' | 'AdminDashboard';
 
@@ -98,12 +99,13 @@ interface PersistentTabsProps {
   onAllBudgets: () => void;
   onLogout: () => void;
   onChatBack: () => void;
+  onManagePortfolio: () => void;
 }
 
 const PersistentTabs = memo(function PersistentTabs({
   activeTab, role,
   onBudget, onPortfolio, onServiceDetail, onAllServices,
-  onPortfolioDetail, onBudgetDetail, onAllBudgets, onLogout, onChatBack,
+  onPortfolioDetail, onBudgetDetail, onAllBudgets, onLogout, onChatBack, onManagePortfolio,
 }: PersistentTabsProps) {
   const isAdmin = role === 'admin';
 
@@ -149,6 +151,7 @@ const PersistentTabs = memo(function PersistentTabs({
           <AdminDashboard
             onBudgetDetail={onBudgetDetail}
             onAllBudgets={onAllBudgets}
+            onManagePortfolio={onManagePortfolio}
           />
         </View>
       )}
@@ -186,6 +189,7 @@ export function AppNavigator() {
   const goToService         = useCallback((id: string) => { setSelectedServiceType(id); go('Budget'); }, [go]);
   const goToBudgetDetail    = useCallback((id: string) => { setSelectedBudgetId(id); go('BudgetDetail'); }, [go]);
   const goToPortfolioDetail = useCallback((item: PortfolioItem) => { setSelectedPortfolioItem(item); go('PortfolioDetail'); }, [go]);
+  const goToAdminPortfolio  = useCallback(() => go('AdminPortfolio'), [go]);
 
   const handleBudgetSuccess = useCallback(() => {
     setActiveTab('Home');
@@ -276,6 +280,14 @@ export function AppNavigator() {
     );
   }
 
+  if (screen === 'AdminPortfolio') {
+    return (
+      <ScreenTransition screenKey={`adminportfolio-${transitionKey}`}>
+        <AdminPortfolioScreen onBack={() => go('Main')} />
+      </ScreenTransition>
+    );
+  }
+
   // ── Main — tabs sempre montadas ──────────────────────────────────────────
   return (
     <View style={{ flex: 1, backgroundColor: '#0F0D0A' }}>
@@ -291,6 +303,7 @@ export function AppNavigator() {
         onAllBudgets={() => setActiveTab('BudgetsList')}
         onLogout={() => go('Login')}
         onChatBack={() => setActiveTab('Home')}
+        onManagePortfolio={goToAdminPortfolio}
       />
       <BottomTabBar
         activeTab={activeTab}
