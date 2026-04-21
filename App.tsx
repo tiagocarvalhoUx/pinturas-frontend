@@ -11,12 +11,7 @@ import { AppNavigator } from './src/navigation';
 export default function App() {
   const [fontsLoaded] = useFonts({
     ...Ionicons.font,
-    'Onest':          require('./assets/fonts/static/Onest-Regular.ttf'),
-    'Onest-Medium':   require('./assets/fonts/static/Onest-Medium.ttf'),
-    'Onest-SemiBold': require('./assets/fonts/static/Onest-SemiBold.ttf'),
-    'Onest-Bold':     require('./assets/fonts/static/Onest-Bold.ttf'),
-    'Onest-ExtraBold':require('./assets/fonts/static/Onest-ExtraBold.ttf'),
-    'Onest-Black':    require('./assets/fonts/static/Onest-Black.ttf'),
+    'Alice': require('./assets/fonts/Alice-Regular.ttf'),
   });
 
   if (!fontsLoaded) return <View style={{ flex: 1, backgroundColor: '#000000' }} />;

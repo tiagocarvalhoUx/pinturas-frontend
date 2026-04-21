@@ -57,14 +57,9 @@ export const C = {
   overlay: 'rgba(0,0,0,0.75)',
 };
 
-// Typography — Onest font family
+// Typography — Alice custom font
 export const F = {
-  base:      'Onest',
-  medium:    'Onest-Medium',
-  semibold:  'Onest-SemiBold',
-  bold:      'Onest-Bold',
-  extrabold: 'Onest-ExtraBold',
-  black:     'Onest-Black',
+  base: 'Alice',
 };
 
 // Gradient presets
