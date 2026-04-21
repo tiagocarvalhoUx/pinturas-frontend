@@ -57,10 +57,10 @@ export const C = {
   overlay: 'rgba(0,0,0,0.75)',
 };
 
-// Typography — Stardos Stencil font family
+// Typography — Fondamento font family
 export const F = {
-  base: 'StardosStencil',
-  bold: 'StardosStencil-Bold',
+  base:   'Fondamento',
+  italic: 'Fondamento-Italic',
 };
 
 // Gradient presets

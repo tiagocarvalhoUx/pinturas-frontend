@@ -15,8 +15,8 @@ SplashScreen.preventAutoHideAsync();
 export default function App() {
   const [fontsLoaded] = useFonts({
     ...Ionicons.font,
-    'StardosStencil':      require('./assets/fonts/StardosStencil-Regular.ttf'),
-    'StardosStencil-Bold': require('./assets/fonts/StardosStencil-Bold.ttf'),
+    'Fondamento':        require('./assets/fonts/Fondamento-Regular.ttf'),
+    'Fondamento-Italic': require('./assets/fonts/Fondamento-Italic.ttf'),
   });
 
   const onReady = useCallback(async () => {
