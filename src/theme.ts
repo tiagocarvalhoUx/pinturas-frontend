@@ -1,7 +1,6 @@
 // Design tokens — Neon Violet Grid
 // Palette: pure black base + neon violet & electric blue accent for a futuristic look
 
-import { Platform } from 'react-native';
 
 export const C = {
   // Backgrounds
@@ -58,14 +57,9 @@ export const C = {
   overlay: 'rgba(0,0,0,0.75)',
 };
 
-// Typography — Inter on web, system on native
+// Typography — Sekuya custom font
 export const F = {
-  base: Platform.select({
-    web:     'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-    ios:     'System',
-    android: 'Roboto',
-    default: 'System',
-  }) as string,
+  base: 'Sekuya',
 };
 
 // Gradient presets
