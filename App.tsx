@@ -1,5 +1,6 @@
 import './global.css';
 import React from 'react';
+import { View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -18,7 +19,7 @@ export default function App() {
     'Onest-Black':    require('./assets/fonts/static/Onest-Black.ttf'),
   });
 
-  if (!fontsLoaded) return null;
+  if (!fontsLoaded) return <View style={{ flex: 1, backgroundColor: '#000000' }} />;
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
