@@ -15,10 +15,8 @@ SplashScreen.preventAutoHideAsync();
 export default function App() {
   const [fontsLoaded] = useFonts({
     ...Ionicons.font,
-    'Philosopher':            require('./assets/fonts/Philosopher-Regular.ttf'),
-    'Philosopher-Bold':       require('./assets/fonts/Philosopher-Bold.ttf'),
-    'Philosopher-Italic':     require('./assets/fonts/Philosopher-Italic.ttf'),
-    'Philosopher-BoldItalic': require('./assets/fonts/Philosopher-BoldItalic.ttf'),
+    'StardosStencil':      require('./assets/fonts/StardosStencil-Regular.ttf'),
+    'StardosStencil-Bold': require('./assets/fonts/StardosStencil-Bold.ttf'),
   });
 
   const onReady = useCallback(async () => {

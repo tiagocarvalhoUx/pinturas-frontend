@@ -57,9 +57,10 @@ export const C = {
   overlay: 'rgba(0,0,0,0.75)',
 };
 
-// Typography — Alice custom font
+// Typography — Stardos Stencil font family
 export const F = {
-  base: 'Alice',
+  base: 'StardosStencil',
+  bold: 'StardosStencil-Bold',
 };
 
 // Gradient presets
