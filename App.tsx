@@ -11,7 +11,10 @@ import { AppNavigator } from './src/navigation';
 export default function App() {
   const [fontsLoaded] = useFonts({
     ...Ionicons.font,
-    'Alice': require('./assets/fonts/Alice-Regular.ttf'),
+    'Philosopher':            require('./assets/fonts/Philosopher-Regular.ttf'),
+    'Philosopher-Bold':       require('./assets/fonts/Philosopher-Bold.ttf'),
+    'Philosopher-Italic':     require('./assets/fonts/Philosopher-Italic.ttf'),
+    'Philosopher-BoldItalic': require('./assets/fonts/Philosopher-BoldItalic.ttf'),
   });
 
   if (!fontsLoaded) return <View style={{ flex: 1, backgroundColor: '#000000' }} />;
