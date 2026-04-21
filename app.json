@@ -8,8 +8,8 @@
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {
-      "image": "./src/image/logo-pintura.png",
-      "resizeMode": "contain",
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "cover",
       "backgroundColor": "#000000"
     },
     "ios": {
