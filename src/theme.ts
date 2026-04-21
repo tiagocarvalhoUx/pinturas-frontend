@@ -57,10 +57,14 @@ export const C = {
   overlay: 'rgba(0,0,0,0.75)',
 };
 
-// Typography — Fondamento font family
+// Typography — Lato font family
 export const F = {
-  base:   'Fondamento',
-  italic: 'Fondamento-Italic',
+  base:        'Lato-Regular',
+  italic:      'Lato-Italic',
+  bold:        'Lato-Bold',
+  boldItalic:  'Lato-BoldItalic',
+  light:       'Lato-Light',
+  black:       'Lato-Black',
 };
 
 // Gradient presets

@@ -15,8 +15,12 @@ SplashScreen.preventAutoHideAsync();
 export default function App() {
   const [fontsLoaded] = useFonts({
     ...Ionicons.font,
-    'Fondamento':        require('./assets/fonts/Fondamento-Regular.ttf'),
-    'Fondamento-Italic': require('./assets/fonts/Fondamento-Italic.ttf'),
+    'Lato-Regular':      require('./assets/fonts/Lato-Regular.ttf'),
+    'Lato-Italic':       require('./assets/fonts/Lato-Italic.ttf'),
+    'Lato-Bold':         require('./assets/fonts/Lato-Bold.ttf'),
+    'Lato-BoldItalic':   require('./assets/fonts/Lato-BoldItalic.ttf'),
+    'Lato-Light':        require('./assets/fonts/Lato-Light.ttf'),
+    'Lato-Black':        require('./assets/fonts/Lato-Black.ttf'),
   });
 
   const onReady = useCallback(async () => {
