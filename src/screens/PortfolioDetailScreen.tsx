@@ -240,34 +240,37 @@ export function PortfolioDetailScreen({ item, onBack }: Props) {
             </TouchableOpacity>
           )}
 
-          {/* Thumbnails do lightbox */}
+          {/* ── Galeria de fotos ── */}
           {images.length > 1 && (
-            <View style={{
-              flexDirection: 'row', gap: 8, paddingHorizontal: S.md,
-              paddingVertical: 10, backgroundColor: C.bgSurface,
-              borderBottomWidth: 1, borderBottomColor: C.border,
-            }}>
-              {images.map((img, i) => (
-                <TouchableOpacity key={i} onPress={() => { setLightboxIndex(i); setLightboxOpen(true); }}
-                  activeOpacity={0.8}
-                  style={{
-                    borderRadius: R.sm, overflow: 'hidden',
-                    borderWidth: 2, borderColor: i === 0 ? C.amber : C.border,
-                  }}>
-                  <Image source={{ uri: img.url }} style={{ width: 72, height: 56 }} resizeMode="cover" />
-                  <View style={{
-                    position: 'absolute', bottom: 0, left: 0, right: 0,
-                    backgroundColor: 'rgba(0,0,0,0.55)', paddingVertical: 2, alignItems: 'center',
-                  }}>
-                    <Text style={{ color: '#fff', fontSize: 9, fontWeight: '800', fontFamily: F.base }}>{img.label}</Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
-              <View style={{ flex: 1, justifyContent: 'center', paddingLeft: 8 }}>
-                <Text style={{ color: C.textSecondary, fontSize: 12, fontFamily: F.base }}>
-                  Toque para ampliar
-                </Text>
+            <View style={{ backgroundColor: C.bgSurface, borderBottomWidth: 1, borderBottomColor: C.border }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: S.md, paddingTop: 12, paddingBottom: 8 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+                  <Ionicons name="images-outline" size={13} color={C.amber} />
+                  <Text style={{ fontSize: 11, fontWeight: '800', color: C.textSecondary, letterSpacing: 0.5, fontFamily: F.base, textTransform: 'uppercase' }}>
+                    Galeria ({images.length} fotos)
+                  </Text>
+                </View>
+                <Text style={{ fontSize: 11, color: C.textDisabled, fontFamily: F.base }}>Toque para ampliar</Text>
               </View>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ paddingHorizontal: S.md, paddingBottom: 12, gap: 8 }}
+              >
+                {images.map((img, i) => (
+                  <TouchableOpacity
+                    key={i}
+                    onPress={() => { setLightboxIndex(i); setLightboxOpen(true); }}
+                    activeOpacity={0.82}
+                    style={{ width: 80, height: 64, borderRadius: R.sm, overflow: 'hidden', borderWidth: 2, borderColor: i === 0 ? C.amber : C.border, alignSelf: 'flex-start' }}
+                  >
+                    <Image source={{ uri: img.url }} style={{ width: 80, height: 64 }} resizeMode="cover" />
+                    <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: 'rgba(0,0,0,0.6)', paddingVertical: 3, alignItems: 'center' }}>
+                      <Text style={{ color: img.label === 'DEPOIS' ? C.amber : '#fff', fontSize: 8, fontWeight: '900', fontFamily: F.base, letterSpacing: 0.8 }}>{img.label}</Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
             </View>
           )}
         </Animated.View>
