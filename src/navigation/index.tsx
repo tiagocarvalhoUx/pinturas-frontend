@@ -4,7 +4,6 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { useAppStore } from '../store/appStore';
 import { prefetchAll, warmupBackend } from '../services/prefetch';
-import { SplashScreen } from '../screens/SplashScreen';
 import { OnboardingScreen } from '../screens/OnboardingScreen';
 import { LoginScreen } from '../screens/LoginScreen';
 import { RegisterScreen } from '../screens/RegisterScreen';
@@ -22,7 +21,7 @@ import { PortfolioDetailScreen } from '../screens/PortfolioDetailScreen';
 import { PortfolioItem } from '../store/appStore';
 
 type Screen =
-  | 'Splash' | 'Onboarding' | 'Login' | 'Register'
+  | 'Onboarding' | 'Login' | 'Register'
   | 'Main' | 'Budget' | 'Chat' | 'BudgetDetail' | 'PortfolioDetail' | 'AdminPortfolio';
 
 type TabScreen = 'Home' | 'BudgetsList' | 'Portfolio' | 'Chat' | 'Profile' | 'AdminDashboard';
@@ -165,8 +164,9 @@ export function AppNavigator() {
   const isAuthenticated  = useAppStore((s) => s.isAuthenticated);
   const hasSeenOnboarding = useAppStore((s) => s.hasSeenOnboarding);
 
-  const [screen, setScreen]           = useState<Screen>('Splash');
-  const [activeTab, setActiveTab]     = useState<TabScreen>('Home');
+  const initialScreen: Screen = !hasSeenOnboarding ? 'Onboarding' : !isAuthenticated ? 'Login' : 'Main';
+  const [screen, setScreen]           = useState<Screen>(initialScreen);
+  const [activeTab, setActiveTab]     = useState<TabScreen>(() => user?.role === 'admin' ? 'AdminDashboard' : 'Home');
   const [transitionKey, setTransitionKey] = useState(0);
   const [selectedServiceType, setSelectedServiceType] = useState<string | undefined>();
   const [selectedBudgetId, setSelectedBudgetId]       = useState<string | undefined>();
@@ -176,6 +176,11 @@ export function AppNavigator() {
 
   const bumpKey = useCallback(() => setTransitionKey((k) => k + 1), []);
   const go      = useCallback((s: Screen) => { setScreen(s); bumpKey(); }, [bumpKey]);
+
+  useEffect(() => {
+    warmupBackend();
+    if (isAuthenticated) prefetchAll(user?.role ?? 'client');
+  }, []);
 
   // Prefetch ao entrar no Main
   const enterMain = useCallback((role: 'client' | 'admin') => {
@@ -203,18 +208,6 @@ export function AppNavigator() {
   const handleTabChange = useCallback((tab: string) => {
     setActiveTab(tab as TabScreen);
   }, []);
-
-  // Splash
-  if (screen === 'Splash') {
-    warmupBackend(); // acorda o Render enquanto mostra o splash
-    return (
-      <SplashScreen onFinish={() => {
-        if (!hasSeenOnboarding) go('Onboarding');
-        else if (!isAuthenticated) go('Login');
-        else enterMain(user?.role ?? 'client');
-      }} />
-    );
-  }
 
   if (screen === 'Onboarding') {
     return (

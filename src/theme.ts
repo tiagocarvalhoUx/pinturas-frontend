@@ -57,12 +57,9 @@ export const C = {
   overlay: 'rgba(0,0,0,0.75)',
 };
 
-// Typography — Philosopher font family
+// Typography — Alice custom font
 export const F = {
-  base:       'Philosopher',
-  bold:       'Philosopher-Bold',
-  italic:     'Philosopher-Italic',
-  boldItalic: 'Philosopher-BoldItalic',
+  base: 'Alice',
 };
 
 // Gradient presets
