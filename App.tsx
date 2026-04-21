@@ -10,7 +10,7 @@ import { AppNavigator } from './src/navigation';
 export default function App() {
   const [fontsLoaded] = useFonts({
     ...Ionicons.font,
-    'Sekuya': require('./assets/fonts/Sekuya-Regular.ttf'),
+    'GreatVibes': require('./assets/fonts/GreatVibes-Regular.ttf'),
   });
 
   if (!fontsLoaded) return null;

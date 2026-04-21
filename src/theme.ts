@@ -57,9 +57,9 @@ export const C = {
   overlay: 'rgba(0,0,0,0.75)',
 };
 
-// Typography — Sekuya custom font
+// Typography — Great Vibes custom font
 export const F = {
-  base: 'Sekuya',
+  base: 'GreatVibes',
 };
 
 // Gradient presets
