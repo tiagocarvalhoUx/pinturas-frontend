@@ -57,9 +57,14 @@ export const C = {
   overlay: 'rgba(0,0,0,0.75)',
 };
 
-// Typography — Great Vibes custom font
+// Typography — Onest font family
 export const F = {
-  base: 'GreatVibes',
+  base:      'Onest',
+  medium:    'Onest-Medium',
+  semibold:  'Onest-SemiBold',
+  bold:      'Onest-Bold',
+  extrabold: 'Onest-ExtraBold',
+  black:     'Onest-Black',
 };
 
 // Gradient presets
