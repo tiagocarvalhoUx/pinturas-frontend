@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, RefreshControl, Image, ScrollView, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, RefreshControl, Image, ScrollView, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../store/appStore';
 import { portfolioService } from '../services/portfolio';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { LogoHero } from '../components/LogoHero';
 import { NeonFrame } from '../components/NeonFrame';
+import { BeforeAfterSlider } from '../components/BeforeAfterSlider';
 import { SERVICE_LABELS } from '../utils/helpers';
 import { PortfolioItem } from '../store/appStore';
 import { C, R, S, F } from '../theme';
@@ -36,53 +37,71 @@ const SERVICE_COLORS: Record<string, string> = {
   restoration:   C.amberLight,
 };
 
+// ─── Dados de amostra — todos os 8 tipos com Antes + Depois ─────────────────
 const SAMPLE_ITEMS: PortfolioItem[] = [
   {
     _id: 's1', title: 'Sala de Estar Moderna', serviceType: 'internal', featured: true,
-    description: 'Pintura completa com acabamento premium em tons neutros.',
+    description: 'Pintura completa com acabamento premium em tons neutros. Preparação de superfície, selador e duas demãos de tinta acrílica fosca.',
     area: 45, duration: '3 dias', location: 'Araçatuba, SP',
-    beforeImage: { url: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80' },
-    afterImage:  { url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&q=80' },
+    beforeImage: { url: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&q=80' },
+    afterImage:  { url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=700&q=80' },
   },
   {
     _id: 's2', title: 'Fachada Residencial', serviceType: 'external', featured: true,
-    description: 'Revitalização completa da fachada com tinta acrílica.',
+    description: 'Revitalização completa da fachada com tinta acrílica de alta durabilidade e proteção UV.',
     area: 120, duration: '5 dias', location: 'Araçatuba, SP',
-    beforeImage: { url: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=600&q=80' },
-    afterImage:  { url: 'https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=600&q=80' },
+    beforeImage: { url: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=700&q=80' },
+    afterImage:  { url: 'https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=700&q=80' },
   },
   {
-    _id: 's3', title: 'Textura Artística', serviceType: 'texture', featured: false,
-    description: 'Textura grafiato com efeito moderno na sala de jantar.',
+    _id: 's3', title: 'Textura Grafiato', serviceType: 'texture', featured: false,
+    description: 'Textura grafiato com efeito moderno aplicado na sala de jantar. Acabamento rústico contemporâneo.',
     area: 30, duration: '2 dias', location: 'Birigui, SP',
-    afterImage: { url: 'https://images.unsplash.com/photo-1615971677499-5467cbab01c0?w=600&q=80' },
+    beforeImage: { url: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=700&q=80' },
+    afterImage:  { url: 'https://images.unsplash.com/photo-1615971677499-5467cbab01c0?w=700&q=80' },
   },
   {
     _id: 's4', title: 'Quarto Casal Premium', serviceType: 'internal', featured: false,
-    description: 'Pintura com efeito aveludado e acabamento impecável.',
+    description: 'Pintura com efeito aveludado e acabamento impecável. Cor selecionada com consultoria de design de interiores.',
     area: 25, duration: '2 dias', location: 'Araçatuba, SP',
-    afterImage: { url: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=600&q=80' },
+    beforeImage: { url: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=700&q=80' },
+    afterImage:  { url: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=700&q=80' },
   },
   {
-    _id: 's5', title: 'Laqueação de Móveis', serviceType: 'lacquering', featured: false,
-    description: 'Laqueação de cozinha completa em branco brilhante.',
+    _id: 's5', title: 'Laqueação de Cozinha', serviceType: 'lacquering', featured: false,
+    description: 'Laqueação completa de cozinha em branco brilhante. Portas, gavetas e laterais com acabamento liso e durável.',
     area: 15, duration: '4 dias', location: 'Penápolis, SP',
-    afterImage: { url: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80' },
+    beforeImage: { url: 'https://images.unsplash.com/photo-1556909172-54557c7e4fb7?w=700&q=80' },
+    afterImage:  { url: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=700&q=80' },
   },
   {
-    _id: 's6', title: 'Área Externa Gourmet', serviceType: 'external', featured: false,
-    description: 'Pintura de área gourmet com proteção especial para externo.',
+    _id: 's6', title: 'Área Gourmet Externa', serviceType: 'external', featured: false,
+    description: 'Pintura de área gourmet com proteção especial para ambientes externos. Tinta elastomérica resistente a chuva.',
     area: 60, duration: '3 dias', location: 'Araçatuba, SP',
-    afterImage: { url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80' },
+    beforeImage: { url: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=700&q=80' },
+    afterImage:  { url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=700&q=80' },
+  },
+  {
+    _id: 's7', title: 'Impermeabilização Terraço', serviceType: 'waterproofing', featured: false,
+    description: 'Impermeabilização completa com manta asfáltica e selante de alta performance. Solução definitiva para infiltrações.',
+    area: 80, duration: '4 dias', location: 'Araçatuba, SP',
+    beforeImage: { url: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=700&q=80' },
+    afterImage:  { url: 'https://images.unsplash.com/photo-1576941089067-2de3c901e126?w=700&q=80' },
+  },
+  {
+    _id: 's8', title: 'Restauração de Fachada', serviceType: 'restoration', featured: false,
+    description: 'Restauração completa com recuperação de rebocos, tratamento de eflorescências e pintura final de alta resistência.',
+    area: 95, duration: '7 dias', location: 'Araçatuba, SP',
+    beforeImage: { url: 'https://images.unsplash.com/photo-1572375992501-4b0892d50c69?w=700&q=80' },
+    afterImage:  { url: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=700&q=80' },
   },
 ];
 
-// Local card component for the masonry grid
+// ─── Card local para o grid masonry ─────────────────────────────────────────
 function GridCard({ item, onPress }: { item: PortfolioItem; onPress: () => void }) {
-  const [showAfter, setShowAfter] = useState(true);
-  const image    = showAfter ? item.afterImage : item.beforeImage;
-  const color    = SERVICE_COLORS[item.serviceType] || C.amber;
-  const hasBoth  = item.beforeImage?.url && item.afterImage?.url;
+  const color   = SERVICE_COLORS[item.serviceType] || C.amber;
+  const hasBoth = !!(item.beforeImage?.url && item.afterImage?.url);
+  const image   = item.afterImage?.url ? item.afterImage : item.beforeImage;
 
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.88}
@@ -95,7 +114,14 @@ function GridCard({ item, onPress }: { item: PortfolioItem; onPress: () => void 
       }}
     >
       <View style={{ height: 150, backgroundColor: C.bgElevated }}>
-        {image?.url ? (
+        {hasBoth ? (
+          <BeforeAfterSlider
+            before={item.beforeImage!.url}
+            after={item.afterImage!.url}
+            width={CARD_WIDTH}
+            height={150}
+          />
+        ) : image?.url ? (
           <Image source={{ uri: image.url }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
         ) : (
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -103,7 +129,7 @@ function GridCard({ item, onPress }: { item: PortfolioItem; onPress: () => void 
           </View>
         )}
 
-        {/* Featured badge */}
+        {/* Badge destaque */}
         {item.featured && (
           <View style={{
             position: 'absolute', top: 8, left: 8,
@@ -113,30 +139,6 @@ function GridCard({ item, onPress }: { item: PortfolioItem; onPress: () => void 
           }}>
             <Ionicons name="star" size={9} color="#fff" />
             <Text style={{ fontSize: 9, fontWeight: '800', color: '#fff', fontFamily: F.base }}>DESTAQUE</Text>
-          </View>
-        )}
-
-        {/* Before/After toggle */}
-        {hasBoth && (
-          <View style={{
-            position: 'absolute', top: 8, right: 8,
-            flexDirection: 'row',
-            backgroundColor: 'rgba(0,0,0,0.65)', borderRadius: R.sm, padding: 2,
-          }}>
-            {[false, true].map((after) => (
-              <TouchableOpacity
-                key={String(after)}
-                onPress={() => setShowAfter(after)}
-                style={{
-                  paddingHorizontal: 6, paddingVertical: 3, borderRadius: R.sm - 1,
-                  backgroundColor: showAfter === after ? C.amber : 'transparent',
-                }}
-              >
-                <Text style={{ fontSize: 9, fontWeight: '700', color: '#fff', fontFamily: F.base }}>
-                  {after ? 'DEPOIS' : 'ANTES'}
-                </Text>
-              </TouchableOpacity>
-            ))}
           </View>
         )}
       </View>
@@ -169,6 +171,7 @@ function GridCard({ item, onPress }: { item: PortfolioItem; onPress: () => void 
   );
 }
 
+// ─── Tela principal ──────────────────────────────────────────────────────────
 export function PortfolioScreen({ onDetail }: Props) {
   const portfolio    = useAppStore((s) => s.portfolio);
   const setPortfolio = useAppStore((s) => s.setPortfolio);
@@ -181,7 +184,7 @@ export function PortfolioScreen({ onDetail }: Props) {
     try {
       const data = await portfolioService.getAll();
       setPortfolio(data);
-    } catch { /* keep cached */ }
+    } catch { /* mantém cache */ }
     finally { setLoading(false); setRefreshing(false); }
   };
 
@@ -217,7 +220,7 @@ export function PortfolioScreen({ onDetail }: Props) {
           <Text style={{ color: C.textPrimary, fontSize: 26, fontWeight: '900', marginBottom: 4, letterSpacing: -0.5, fontFamily: F.base }}>Portfólio</Text>
           <View style={{ width: 32, height: 2, backgroundColor: C.amber, borderRadius: 1, marginBottom: 18, opacity: 0.9 }} />
 
-          {/* Stats row */}
+          {/* Stats */}
           <View style={{ flexDirection: 'row', gap: 10 }}>
             {[
               { icon: 'images-outline',  value: allItems.length + '+', label: 'Projetos' },
@@ -237,7 +240,7 @@ export function PortfolioScreen({ onDetail }: Props) {
           </View>
         </View>
 
-        {/* ── Featured horizontal carousel ── */}
+        {/* ── Carrossel de destaques ── */}
         {featured.length > 0 && (
           <View style={{ paddingTop: 20, paddingBottom: 4 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: S.md, marginBottom: 12 }}>
@@ -258,7 +261,16 @@ export function PortfolioScreen({ onDetail }: Props) {
                     source={{ uri: item.afterImage?.url || item.beforeImage?.url }}
                     style={{ width: '100%', height: 130 }} resizeMode="cover"
                   />
-                  {/* Amber bottom accent */}
+                  {/* Label antes/depois */}
+                  <View style={{
+                    position: 'absolute', top: 8, right: 8,
+                    backgroundColor: 'rgba(0,0,0,0.6)',
+                    borderRadius: R.sm, paddingHorizontal: 7, paddingVertical: 3,
+                    borderWidth: 1, borderColor: C.border,
+                  }}>
+                    <Text style={{ fontSize: 9, fontWeight: '800', color: C.amberLight, fontFamily: F.base }}>ANTES × DEPOIS</Text>
+                  </View>
+                  {/* Accent line */}
                   <View style={{ height: 2, backgroundColor: C.amber }} />
                   <View style={{ padding: 10 }}>
                     <Text style={{ fontSize: 13, fontWeight: '700', color: C.textPrimary, fontFamily: F.base }} numberOfLines={1}>{item.title}</Text>
@@ -270,18 +282,22 @@ export function PortfolioScreen({ onDetail }: Props) {
           </View>
         )}
 
-        {/* ── Filter chips ── */}
-        <View style={{ backgroundColor: C.bgSurface, paddingVertical: 14, paddingHorizontal: S.md, borderTopWidth: 1, borderBottomWidth: 1, borderColor: C.border, marginTop: 16 }}>
+        {/* ── Filtros ── */}
+        <View style={{
+          backgroundColor: C.bgSurface, paddingVertical: 14, paddingHorizontal: S.md,
+          borderTopWidth: 1, borderBottomWidth: 1, borderColor: C.border, marginTop: 16,
+        }}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={{ flexDirection: 'row', gap: 8 }}>
               {FILTERS.map((f) => {
                 const active = filter === f.key;
+                const svcColor = f.key !== 'Todos' ? SERVICE_COLORS[f.key] : C.amber;
                 return (
                   <TouchableOpacity key={f.key} onPress={() => setFilter(f.key)} activeOpacity={0.7}
                     style={{
                       paddingHorizontal: 14, paddingVertical: 7, borderRadius: R.full,
-                      backgroundColor: active ? C.amber : C.bgElevated,
-                      borderWidth: 1, borderColor: active ? C.amber : C.border,
+                      backgroundColor: active ? svcColor : C.bgElevated,
+                      borderWidth: 1, borderColor: active ? svcColor : C.border,
                     }}
                   >
                     <Text style={{ fontSize: 12, fontWeight: '700', color: active ? '#fff' : C.textSecondary, fontFamily: F.base }}>
@@ -294,7 +310,7 @@ export function PortfolioScreen({ onDetail }: Props) {
           </ScrollView>
         </View>
 
-        {/* ── Masonry grid ── */}
+        {/* ── Grid masonry ── */}
         <View style={{ padding: S.md }}>
           <Text style={{ fontSize: 12, color: C.textDisabled, marginBottom: 14, fontWeight: '600', letterSpacing: 0.5, fontFamily: F.base }}>
             {filtered.length} PROJETO{filtered.length !== 1 ? 'S' : ''}
