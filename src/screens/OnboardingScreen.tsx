@@ -72,17 +72,20 @@ function SlideOne() {
         transform: [{ scale: r2Sc }], opacity: r2Op,
       }} />
 
-      {/* Hexagon-like icon frame */}
+      {/* Logo frame */}
       <View style={{
-        width: 160, height: 160,
-        borderRadius: 28,
-        borderWidth: 2, borderColor: C.amber,
-        backgroundColor: '#06000F',
-        alignItems: 'center', justifyContent: 'center',
+        width: 180, height: 180,
+        borderRadius: 999,
+        borderWidth: 2.5, borderColor: C.amber,
+        overflow: 'hidden',
         shadowColor: C.amber, shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 0.95, shadowRadius: 28, elevation: 24,
       }}>
-        <Ionicons name="brush" size={72} color={C.amber} />
+        <Image
+          source={require('../../assets/logo-pintura.png')}
+          style={{ width: 180, height: 180 }}
+          resizeMode="cover"
+        />
       </View>
 
       {/* Texts */}
