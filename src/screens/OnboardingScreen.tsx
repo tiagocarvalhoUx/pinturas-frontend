@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   View, Text, TouchableOpacity, Dimensions,
-  Animated, PanResponder,
+  Animated, PanResponder, Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
