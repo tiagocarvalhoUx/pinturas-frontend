@@ -110,14 +110,14 @@ export function SplashScreen({ onFinish }: Props) {
         {/* Amber rule */}
         <View style={{ width: 40, height: 2, backgroundColor: C.amber, borderRadius: 1, marginBottom: 14, opacity: 0.9 }} />
         <Text style={{
-          fontSize: 22, fontWeight: '800', color: C.textPrimary,
-          letterSpacing: 0.8, textAlign: 'center', fontFamily: F.base,
+          fontSize: 22, color: C.textPrimary,
+          letterSpacing: 0.8, textAlign: 'center', fontFamily: F.bold,
         }}>
           A. Coraça & T. Carvalho
         </Text>
         <Text style={{
           fontSize: 13, color: C.amber, marginTop: 6,
-          letterSpacing: 3, fontWeight: '600', textTransform: 'uppercase', fontFamily: F.base,
+          letterSpacing: 3, textTransform: 'uppercase', fontFamily: F.semiBold,
         }}>
           Pinturas e Reformas
         </Text>

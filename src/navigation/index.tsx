@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { useAppStore } from '../store/appStore';
 import { prefetchAll, warmupBackend } from '../services/prefetch';
+import { SplashScreen } from '../screens/SplashScreen';
 import { OnboardingScreen } from '../screens/OnboardingScreen';
 import { LoginScreen } from '../screens/LoginScreen';
 import { RegisterScreen } from '../screens/RegisterScreen';
@@ -21,7 +22,7 @@ import { PortfolioDetailScreen } from '../screens/PortfolioDetailScreen';
 import { PortfolioItem } from '../store/appStore';
 
 type Screen =
-  | 'Onboarding' | 'Login' | 'Register'
+  | 'Splash' | 'Onboarding' | 'Login' | 'Register'
   | 'Main' | 'Budget' | 'Chat' | 'BudgetDetail' | 'PortfolioDetail' | 'AdminPortfolio';
 
 type TabScreen = 'Home' | 'BudgetsList' | 'Portfolio' | 'Chat' | 'Profile' | 'AdminDashboard';
@@ -164,8 +165,7 @@ export function AppNavigator() {
   const isAuthenticated  = useAppStore((s) => s.isAuthenticated);
   const hasSeenOnboarding = useAppStore((s) => s.hasSeenOnboarding);
 
-  const initialScreen: Screen = !hasSeenOnboarding ? 'Onboarding' : !isAuthenticated ? 'Login' : 'Main';
-  const [screen, setScreen]           = useState<Screen>(initialScreen);
+  const [screen, setScreen]           = useState<Screen>('Splash');
   const [activeTab, setActiveTab]     = useState<TabScreen>(() => user?.role === 'admin' ? 'AdminDashboard' : 'Home');
   const [transitionKey, setTransitionKey] = useState(0);
   const [selectedServiceType, setSelectedServiceType] = useState<string | undefined>();
@@ -208,6 +208,15 @@ export function AppNavigator() {
   const handleTabChange = useCallback((tab: string) => {
     setActiveTab(tab as TabScreen);
   }, []);
+
+  if (screen === 'Splash') {
+    return (
+      <SplashScreen onFinish={() => {
+        const next: Screen = !hasSeenOnboarding ? 'Onboarding' : !isAuthenticated ? 'Login' : 'Main';
+        go(next);
+      }} />
+    );
+  }
 
   if (screen === 'Onboarding') {
     return (
