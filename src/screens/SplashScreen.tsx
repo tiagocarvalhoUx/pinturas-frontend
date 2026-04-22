@@ -96,7 +96,7 @@ export function SplashScreen({ onFinish }: Props) {
         }}>
           <Image
             source={require('../../assets/logo-pintura.png')}
-            style={{ width: '100%', height: '100%' }}
+            style={{ width: 180, height: 180 }}
             resizeMode="cover"
           />
         </View>
