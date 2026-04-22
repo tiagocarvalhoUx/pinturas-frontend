@@ -57,14 +57,14 @@ export const C = {
   overlay: 'rgba(0,0,0,0.75)',
 };
 
-// Typography — Lato font family
+// Typography — Lora font family
 export const F = {
-  base:        'Lato-Regular',
-  italic:      'Lato-Italic',
-  bold:        'Lato-Bold',
-  boldItalic:  'Lato-BoldItalic',
-  light:       'Lato-Light',
-  black:       'Lato-Black',
+  base:        'Lora-Regular',
+  italic:      'Lora-Italic',
+  bold:        'Lora-Bold',
+  boldItalic:  'Lora-BoldItalic',
+  medium:      'Lora-Medium',
+  semiBold:    'Lora-SemiBold',
 };
 
 // Gradient presets
