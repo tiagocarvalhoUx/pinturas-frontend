@@ -29,6 +29,14 @@
 
     <meta name="theme-color" content="#8A2BE2" />
 
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Pinturas" />
+    <link rel="apple-touch-icon" href="/og-image.png" />
+
     <style id="expo-reset">
       html, body { height: 100%; }
       body { overflow: hidden; }
@@ -38,5 +46,12 @@
   <body>
     <noscript>Você precisa habilitar o JavaScript para usar este app.</noscript>
     <div id="root"></div>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js');
+        });
+      }
+    </script>
   </body>
 </html>

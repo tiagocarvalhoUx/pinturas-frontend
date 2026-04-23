@@ -27,7 +27,15 @@
     },
     "web": {
       "favicon": "./src/image/logo-pintura.png",
-      "name": "A. Coraça & T. Carvalho Pinturas e Reformas"
+      "name": "A. Coraça & T. Carvalho Pinturas e Reformas",
+      "shortName": "Pinturas",
+      "description": "Serviços profissionais de pintura residencial e comercial em São Paulo.",
+      "themeColor": "#8A2BE2",
+      "backgroundColor": "#0F0D0A",
+      "display": "standalone",
+      "orientation": "portrait",
+      "lang": "pt-BR",
+      "output": "static"
     }
   }
 }
