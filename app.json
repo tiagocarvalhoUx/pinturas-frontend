@@ -36,7 +36,7 @@
       "display": "standalone",
       "orientation": "portrait",
       "lang": "pt-BR",
-      "output": "static"
+      "output": "single"
     }
   }
 }
