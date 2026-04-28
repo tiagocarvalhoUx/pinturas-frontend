@@ -25,11 +25,6 @@ const CLIENT_TABS: Tab[] = [
   { id: 'Profile',     icon: 'person-outline',      iconActive: 'person',     label: 'Perfil'     },
 ];
 
-const GUEST_TABS: Tab[] = [
-  { id: 'Home',      icon: 'home-outline',   iconActive: 'home',   label: 'Início'    },
-  { id: 'Portfolio', icon: 'images-outline', iconActive: 'images', label: 'Portfólio' },
-];
-
 const ADMIN_TABS: Tab[] = [
   { id: 'AdminDashboard', icon: 'grid-outline',      iconActive: 'grid',       label: 'Dashboard'  },
   { id: 'BudgetsList',    icon: 'clipboard-outline', iconActive: 'clipboard',  label: 'Pedidos'    },
@@ -39,7 +34,7 @@ const ADMIN_TABS: Tab[] = [
 ];
 
 export function BottomTabBar({ activeTab, onTabChange, role }: Props) {
-  const tabs = role === 'admin' ? ADMIN_TABS : role === 'client' ? CLIENT_TABS : GUEST_TABS;
+  const tabs = role === 'admin' ? ADMIN_TABS : CLIENT_TABS;
 
   return (
     <View style={{

@@ -249,8 +249,13 @@ export function AppNavigator() {
   }, [go]);
 
   const handleTabChange = useCallback((tab: string) => {
+    const privateTabs: TabScreen[] = ['BudgetsList', 'Chat', 'Profile', 'AdminDashboard'];
+    if (privateTabs.includes(tab as TabScreen) && !isAuthenticated) {
+      go('Login');
+      return;
+    }
     setActiveTab(tab as TabScreen);
-  }, []);
+  }, [isAuthenticated, go]);
 
   if (screen === 'Splash') {
     return (
