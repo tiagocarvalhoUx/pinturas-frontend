@@ -67,7 +67,7 @@ export function HomeScreen({ onBudget, onPortfolio, onServiceDetail, onPortfolio
 
   if (loading) return <LoadingSpinner message="Carregando..." />;
 
-  const firstName = user?.name?.split(' ')[0];
+  const firstName = user?.name?.split(' ')[0] || 'Visitante';
 
   return (
     <NeonFrame>

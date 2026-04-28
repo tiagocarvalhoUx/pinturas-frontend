@@ -240,7 +240,7 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
     setSubmittingRating(true);
     try {
       const updated = await budgetService.rate(budgetId, ratingStars, ratingComment);
-      applyUpdate(updated); setRatingModal(false);
+      applyUpdate(updated);
       setSuccessBanner('Avaliação enviada com sucesso!');
       setTimeout(() => setSuccessBanner(''), 3000);
     } catch { }

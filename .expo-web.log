@@ -1,0 +1,7 @@
+
+> frontend@1.0.0 web
+> expo start --web
+
+env: load .env
+env: export EXPO_PUBLIC_API_URL EXPO_PUBLIC_SOCKET_URL
+Starting project at C:\Users\Casa-PC\OneDrive\Documentos\Projects\Pintura-residencial\frontend

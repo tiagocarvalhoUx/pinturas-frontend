@@ -16,6 +16,8 @@ export interface User {
 
 export interface Budget {
   _id: string;
+  contactName?: string;
+  contactEmail?: string;
   serviceType: string;
   description: string;
   phone?: string;
@@ -26,6 +28,8 @@ export interface Budget {
   address: { street: string; city: string; state: string };
   photos: { url: string }[];
   scheduledDate?: string;
+  emailVerified?: boolean;
+  emailVerifiedAt?: string;
   rating?: { stars: number; comment: string };
   client?: User;
   createdAt: string;

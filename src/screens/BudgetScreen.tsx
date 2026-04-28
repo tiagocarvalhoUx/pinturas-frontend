@@ -86,6 +86,8 @@ export function BudgetScreen({ onSuccess, onBack, initialServiceType }: Props) {
   const [serviceType, setServiceType] = useState(initialServiceType || 'internal');
   const [description, setDescription] = useState('');
   const [area, setArea]               = useState('');
+  const [name, setName]               = useState('');
+  const [email, setEmail]             = useState('');
   const [phone, setPhone]             = useState('');
   const [street, setStreet]           = useState('');
   const [city, setCity]               = useState('');
@@ -116,6 +118,8 @@ export function BudgetScreen({ onSuccess, onBack, initialServiceType }: Props) {
     setError('');
     if (!description.trim()) { setError('Preencha a descrição do ambiente.'); return; }
     if (!area)               { setError('Informe a área em m².'); return; }
+    if (!name.trim())        { setError('Informe seu nome.'); return; }
+    if (!email.trim() || !email.includes('@')) { setError('Informe um e-mail válido.'); return; }
     if (!phone.trim())       { setError('Informe seu celular para contato.'); return; }
     if (!street.trim() || !city.trim() || !state.trim()) { setError('Preencha o endereço completo.'); return; }
     try {
@@ -124,6 +128,8 @@ export function BudgetScreen({ onSuccess, onBack, initialServiceType }: Props) {
       fd.append('serviceType', serviceType);
       fd.append('description', description.trim());
       fd.append('area', area);
+      fd.append('name', name.trim());
+      fd.append('email', email.trim().toLowerCase());
       fd.append('phone', phone.trim());
       fd.append('address', JSON.stringify({ street: street.trim(), city: city.trim(), state: state.trim() }));
       for (let i = 0; i < photos.length; i++) {
@@ -242,6 +248,26 @@ export function BudgetScreen({ onSuccess, onBack, initialServiceType }: Props) {
               onChangeText={setDescription}
               multiline
             />
+          </SectionCard>
+
+          <SectionCard title="Dados para Validação">
+            <DarkInput
+              icon="person-outline"
+              placeholder="Seu nome"
+              value={name}
+              onChangeText={setName}
+              style={{ marginBottom: 10 }}
+            />
+            <DarkInput
+              icon="mail-outline"
+              placeholder="seu@email.com"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+            />
+            <Text style={{ color: C.textSecondary, fontSize: 11, marginTop: 10, fontFamily: F.base }}>
+              Enviaremos um link mágico para validar este agendamento.
+            </Text>
           </SectionCard>
 
           {/* ── Phone ── */}
