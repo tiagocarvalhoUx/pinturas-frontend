@@ -6,7 +6,7 @@ export const budgetService = {
       headers: { 'Content-Type': 'multipart/form-data' },
       timeout: 60000, // 60s para upload de imagens
     });
-    return res.data.budget;
+    return res.data;
   },
 
   async getMyBudgets() {

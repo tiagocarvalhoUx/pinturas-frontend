@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, ScrollView,
-  Image, KeyboardAvoidingView, Platform,
+  Image, KeyboardAvoidingView, Platform, Linking,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -87,7 +87,6 @@ export function BudgetScreen({ onSuccess, onBack, initialServiceType }: Props) {
   const [description, setDescription] = useState('');
   const [area, setArea]               = useState('');
   const [name, setName]               = useState('');
-  const [email, setEmail]             = useState('');
   const [phone, setPhone]             = useState('');
   const [street, setStreet]           = useState('');
   const [city, setCity]               = useState('');
@@ -119,8 +118,7 @@ export function BudgetScreen({ onSuccess, onBack, initialServiceType }: Props) {
     if (!description.trim()) { setError('Preencha a descrição do ambiente.'); return; }
     if (!area)               { setError('Informe a área em m².'); return; }
     if (!name.trim())        { setError('Informe seu nome.'); return; }
-    if (!email.trim() || !email.includes('@')) { setError('Informe um e-mail válido.'); return; }
-    if (!phone.trim())       { setError('Informe seu celular para contato.'); return; }
+    if (!phone.trim())       { setError('Informe seu WhatsApp para validação.'); return; }
     if (!street.trim() || !city.trim() || !state.trim()) { setError('Preencha o endereço completo.'); return; }
     try {
       setLoading(true);
@@ -129,7 +127,6 @@ export function BudgetScreen({ onSuccess, onBack, initialServiceType }: Props) {
       fd.append('description', description.trim());
       fd.append('area', area);
       fd.append('name', name.trim());
-      fd.append('email', email.trim().toLowerCase());
       fd.append('phone', phone.trim());
       fd.append('address', JSON.stringify({ street: street.trim(), city: city.trim(), state: state.trim() }));
       for (let i = 0; i < photos.length; i++) {
@@ -146,8 +143,11 @@ export function BudgetScreen({ onSuccess, onBack, initialServiceType }: Props) {
           fd.append('photos', { uri, name: `photo_${i}.jpg`, type: 'image/jpeg' } as any);
         }
       }
-      const budget = await budgetService.create(fd);
+      const { budget, whatsappLink } = await budgetService.create(fd);
       addBudget(budget);
+      if (whatsappLink) {
+        Linking.openURL(whatsappLink).catch(() => {});
+      }
       onSuccess();
     } catch (err: any) {
       const msg = err.response?.data?.message ||
@@ -259,26 +259,15 @@ export function BudgetScreen({ onSuccess, onBack, initialServiceType }: Props) {
               style={{ marginBottom: 10 }}
             />
             <DarkInput
-              icon="mail-outline"
-              placeholder="seu@email.com"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-            />
-            <Text style={{ color: C.textSecondary, fontSize: 11, marginTop: 10, fontFamily: F.base }}>
-              Enviaremos um link mágico para validar este agendamento.
-            </Text>
-          </SectionCard>
-
-          {/* ── Phone ── */}
-          <SectionCard title="Celular para Contato">
-            <DarkInput
-              icon="call-outline"
+              icon="logo-whatsapp"
               placeholder="(11) 99999-9999"
               value={phone}
               onChangeText={setPhone}
               keyboardType="phone-pad"
             />
+            <Text style={{ color: C.textSecondary, fontSize: 11, marginTop: 10, fontFamily: F.base }}>
+              Ao enviar, abriremos o WhatsApp com uma mensagem pronta para validar este agendamento.
+            </Text>
           </SectionCard>
 
           {/* ── Address ── */}

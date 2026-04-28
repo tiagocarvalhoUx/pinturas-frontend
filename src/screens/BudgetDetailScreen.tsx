@@ -423,7 +423,8 @@ export function BudgetDetailScreen({ budgetId, onBack }: Props) {
           {[
             { icon: SERVICE_ICONS[budget.serviceType] || 'brush', label: 'Tipo',      value: SERVICE_LABELS[budget.serviceType],              color: iconColor       },
             { icon: 'document-text-outline',                       label: 'Descrição', value: budget.description,                              color: C.textSecondary },
-            ...(budget.phone ? [{ icon: 'call-outline', label: 'Celular', value: budget.phone, color: C.success }] : []),
+            ...(budget.phone ? [{ icon: 'logo-whatsapp', label: 'WhatsApp', value: budget.phone, color: C.success }] : []),
+            ...(budget.whatsappValidationCode ? [{ icon: 'shield-checkmark-outline', label: 'Código de validação', value: budget.whatsappValidationCode, color: C.amber }] : []),
             { icon: 'location-outline', label: 'Endereço', value: `${budget.address.street}, ${budget.address.city} - ${budget.address.state}`, color: C.textSecondary },
             { icon: 'calendar-outline', label: 'Criado em', value: formatDate(budget.createdAt), color: C.textSecondary },
             ...(budget.scheduledDate ? [{ icon: 'time-outline', label: 'Agendado para', value: formatDate(budget.scheduledDate), color: C.success }] : []),

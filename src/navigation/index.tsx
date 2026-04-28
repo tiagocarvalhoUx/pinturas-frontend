@@ -87,7 +87,7 @@ const SuccessToast = memo(function SuccessToast({ visible }: { visible: boolean 
         <View style={{ flex: 1 }}>
           <Text style={{ color: '#fff', fontWeight: '800', fontSize: 14 }}>Orçamento enviado!</Text>
           <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 12, marginTop: 2 }}>
-            Nossa equipe entrará em contato em breve.
+            Finalize a validação pelo WhatsApp.
           </Text>
         </View>
       </View>

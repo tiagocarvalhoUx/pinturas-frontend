@@ -18,6 +18,9 @@ export interface Budget {
   _id: string;
   contactName?: string;
   contactEmail?: string;
+  contactValidationMethod?: 'whatsapp' | 'email';
+  whatsappValidationCode?: string;
+  whatsappValidationRequestedAt?: string;
   serviceType: string;
   description: string;
   phone?: string;
