@@ -251,7 +251,8 @@ export function AppNavigator() {
   const handleTabChange = useCallback((tab: string) => {
     const privateTabs: TabScreen[] = ['BudgetsList', 'Chat', 'Profile', 'AdminDashboard'];
     if (privateTabs.includes(tab as TabScreen) && !isAuthenticated) {
-      go('Login');
+      setMagicLinkError(null);
+      go('MagicLink');
       return;
     }
     setActiveTab(tab as TabScreen);
@@ -291,7 +292,7 @@ export function AppNavigator() {
   if (screen === 'MagicLink') {
     return (
       <ScreenTransition screenKey={`magiclink-${transitionKey}`}>
-        <MagicLinkScreen onBack={() => go('Login')} />
+        <MagicLinkScreen onBack={() => go('Main')} />
       </ScreenTransition>
     );
   }
@@ -362,7 +363,7 @@ export function AppNavigator() {
         onPortfolioDetail={goToPortfolioDetail}
         onBudgetDetail={goToBudgetDetail}
         onAllBudgets={() => setActiveTab('BudgetsList')}
-        onLogout={() => go('Login')}
+        onLogout={() => { setMagicLinkError(null); go('MagicLink'); }}
         onChatBack={() => setActiveTab('Home')}
         onManagePortfolio={goToAdminPortfolio}
       />
