@@ -26,4 +26,15 @@ export const authService = {
   async updateFcmToken(fcmToken: string) {
     await api.patch('/auth/fcm-token', { fcmToken });
   },
+
+  async requestMagicLink(email: string) {
+    const res = await api.post('/auth/magic-link/request', { email });
+    return res.data;
+  },
+
+  async verifyMagicLink(token: string) {
+    const res = await api.post('/auth/magic-link/verify', { token });
+    await AsyncStorage.setItem('@adelcio:token', res.data.token);
+    return res.data;
+  },
 };

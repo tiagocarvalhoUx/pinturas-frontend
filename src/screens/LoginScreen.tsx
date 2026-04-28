@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity,
   KeyboardAvoidingView, Platform, ScrollView, Image, Animated,
@@ -13,15 +13,22 @@ import { LogoHero } from '../components/LogoHero';
 interface Props {
   onLogin: () => void;
   onGoRegister: () => void;
+  onGoMagicLink?: () => void;
+  externalError?: string | null;
+  onClearExternalError?: () => void;
 }
 
-export function LoginScreen({ onLogin, onGoRegister }: Props) {
+export function LoginScreen({ onLogin, onGoRegister, onGoMagicLink, externalError, onClearExternalError }: Props) {
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading]   = useState(false);
   const [error, setError]       = useState('');
   const [showPass, setShowPass] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (externalError) setError(externalError);
+  }, [externalError]);
   const setUser           = useAppStore((s) => s.setUser);
   const setAuthenticated  = useAppStore((s) => s.setAuthenticated);
   const btnScale = useRef(new Animated.Value(1)).current;
@@ -29,6 +36,7 @@ export function LoginScreen({ onLogin, onGoRegister }: Props) {
   const handleLogin = async () => {
     if (loading) return;
     setError('');
+    onClearExternalError?.();
     if (!email.trim() || !password) { setError('Preencha e-mail e senha.'); return; }
     try {
       setLoading(true);
@@ -178,6 +186,26 @@ export function LoginScreen({ onLogin, onGoRegister }: Props) {
             <Text style={{ color: C.textDisabled, fontSize: 12, fontFamily: F.base }}>ou</Text>
             <View style={{ flex: 1, height: 1, backgroundColor: C.border }} />
           </View>
+
+          {/* Magic link */}
+          {onGoMagicLink && (
+            <TouchableOpacity
+              onPress={onGoMagicLink}
+              activeOpacity={0.8}
+              style={{
+                backgroundColor: C.bgElevated,
+                borderWidth: 1.5, borderColor: C.border,
+                borderRadius: R.md, paddingVertical: 14,
+                alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 8,
+                marginBottom: 12,
+              }}
+            >
+              <Ionicons name="sparkles-outline" size={18} color={C.amberLight} />
+              <Text style={{ color: C.textPrimary, fontWeight: '700', fontSize: 15, fontFamily: F.base }}>
+                Entrar com link mágico
+              </Text>
+            </TouchableOpacity>
+          )}
 
           {/* Register link */}
           <TouchableOpacity

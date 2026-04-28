@@ -2,6 +2,7 @@
   "expo": {
     "name": "A. Coraça & T. Carvalho Pinturas e Reformas",
     "slug": "a-coraca-t-carvalho-pinturas",
+    "scheme": "acoraca",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./src/image/logo-pintura.png",

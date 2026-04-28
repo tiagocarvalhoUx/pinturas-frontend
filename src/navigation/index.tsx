@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
-import { View, Text, Animated } from 'react-native';
+import { View, Text, Animated, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useAppStore } from '../store/appStore';
+import { authService } from '../services/auth';
 import { prefetchAll, warmupBackend } from '../services/prefetch';
 import { SplashScreen } from '../screens/SplashScreen';
 import { OnboardingScreen } from '../screens/OnboardingScreen';
 import { LoginScreen } from '../screens/LoginScreen';
+import { MagicLinkScreen } from '../screens/MagicLinkScreen';
 import { RegisterScreen } from '../screens/RegisterScreen';
 import { HomeScreen } from '../screens/HomeScreen';
 import { BudgetScreen } from '../screens/BudgetScreen';
@@ -22,8 +24,15 @@ import { PortfolioDetailScreen } from '../screens/PortfolioDetailScreen';
 import { PortfolioItem } from '../store/appStore';
 
 type Screen =
-  | 'Splash' | 'Onboarding' | 'Login' | 'Register'
+  | 'Splash' | 'Onboarding' | 'Login' | 'MagicLink' | 'Register'
   | 'Main' | 'Budget' | 'Chat' | 'BudgetDetail' | 'PortfolioDetail' | 'AdminPortfolio';
+
+function extractMagicLinkToken(url: string | null): string | null {
+  if (!url) return null;
+  if (!url.includes('magic-link')) return null;
+  const match = url.match(/[?&]token=([^&#]+)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
 
 type TabScreen = 'Home' | 'BudgetsList' | 'Portfolio' | 'Chat' | 'Profile' | 'AdminDashboard';
 
@@ -123,12 +132,14 @@ const PersistentTabs = memo(function PersistentTabs({
       </View>
 
       {/* Orçamentos */}
-      <View style={{ flex: 1, display: activeTab === 'BudgetsList' ? 'flex' : 'none' }}>
-        <BudgetsListScreen
-          onBudgetDetail={onBudgetDetail}
-          onNewBudget={onBudget}
-        />
-      </View>
+      {role && (
+        <View style={{ flex: 1, display: activeTab === 'BudgetsList' ? 'flex' : 'none' }}>
+          <BudgetsListScreen
+            onBudgetDetail={onBudgetDetail}
+            onNewBudget={onBudget}
+          />
+        </View>
+      )}
 
       {/* Portfólio */}
       <View style={{ flex: 1, display: activeTab === 'Portfolio' ? 'flex' : 'none' }}>
@@ -136,14 +147,18 @@ const PersistentTabs = memo(function PersistentTabs({
       </View>
 
       {/* Chat */}
-      <View style={{ flex: 1, display: activeTab === 'Chat' ? 'flex' : 'none' }}>
-        <ChatScreen onBack={onChatBack} />
-      </View>
+      {role && (
+        <View style={{ flex: 1, display: activeTab === 'Chat' ? 'flex' : 'none' }}>
+          <ChatScreen onBack={onChatBack} />
+        </View>
+      )}
 
       {/* Perfil */}
-      <View style={{ flex: 1, display: activeTab === 'Profile' ? 'flex' : 'none' }}>
-        <ProfileScreen onLogout={onLogout} />
-      </View>
+      {role && (
+        <View style={{ flex: 1, display: activeTab === 'Profile' ? 'flex' : 'none' }}>
+          <ProfileScreen onLogout={onLogout} />
+        </View>
+      )}
 
       {/* Admin Dashboard */}
       {isAdmin && (
@@ -172,7 +187,10 @@ export function AppNavigator() {
   const [selectedBudgetId, setSelectedBudgetId]       = useState<string | undefined>();
   const [selectedPortfolioItem, setSelectedPortfolioItem] = useState<PortfolioItem | undefined>();
   const [showToast, setShowToast]     = useState(false);
-  const toastTimer = useRef<ReturnType<typeof setTimeout>>();
+  const [magicLinkError, setMagicLinkError] = useState<string | null>(null);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const setUser           = useAppStore((s) => s.setUser);
+  const setAuthenticated  = useAppStore((s) => s.setAuthenticated);
 
   const bumpKey = useCallback(() => setTransitionKey((k) => k + 1), []);
   const go      = useCallback((s: Screen) => { setScreen(s); bumpKey(); }, [bumpKey]);
@@ -181,6 +199,31 @@ export function AppNavigator() {
     warmupBackend();
     if (isAuthenticated) prefetchAll(user?.role ?? 'client');
   }, []);
+
+  // ── Deep link handler — magic-link tokens ────────────────────────────────
+  const handleMagicLinkUrl = useCallback(async (url: string | null) => {
+    const token = extractMagicLinkToken(url);
+    if (!token) return;
+    try {
+      const { user: authedUser } = await authService.verifyMagicLink(token);
+      setUser(authedUser);
+      setAuthenticated(true);
+      setMagicLinkError(null);
+      const tab = authedUser?.role === 'admin' ? 'AdminDashboard' : 'Home';
+      setActiveTab(tab);
+      go('Main');
+      prefetchAll(authedUser?.role ?? 'client');
+    } catch (err: any) {
+      setMagicLinkError(err?.response?.data?.message || 'Link inválido ou expirado.');
+      go('Login');
+    }
+  }, [go, setUser, setAuthenticated]);
+
+  useEffect(() => {
+    Linking.getInitialURL().then(handleMagicLinkUrl);
+    const sub = Linking.addEventListener('url', ({ url }) => handleMagicLinkUrl(url));
+    return () => sub.remove();
+  }, [handleMagicLinkUrl]);
 
   // Prefetch ao entrar no Main
   const enterMain = useCallback((role: 'client' | 'admin') => {
@@ -212,7 +255,7 @@ export function AppNavigator() {
   if (screen === 'Splash') {
     return (
       <SplashScreen onFinish={() => {
-        const next: Screen = !hasSeenOnboarding ? 'Onboarding' : !isAuthenticated ? 'Login' : 'Main';
+        const next: Screen = !hasSeenOnboarding ? 'Onboarding' : 'Main';
         go(next);
       }} />
     );
@@ -221,7 +264,7 @@ export function AppNavigator() {
   if (screen === 'Onboarding') {
     return (
       <ScreenTransition screenKey={`onboarding-${transitionKey}`}>
-        <OnboardingScreen onFinish={() => go('Login')} />
+        <OnboardingScreen onFinish={() => go('Main')} />
       </ScreenTransition>
     );
   }
@@ -232,7 +275,18 @@ export function AppNavigator() {
         <LoginScreen
           onLogin={() => enterMain(user?.role ?? 'client')}
           onGoRegister={() => go('Register')}
+          onGoMagicLink={() => { setMagicLinkError(null); go('MagicLink'); }}
+          externalError={magicLinkError}
+          onClearExternalError={() => setMagicLinkError(null)}
         />
+      </ScreenTransition>
+    );
+  }
+
+  if (screen === 'MagicLink') {
+    return (
+      <ScreenTransition screenKey={`magiclink-${transitionKey}`}>
+        <MagicLinkScreen onBack={() => go('Login')} />
       </ScreenTransition>
     );
   }
