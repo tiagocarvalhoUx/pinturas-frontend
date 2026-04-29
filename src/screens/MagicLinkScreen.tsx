@@ -34,7 +34,12 @@ export function MagicLinkScreen({ onBack }: Props) {
       await authService.requestMagicLink(value);
       setSent(true);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Não foi possível enviar o link. Tente novamente.');
+      setError(
+        err?.response?.data?.message ||
+        err?.message ||
+        err?.code ||
+        'Nao foi possivel enviar o link. Tente novamente.',
+      );
     } finally {
       setLoading(false);
     }
@@ -206,3 +211,4 @@ export function MagicLinkScreen({ onBack }: Props) {
     </KeyboardAvoidingView>
   );
 }
+
