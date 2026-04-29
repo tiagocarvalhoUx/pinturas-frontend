@@ -27,13 +27,6 @@ type Screen =
   | 'Splash' | 'Onboarding' | 'Login' | 'MagicLink' | 'Register'
   | 'Main' | 'Budget' | 'Chat' | 'BudgetDetail' | 'PortfolioDetail' | 'AdminPortfolio';
 
-function extractMagicLinkToken(url: string | null): string | null {
-  if (!url) return null;
-  if (!url.includes('magic-link')) return null;
-  const match = url.match(/[?&]token=([^&#]+)/);
-  return match ? decodeURIComponent(match[1]) : null;
-}
-
 type TabScreen = 'Home' | 'BudgetsList' | 'Portfolio' | 'Chat' | 'Profile' | 'AdminDashboard';
 
 // ─── Animação de entrada leve ────────────────────────────────────────────────
@@ -202,10 +195,9 @@ export function AppNavigator() {
 
   // ── Deep link handler — magic-link tokens ────────────────────────────────
   const handleMagicLinkUrl = useCallback(async (url: string | null) => {
-    const token = extractMagicLinkToken(url);
-    if (!token) return;
+    if (!authService.canHandleMagicLink(url)) return;
     try {
-      const { user: authedUser } = await authService.verifyMagicLink(token);
+      const { user: authedUser } = await authService.verifyMagicLink(url!);
       setUser(authedUser);
       setAuthenticated(true);
       setMagicLinkError(null);
@@ -214,7 +206,11 @@ export function AppNavigator() {
       go('Main');
       prefetchAll(authedUser?.role ?? 'client');
     } catch (err: any) {
-      setMagicLinkError(err?.response?.data?.message || 'Link inválido ou expirado.');
+      setMagicLinkError(
+        err?.response?.data?.message ||
+        err?.message ||
+        'Link invalido, expirado ou aberto em outro navegador.',
+      );
       go('Login');
     }
   }, [go, setUser, setAuthenticated]);
@@ -376,3 +372,4 @@ export function AppNavigator() {
     </View>
   );
 }
+

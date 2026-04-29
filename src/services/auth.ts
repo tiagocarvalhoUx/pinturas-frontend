@@ -1,21 +1,35 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { isSignInWithEmailLink, sendSignInLinkToEmail, signInWithEmailLink } from 'firebase/auth';
 import api from './api';
+import { firebaseAuth } from './firebase';
+
+const APP_TOKEN_KEY = '@adelcio:token';
+const MAGIC_LINK_EMAIL_KEY = '@adelcio:magic-link-email';
+
+function getMagicLinkUrl() {
+  const base =
+    process.env.EXPO_PUBLIC_MAGIC_LINK_URL ||
+    process.env.EXPO_PUBLIC_SITE_URL ||
+    'http://localhost:8081';
+
+  return base.endsWith('/magic-link') ? base : `${base.replace(/\/$/, '')}/magic-link`;
+}
 
 export const authService = {
   async register(data: { name: string; email: string; password: string; phone?: string }) {
     const res = await api.post('/auth/register', data);
-    await AsyncStorage.setItem('@adelcio:token', res.data.token);
+    await AsyncStorage.setItem(APP_TOKEN_KEY, res.data.token);
     return res.data;
   },
 
   async login(email: string, password: string) {
     const res = await api.post('/auth/login', { email, password });
-    await AsyncStorage.setItem('@adelcio:token', res.data.token);
+    await AsyncStorage.setItem(APP_TOKEN_KEY, res.data.token);
     return res.data;
   },
 
   async logout() {
-    await AsyncStorage.removeItem('@adelcio:token');
+    await AsyncStorage.multiRemove([APP_TOKEN_KEY, MAGIC_LINK_EMAIL_KEY]);
   },
 
   async getMe() {
@@ -28,13 +42,31 @@ export const authService = {
   },
 
   async requestMagicLink(email: string) {
-    const res = await api.post('/auth/magic-link/request', { email });
-    return res.data;
+    await sendSignInLinkToEmail(firebaseAuth, email, {
+      url: getMagicLinkUrl(),
+      handleCodeInApp: true,
+    });
+    await AsyncStorage.setItem(MAGIC_LINK_EMAIL_KEY, email);
+    return {
+      message: 'Se o e-mail estiver valido, enviaremos um link de acesso em instantes.',
+    };
   },
 
-  async verifyMagicLink(token: string) {
-    const res = await api.post('/auth/magic-link/verify', { token });
-    await AsyncStorage.setItem('@adelcio:token', res.data.token);
+  canHandleMagicLink(url: string | null) {
+    return !!url && isSignInWithEmailLink(firebaseAuth, url);
+  },
+
+  async verifyMagicLink(url: string) {
+    const email = (await AsyncStorage.getItem(MAGIC_LINK_EMAIL_KEY))?.trim().toLowerCase();
+    if (!email) {
+      throw new Error('Abra o link no mesmo navegador onde o acesso foi solicitado.');
+    }
+
+    const credential = await signInWithEmailLink(firebaseAuth, email, url);
+    const idToken = await credential.user.getIdToken();
+    const res = await api.post('/auth/firebase/verify', { idToken });
+    await AsyncStorage.setItem(APP_TOKEN_KEY, res.data.token);
+    await AsyncStorage.removeItem(MAGIC_LINK_EMAIL_KEY);
     return res.data;
   },
 };
