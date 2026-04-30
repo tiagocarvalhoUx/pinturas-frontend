@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity,
   KeyboardAvoidingView, Platform, ScrollView, Animated, ActivityIndicator,
@@ -11,9 +11,11 @@ import { LogoHero } from '../components/LogoHero';
 
 interface Props {
   onBack: () => void;
+  externalError?: string | null;
+  onClearExternalError?: () => void;
 }
 
-export function MagicLinkScreen({ onBack }: Props) {
+export function MagicLinkScreen({ onBack, externalError, onClearExternalError }: Props) {
   const [email, setEmail]     = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState('');
@@ -21,9 +23,14 @@ export function MagicLinkScreen({ onBack }: Props) {
   const [focused, setFocused] = useState(false);
   const btnScale = useRef(new Animated.Value(1)).current;
 
+  useEffect(() => {
+    if (externalError) setError(externalError);
+  }, [externalError]);
+
   const handleSend = async () => {
     if (loading) return;
     setError('');
+    onClearExternalError?.();
     const value = email.trim().toLowerCase();
     if (!value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
       setError('Digite um e-mail válido.');

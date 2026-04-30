@@ -7,9 +7,7 @@ import { authService } from '../services/auth';
 import { prefetchAll, warmupBackend } from '../services/prefetch';
 import { SplashScreen } from '../screens/SplashScreen';
 import { OnboardingScreen } from '../screens/OnboardingScreen';
-import { LoginScreen } from '../screens/LoginScreen';
 import { MagicLinkScreen } from '../screens/MagicLinkScreen';
-import { RegisterScreen } from '../screens/RegisterScreen';
 import { HomeScreen } from '../screens/HomeScreen';
 import { BudgetScreen } from '../screens/BudgetScreen';
 import { BudgetsListScreen } from '../screens/BudgetsListScreen';
@@ -24,7 +22,7 @@ import { PortfolioDetailScreen } from '../screens/PortfolioDetailScreen';
 import { PortfolioItem } from '../store/appStore';
 
 type Screen =
-  | 'Splash' | 'Onboarding' | 'Login' | 'MagicLink' | 'Register'
+  | 'Splash' | 'Onboarding' | 'MagicLink'
   | 'Main' | 'Budget' | 'Chat' | 'BudgetDetail' | 'PortfolioDetail' | 'AdminPortfolio';
 
 type TabScreen = 'Home' | 'BudgetsList' | 'Portfolio' | 'Chat' | 'Profile' | 'AdminDashboard';
@@ -211,7 +209,7 @@ export function AppNavigator() {
         err?.message ||
         'Link invalido, expirado ou aberto em outro navegador.',
       );
-      go('Login');
+      go('MagicLink');
     }
   }, [go, setUser, setAuthenticated]);
 
@@ -220,14 +218,6 @@ export function AppNavigator() {
     const sub = Linking.addEventListener('url', ({ url }) => handleMagicLinkUrl(url));
     return () => sub.remove();
   }, [handleMagicLinkUrl]);
-
-  // Prefetch ao entrar no Main
-  const enterMain = useCallback((role: 'client' | 'admin') => {
-    const tab = role === 'admin' ? 'AdminDashboard' : 'Home';
-    setActiveTab(tab);
-    go('Main');
-    prefetchAll(role);
-  }, [go]);
 
   const goToBudget          = useCallback(() => { setSelectedServiceType(undefined); go('Budget'); }, [go]);
   const goToService         = useCallback((id: string) => { setSelectedServiceType(id); go('Budget'); }, [go]);
@@ -271,34 +261,13 @@ export function AppNavigator() {
     );
   }
 
-  if (screen === 'Login') {
-    return (
-      <ScreenTransition screenKey={`login-${transitionKey}`}>
-        <LoginScreen
-          onLogin={() => enterMain(user?.role ?? 'client')}
-          onGoRegister={() => go('Register')}
-          onGoMagicLink={() => { setMagicLinkError(null); go('MagicLink'); }}
-          externalError={magicLinkError}
-          onClearExternalError={() => setMagicLinkError(null)}
-        />
-      </ScreenTransition>
-    );
-  }
-
   if (screen === 'MagicLink') {
     return (
       <ScreenTransition screenKey={`magiclink-${transitionKey}`}>
-        <MagicLinkScreen onBack={() => go('Main')} />
-      </ScreenTransition>
-    );
-  }
-
-  if (screen === 'Register') {
-    return (
-      <ScreenTransition screenKey={`register-${transitionKey}`}>
-        <RegisterScreen
-          onRegister={() => enterMain(user?.role ?? 'client')}
-          onGoLogin={() => go('Login')}
+        <MagicLinkScreen
+          onBack={() => go('Main')}
+          externalError={magicLinkError}
+          onClearExternalError={() => setMagicLinkError(null)}
         />
       </ScreenTransition>
     );
